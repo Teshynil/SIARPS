@@ -1,3 +1,4 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+#Authentication Routes
+login:
+    path: /login
+    controller: App\Controller\AuthenticationController::index
