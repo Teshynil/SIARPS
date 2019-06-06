@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <base href="./">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>{{ status_code }}</title>
+        <!-- Main styles for this application-->
+        {{ encore_entry_link_tags('app') }}
+    </head>
+    <body class="app flex-row align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="clearfix">
+                        <h1 class="float-left display-3 mr-4">{{ status_code }}</h1>
+                        <h4 class="pt-3">{% block error_title %}Oops! Parece que hubo un problema.{% endblock %}</h4>
+                        <p class="text-muted">{% block error_text %}{% endblock %}</p>
+                    </div>
+                    <button onclick="window.history.back()" class="btn btn-block btn-info" type="button">Regresar</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

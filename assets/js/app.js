@@ -7,8 +7,17 @@
 
 // any CSS you require will output into a single css file (app.css in this case)
 require('../css/app.css');
-
-// Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-// const $ = require('jquery');
-
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+require('../css/main.css');
+require('@coreui/icons/css/coreui-icons.css');
+require('flag-icon-css/css/flag-icon.css');
+require('font-awesome/css/font-awesome.css');
+require('simple-line-icons/css/simple-line-icons.css');
+require('../css/vendor-custom/pace.css');
+//JS
+const $ = require('jquery');
+global.$ = global.jQuery = $;
+require('popper.js/dist/umd/popper.js');
+require('bootstrap/dist/js/bootstrap.js');
+require('./vendor-custom/pace-progress/pace.js');
+require('perfect-scrollbar/dist/perfect-scrollbar.js');
+require('@coreui/coreui-pro/dist/js/coreui.js');
