@@ -1,0 +1,11 @@
+App\Entity\Properties:
+    type: mappedSuperclass
+    manyToOne:
+        owner:
+            targetEntity: User
+        group:
+          targetEntity: Group
+    fields:
+        permissions:
+            type: integer
+            nullable: false

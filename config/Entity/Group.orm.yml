@@ -1,0 +1,19 @@
+App\Entity\Group:
+    type: entity
+    repositoryClass: App\Repository\GroupRepository
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        name:
+            type: string
+            length: 180
+            nullable: false
+            precision: 0
+        description:
+            type: string
+            nullable: true
+    lifecycleCallbacks: {  }

@@ -1,4 +1,20 @@
+#Debug Routes
+viewdebugMain:
+    path: /d
+    controller: App\Controller\ViewDebugController:index
+viewdebug:
+    path: /d/{page}
+    controller: App\Controller\ViewDebugController:index
+
 #Authentication Routes
 login:
     path: /login
-    controller: App\Controller\AuthenticationController::index
+    controller: App\Controller\AuthenticationController::login
+
+logout:
+    path: /logout
+
+#Main pages
+dashboard:
+    path: /
+    controller: App\Controller\

@@ -1,0 +1,15 @@
+App\Entity\Setting:
+    type: entity
+    repositoryClass: App\Repository\SettingRepository
+    id:
+        id:
+            type: string
+            id: true
+            generator:
+                strategy: NONE
+    fields:
+        entity:
+            type: boolean
+        value:
+            type: object
+    lifecycleCallbacks: {  }

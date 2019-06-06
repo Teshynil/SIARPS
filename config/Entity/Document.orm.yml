@@ -1,0 +1,18 @@
+App\Entity\Document:
+    type: entity
+    repositoryClass: App\Repository\DocumentRepository
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        name:
+            type: string
+            length: 180
+            unique: true
+            nullable: false
+        creationDate:
+            type: datetime
+    lifecycleCallbacks: {  }

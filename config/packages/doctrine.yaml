@@ -18,12 +18,14 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
     orm:
         auto_generate_proxy_classes: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore
+        naming_strategy: App\Helpers\PrefixNamingStrategy
         auto_mapping: true
         mappings:
             App:
                 is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
+                #type: annotation
+                #dir: '%kernel.project_dir%/src/Entity'
+                type: yml
+                dir: '%kernel.project_dir%/config/Entity'
                 prefix: 'App\Entity'
                 alias: App

@@ -1,0 +1,26 @@
+App\Entity\User:
+    type: entity
+    repositoryClass: App\Repository\UserRepository
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        email:
+            type: string
+            length: 180
+            unique: true
+            nullable: false
+        firstName:
+            type: string
+            length: 180
+        lastName:
+            type: string
+            length: 180
+        password:
+            type: string
+            unique: false
+            nullable: false
+    lifecycleCallbacks: {  }
