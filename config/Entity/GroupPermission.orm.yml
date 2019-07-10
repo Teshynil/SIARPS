@@ -1,0 +1,19 @@
+App\Entity\GroupPermission:
+    type: entity
+    manyToOne:
+        properties:
+            targetEntity: Properties
+            inversedBy: GroupsPermissions
+        group:
+            targetEntity: Group
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        permissions:
+            type: integer
+            nullable: false
+    lifecycleCallbacks: {  }
