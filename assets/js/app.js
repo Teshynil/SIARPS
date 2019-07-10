@@ -18,6 +18,21 @@ const $ = require('jquery');
 global.$ = global.jQuery = $;
 require('popper.js/dist/umd/popper.js');
 require('bootstrap/dist/js/bootstrap.js');
+const bootbox = require('bootbox/src/bootbox.js');
+global.bootbox = bootbox;
 require('./vendor-custom/pace-progress/pace.js');
-require('perfect-scrollbar/dist/perfect-scrollbar.js');
-require('@coreui/coreui-pro/dist/js/coreui.js');
+const PerfectScrollbar = require('perfect-scrollbar/dist/perfect-scrollbar.js');
+global.PerfectScrollbar = PerfectScrollbar;
+require('./vendor-custom/coreui/coreui.js');
+require('./vendor-custom/letterpic/letterpic.js');
+$('[bootbox-alert]').each(function() {
+    $(this).click(function() {
+        bootbox.alert({
+            size: $(this).data('bootboxSize') || "sm",
+            title: $(this).data('bootboxTitle') || "",
+            message: $(this).data('bootboxMessage') || "",
+            centerVertical: $(this).data('bootboxVertical') || false
+        })
+    });
+});
+$(".letterpic").letterpic();

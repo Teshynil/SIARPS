@@ -68,28 +68,14 @@ class InstallCommand extends Command {
         try {
             $databaseValidator = $validator->schemaInSyncWithMetadata();
         } catch (\Doctrine\DBAL\Driver\SQLSrv\SQLSrvException $exc) {
-            $io->error('No se pudo realizar la conexion con la base de datos.');
-            if ($force) {
-                $io->section('Intentando crear base de datos');
-                try {
-                    $command = $this->getApplication()->find('doctrine:database:create');
-                    $returnCode = $command->run(new ArrayInput([]), $output);
-
-                    $command = $this->getApplication()->find('doctrine:schema:create');
-                    $returnCode = $command->run(new ArrayInput([]), $output);
-                } catch (\Doctrine\DBAL\Driver\SQLSrv\SQLSrvException $exc) {
-                    $io->error('No se pudo realizar la conexion con la base de datos.\n Revise la cadena de conexión en el archivo .env');
-                }
-            }
+            $io->error('No se pudo realizar la conexion con la base de datos.\n Revise la cadena de conexión en el archivo .env');
         }
         if (!$databaseValidator) {
             $io->error('The database schema is not in sync with the current mapping file.');
             ++$verificacion;
             if ($force) {
-                $command = $this->getApplication()->find('doctrine:database:drop');
-                $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
 
-                $command = $this->getApplication()->find('doctrine:database:create');
+                $command = $this->getApplication()->find('doctrine:schema:drop');
                 $returnCode = $command->run(new ArrayInput([]), $output);
 
                 $command = $this->getApplication()->find('doctrine:schema:create');
@@ -107,10 +93,8 @@ class InstallCommand extends Command {
             $this->install($io, $input, $output);
         } elseif ($installStatus->getValue() != false) {
             if ($force) {
-                $command = $this->getApplication()->find('doctrine:database:drop');
-                $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
 
-                $command = $this->getApplication()->find('doctrine:database:create');
+                $command = $this->getApplication()->find('doctrine:schema:drop');
                 $returnCode = $command->run(new ArrayInput([]), $output);
 
                 $command = $this->getApplication()->find('doctrine:schema:create');

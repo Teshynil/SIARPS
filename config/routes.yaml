@@ -17,4 +17,9 @@ logout:
 #Main pages
 dashboard:
     path: /
-    controller: App\Controller\
+    controller: App\Controller\DashboardController::index
+
+
+notifications:
+    path: /
+    controller: App\Controller\DashboardController::index

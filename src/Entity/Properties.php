@@ -2,22 +2,20 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 class Properties {
 
     protected $owner;
     protected $group;
-    protected $permissions;
+    private $ownerPermissions;
+    private $otherPermissions;
+    private $groupsPermissions;
 
-    public function getPermissions(): ?int {
-        return $this->permissions;
-    }
-
-    public function setPermissions(int $permissions): self {
-        $this->permissions = $permissions;
-
-        return $this;
+    public function __construct() {
+        $this->groupsPermissions = new ArrayCollection();
     }
 
     public function getOwner(): ?User {
@@ -36,6 +34,54 @@ class Properties {
 
     public function setGroup(?Group $group): self {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function getOwnerPermissions(): ?int {
+        return $this->ownerPermissions;
+    }
+
+    public function setOwnerPermissions(int $ownerPermissions): self {
+        $this->ownerPermissions = $ownerPermissions;
+
+        return $this;
+    }
+
+    public function getOtherPermissions(): ?int {
+        return $this->otherPermissions;
+    }
+
+    public function setOtherPermissions(int $otherPermissions): self {
+        $this->otherPermissions = $otherPermissions;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GroupPermission[]
+     */
+    public function getGroupsPermissions(): Collection {
+        return $this->groupsPermissions;
+    }
+
+    public function addGroupsPermission(GroupPermission $groupsPermission): self {
+        if (!$this->groupsPermissions->contains($groupsPermission)) {
+            $this->groupsPermissions[] = $groupsPermission;
+            $groupsPermission->setProperties($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupsPermission(GroupPermission $groupsPermission): self {
+        if ($this->groupsPermissions->contains($groupsPermission)) {
+            $this->groupsPermissions->removeElement($groupsPermission);
+            // set the owning side to null (unless already changed)
+            if ($groupsPermission->getProperties() === $this) {
+                $groupsPermission->setProperties(null);
+            }
+        }
 
         return $this;
     }
