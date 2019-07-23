@@ -8,6 +8,11 @@ App\Entity\User:
             generator:
                 strategy: UUID
     fields:
+        username:
+            type: string
+            length: 180
+            unique: true
+            nullable: false
         email:
             type: string
             length: 180
@@ -22,5 +27,10 @@ App\Entity\User:
         password:
             type: string
             unique: false
+            nullable: false
+        username:
+            type: string
+            length: 180
+            unique: true
             nullable: false
     lifecycleCallbacks: {  }
