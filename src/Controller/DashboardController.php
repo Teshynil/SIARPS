@@ -8,11 +8,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class DashboardController extends AbstractController {
 
-    public function index(SessionInterface $session, Ldap $ldap) {
-        $ldap->bind();
-        $result = $ldap->findUserQuery("pedro.diaz")->execute();
-        var_dump($result[0]);
-        return false;
+    public function index(SessionInterface $session) {
         $session->set("notifications", [
             ["text" => "hola mundo",
                 "icon" => "notebook",
