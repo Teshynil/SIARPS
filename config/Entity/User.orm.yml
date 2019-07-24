@@ -28,9 +28,4 @@ App\Entity\User:
             type: string
             unique: false
             nullable: false
-        username:
-            type: string
-            length: 180
-            unique: true
-            nullable: false
     lifecycleCallbacks: {  }

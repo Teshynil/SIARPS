@@ -10,9 +10,9 @@ class Properties {
 
     protected $owner;
     protected $group;
-    private $ownerPermissions;
-    private $otherPermissions;
-    private $groupsPermissions;
+    protected $ownerPermissions;
+    protected $otherPermissions;
+    protected $groupsPermissions;
 
     public function __construct() {
         $this->groupsPermissions = new ArrayCollection();

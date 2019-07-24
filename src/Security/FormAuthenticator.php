@@ -2,11 +2,10 @@
 
 namespace App\Security;
 
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
+use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -26,20 +25,20 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
 
     private $entityManager;
     private $urlGenerator;
-    private $ldapAdapter;
+    private $ldap;
     private $csrfTokenManager;
     private $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Adapter $ldapAdapter) {
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Ldap $ldap) {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
-        $this->ldapAdapter = $ldapAdapter;
+        $this->ldap = $ldap;
     }
 
     public function supports(Request $request) {
-        return 'app_login' === $request->attributes->get('_route') && $request->isMethod('POST');
+        return 'login' === $request->attributes->get('_route') && $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request) {
@@ -61,11 +60,24 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
-
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+        $user=null;
+        //$user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
         if (!$user) {
-
-            throw new CustomUserMessageAuthenticationException('Username could not be found.');
+            $this->ldap->bind();
+            $result=$this->ldap->findUserQuery($credentials['username'])->execute();
+            $count = \count($result);
+            if(!$count){
+                throw new CustomUserMessageAuthenticationException('Username could not be found.');            
+            }
+            if ($count > 1) {
+                throw new CustomUserMessageAuthenticationException('More than one user found');
+            }
+            try {
+                $this->ldap->bindUser($credentials['username'],$credentials['password']);
+            } catch (ConnectionException $e) {
+                throw new CustomUserMessageAuthenticationException('Password is invalid.');
+            }
+            
         }
 
         return $user;
@@ -85,7 +97,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
     }
 
     protected function getLoginUrl() {
-        return $this->urlGenerator->generate('app_login');
+        return $this->urlGenerator->generate('login');
     }
 
 }

@@ -7,15 +7,23 @@ parameters:
     locale: 'es'
     app.db.table_prefix: t_
     app.db.column_prefix: c_
+    env(READ_ONLY_USER): ~
+    env(READ_ONLY_USER_PASSWORD): ~
+    env(SIARPS_LDAP_GROUP_DN): 'CN=SIARPS,CN=Groups'
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
-    Symfony\Component\Ldap\Ldap:
-        arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
+        bind:
+            $ro_dn: '%env(READ_ONLY_USER)%'
+            $ro_password: '%env(READ_ONLY_USER_PASSWORD)%'
+            $siarps_ldap_group_dn: '%env(SIARPS_LDAP_GROUP_DN)%'
+            $base_dn: '%env(BASE_DN)%'
+    App\Security\Ldap:
+        class: App\Security\Ldap
+            
     Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
         arguments:
             -   host: '%env(LDAP_HOST)%'
@@ -24,7 +32,7 @@ services:
                 options:
                     protocol_version: 3
                     referrals: false
-    Symfony\Component\Ldap\LdapInterface: '@Symfony\Component\Ldap\Ldap'
+    Symfony\Component\Ldap\LdapInterface: '@App\Security\Ldap'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
