@@ -69,6 +69,7 @@ class InstallCommand extends Command {
             $databaseValidator = $validator->schemaInSyncWithMetadata();
         } catch (\Doctrine\DBAL\Driver\SQLSrv\SQLSrvException $exc) {
             $io->error('No se pudo realizar la conexion con la base de datos.\n Revise la cadena de conexión en el archivo .env');
+            return;
         }
         if (!$databaseValidator) {
             $io->error('The database schema is not in sync with the current mapping file.');
@@ -76,13 +77,14 @@ class InstallCommand extends Command {
             if ($force) {
 
                 $command = $this->getApplication()->find('doctrine:schema:drop');
-                $returnCode = $command->run(new ArrayInput([]), $output);
+                $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
 
                 $command = $this->getApplication()->find('doctrine:schema:create');
                 $returnCode = $command->run(new ArrayInput([]), $output);
             } else {
                 $io->error('Es necesario asegurarse que la base de datos este correctamente configurada y sincronizada con el mapeo.');
                 $io->text('Puede usar la opcion --force para que el comando realize las correcciones, NO se debe usar en produccion.');
+                return;
             }
         } else {
             $io->success('The database schema is in sync with the mapping files.');
@@ -120,7 +122,7 @@ class InstallCommand extends Command {
         $groupName = $io->ask('Ingresa el nombre del grupo Administrativo: ', 'admin');
         $group = new Group();
         $group->setName($groupName);
-        $group->setPermissions(0760);
+        $group->setPermissions(07, 06, 00);
         $group->setDescription("Grupo de Administración del Sistema");
         $group->setGroup($group);
 
@@ -129,7 +131,7 @@ class InstallCommand extends Command {
 
         $firstName = $io->ask("Ingresa primer nombre del SuperUsuario: ", "Administrador");
         $lastName = $io->ask("Ingresa los apellidos del SuperUsuario: ", "");
-        $email = $io->ask("Ingresa el correo del SuperUsuario: ", "admin@siarps.local");
+        $email = $io->ask("Ingresa el nombre de usuario del SuperUsuario: ", "admin");
 
         do {
             $password = $io->askHidden("Ingresa la contraseña del SuperUsuario: ");
@@ -140,8 +142,8 @@ class InstallCommand extends Command {
         $user = new User();
         $user->setFirstName($firstName)
                 ->setLastName($lastName)
-                ->setEmail($email)
-                ->setPermissions(0740)
+                ->setUsername($email)
+                ->setPermissions(07, 04, 00)
                 ->setOwner($user)
                 ->setGroup($group);
         $group->setOwner($user);
@@ -149,11 +151,22 @@ class InstallCommand extends Command {
         $password = $this->passwordEncoder->encodePassword($user, $password);
         $user->setPassword($password);
 
-        $this->em->persist(new Setting("installStatus", false, true, $user, $group, 0770));
+        $this->em->persist(new Setting("installStatus", null, true, $user, $group, 07, 07, 00));
         $this->em->persist($user);
         $this->em->persist($group);
         $this->em->flush();
-        $this->em->persist(new Setting("adminGroup", true, $group->getId(), $user, $group, 0770));
+        $this->em->persist(new Setting("adminGroup", Group::class, $group->getId(), $user, $group, 07, 07, 00));
+        $this->em->flush();
+
+        $ggroup = new Group();
+        $ggroup->setName("Guest");
+        $ggroup->setPermissions(07, 00, 00);
+        $ggroup->setDescription("Grupo de Usuarios Temporales");
+        $ggroup->setOwner($user);
+        $ggroup->setGroup($group);
+
+        $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
+        $this->em->persist($ggroup);
         $this->em->flush();
     }
 

@@ -17,7 +17,7 @@ App\Entity\User:
             type: string
             length: 180
             unique: true
-            nullable: false
+            nullable: true
         firstName:
             type: string
             length: 180

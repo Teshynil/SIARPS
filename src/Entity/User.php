@@ -14,6 +14,8 @@ class User extends Properties implements UserInterface {
     private $firstName;
     private $lastName;
 
+    private $username;
+
     public function getId(): ?string {
         return $this->id;
     }
@@ -70,6 +72,13 @@ class User extends Properties implements UserInterface {
 
     public function setLastName(string $lastName): self {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }

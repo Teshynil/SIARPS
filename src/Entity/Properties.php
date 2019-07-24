@@ -14,8 +14,46 @@ class Properties {
     protected $otherPermissions;
     protected $groupsPermissions;
 
-    public function __construct() {
-        $this->groupsPermissions = new ArrayCollection();
+    public function getOwnerPermissions(): ?int {
+        return $this->ownerPermissions;
+    }
+
+    public function setOwnerPermissions(int $ownerPermissions): self {
+        $this->ownerPermissions = $ownerPermissions;
+
+        return $this;
+    }
+
+    public function getOtherPermissions(): ?int {
+        return $this->otherPermissions;
+    }
+
+    public function setOtherPermissions(int $otherPermissions): self {
+        $this->otherPermissions = $otherPermissions;
+
+        return $this;
+    }
+
+    public function getGroupsPermissions(): ?array {
+        return $this->groupsPermissions;
+    }
+
+    public function setGroupsPermissions(array $groupsPermissions): self {
+        $this->groupsPermissions = $groupsPermissions;
+
+        return $this;
+    }
+
+    public function addGroupsPermissions(string $groupId, int $permission): self {
+        $this->groupsPermissions[$groupId] = $permission;
+        return $this;
+    }
+
+    public function removeGroupsPermissions(string $groupId): self {
+        if (isset($this->groupsPermissions[$groupId])) {
+            unset($this->groupsPermissions[$groupId]);
+        }
+        return $this;
     }
 
     public function getOwner(): ?User {
@@ -38,51 +76,10 @@ class Properties {
         return $this;
     }
 
-    public function getOwnerPermissions(): ?int {
-        return $this->ownerPermissions;
-    }
-
-    public function setOwnerPermissions(int $ownerPermissions): self {
-        $this->ownerPermissions = $ownerPermissions;
-
-        return $this;
-    }
-
-    public function getOtherPermissions(): ?int {
-        return $this->otherPermissions;
-    }
-
-    public function setOtherPermissions(int $otherPermissions): self {
-        $this->otherPermissions = $otherPermissions;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|GroupPermission[]
-     */
-    public function getGroupsPermissions(): Collection {
-        return $this->groupsPermissions;
-    }
-
-    public function addGroupsPermission(GroupPermission $groupsPermission): self {
-        if (!$this->groupsPermissions->contains($groupsPermission)) {
-            $this->groupsPermissions[] = $groupsPermission;
-            $groupsPermission->setProperties($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGroupsPermission(GroupPermission $groupsPermission): self {
-        if ($this->groupsPermissions->contains($groupsPermission)) {
-            $this->groupsPermissions->removeElement($groupsPermission);
-            // set the owning side to null (unless already changed)
-            if ($groupsPermission->getProperties() === $this) {
-                $groupsPermission->setProperties(null);
-            }
-        }
-
+    public function setPermissions(int $owner, int $group, int $other) {
+        $this->setOwnerPermissions($owner);
+        $this->addGroupsPermissions(0, $group);
+        $this->setOtherPermissions($other);
         return $this;
     }
 

@@ -8,13 +8,13 @@ class Setting extends Properties {
     private $entity;
     private $value;
 
-    public function __construct(string $id = null, bool $entity = false, $value = null, $owner = null, $group = null, $permissions = 0) {
+    public function __construct(string $id = null, string $entity = null, $value = null, $owner = null, $group = null, int $ownerPermissions = 07, int $groupPermissions = 0, int $otherPermissions = 0) {
         $this->id = $id;
         $this->entity = $entity;
         $this->value = $value;
         $this->setOwner($owner);
         $this->setGroup($group);
-        $this->setPermissions($permissions);
+        $this->setPermissions($ownerPermissions, $groupPermissions, $otherPermissions);
     }
 
     public function getId(): ?string {
@@ -27,11 +27,11 @@ class Setting extends Properties {
         return $this;
     }
 
-    public function getEntity(): ?bool {
+    public function getEntity(): ?string {
         return $this->entity;
     }
 
-    public function setEntity(bool $entity): self {
+    public function setEntity(string $entity): self {
         $this->entity = $entity;
 
         return $this;
@@ -43,7 +43,6 @@ class Setting extends Properties {
 
     public function setValue($value): self {
         $this->value = $value;
-
         return $this;
     }
 

@@ -2,9 +2,12 @@
 
 namespace App\Security;
 
+use App\Entity\Setting;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -60,24 +63,37 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
-        $user=null;
-        //$user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+        $user = null;
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
         if (!$user) {
             $this->ldap->bind();
-            $result=$this->ldap->findUserQuery($credentials['username'])->execute();
+            $result = $this->ldap->findUserQuery($credentials['username'])->execute();
             $count = \count($result);
-            if(!$count){
-                throw new CustomUserMessageAuthenticationException('Username could not be found.');            
+            if (!$count) {
+                throw new CustomUserMessageAuthenticationException('No se pudo encontrar al usuario');
             }
             if ($count > 1) {
-                throw new CustomUserMessageAuthenticationException('More than one user found');
+                throw new CustomUserMessageAuthenticationException('Multiples usuarios encontrados en el Directorio Activo');
             }
+            /** @var Entry * */
+            $result = $result[0];
+            $user = new User();
             try {
-                $this->ldap->bindUser($credentials['username'],$credentials['password']);
+                $this->ldap->bindUser($credentials['username'], $credentials['password']);
+                $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+                /** @var User * */
+                $user = new User();
+                $user = new User();
+                $user->setFirstName($result->getAttribute('givenName')[0])
+                        ->setLastName($result->getAttribute('sn')[0])
+                        ->setUsername($result->getAttribute('cn')[0])
+                        ->setEmail($result->getAttribute('mail')[0])
+                        ->setPermissions(07, 04, 00)
+                        ->setOwner($user)
+                        ->setGroup($group);
             } catch (ConnectionException $e) {
-                throw new CustomUserMessageAuthenticationException('Password is invalid.');
+                throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
             }
-            
         }
 
         return $user;

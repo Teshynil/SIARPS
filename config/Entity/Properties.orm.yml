@@ -5,14 +5,13 @@ App\Entity\Properties:
             targetEntity: User
         group:
           targetEntity: Group
-    oneToMany:
-        groupsPermissions:
-            targetEntity: GroupPermission
-            mappedBy: properties
     fields:
         ownerPermissions:
             type: integer
             nullable: false
         otherPermissions:
             type: integer
+            nullable: false
+        groupsPermissions:
+            type: json
             nullable: false

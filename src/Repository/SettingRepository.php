@@ -12,39 +12,32 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Setting[]    findAll()
  * @method Setting[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SettingRepository extends ServiceEntityRepository
-{
-    public function __construct(RegistryInterface $registry)
-    {
+class SettingRepository extends ServiceEntityRepository {
+
+    public function __construct(RegistryInterface $registry) {
         parent::__construct($registry, Setting::class);
     }
 
-    // /**
-    //  * @return Setting[] Returns an array of Setting objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function getValue($key) {
+        $setting = $this->find($key);
+        $value = null;
+        if ($setting->getEntity() !== null) {
+            $value = $this->getEntityManager()->getRepository($setting->getEntity())->find($setting->getValue());
+        } else {
+            $value = $setting->getValue();
+        }
+        return $value;
     }
-    */
 
     /*
-    public function findOneBySomeField($value): ?Setting
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+      public function findOneBySomeField($value): ?Setting
+      {
+      return $this->createQueryBuilder('s')
+      ->andWhere('s.exampleField = :val')
+      ->setParameter('val', $value)
+      ->getQuery()
+      ->getOneOrNullResult()
+      ;
+      }
+     */
 }
