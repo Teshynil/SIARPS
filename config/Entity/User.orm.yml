@@ -27,5 +27,5 @@ App\Entity\User:
         password:
             type: string
             unique: false
-            nullable: false
+            nullable: true
     lifecycleCallbacks: {  }

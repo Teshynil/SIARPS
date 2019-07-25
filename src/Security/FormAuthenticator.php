@@ -83,7 +83,6 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
                 /** @var User * */
                 $user = new User();
-                $user = new User();
                 $user->setFirstName($result->getAttribute('givenName')[0])
                         ->setLastName($result->getAttribute('sn')[0])
                         ->setUsername($result->getAttribute('cn')[0])
@@ -91,16 +90,31 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                         ->setPermissions(07, 04, 00)
                         ->setOwner($user)
                         ->setGroup($group);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
             } catch (ConnectionException $e) {
                 throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
             }
         }
-
+        if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
+            throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
+        }
         return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user) {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        $valid = false;
+        if ($user->getPassword() !== null) {
+            $valid = $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        } else {
+            try {
+                $this->ldap->bindUser($credentials['username'], $credentials['password']);
+                $valid = true;
+            } catch (ConnectionException $e) {
+                $valid = false;
+            }
+        }
+        return $valid;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
@@ -108,8 +122,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
             return new RedirectResponse($targetPath);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside ' . __FILE__);
+        return new RedirectResponse($this->urlGenerator->generate('dashboard'));
     }
 
     protected function getLoginUrl() {

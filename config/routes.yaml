@@ -19,7 +19,34 @@ dashboard:
     path: /
     controller: App\Controller\DashboardController::index
 
-
 notifications:
     path: /
     controller: App\Controller\DashboardController::index
+
+users:
+    path: /users
+    controller: App\Controller\UsersController::users
+
+me:
+    path: /me
+    controller: App\Controller\UsersController::user
+
+user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::user
+
+proyects:
+    path: /proyects
+    controller: App\Controller\ProyectsController::index
+
+proyect:
+    path: /proyects/{id}
+    controller: App\Controller\ProyectsController::index
+
+proyect-settings:
+    path: /proyects/{id}/settings
+    controller: App\Controller\ProyectsController::index
+
+settings:
+    path: /settings
+    controller: App\Controller\SettingsController::index

@@ -1,0 +1,90 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('main') }}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">{{ user is defined ? user.username:app.user.username }}</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div>
+                                        <img  src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="320" height="320"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <h4>Nombre:</h2>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h4>{{ user is defined ? user.firstName:app.user.firstName }}</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <h4>Apellidos:</h2>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h4>{{ user is defined ? user.lastName:app.user.lastName }}</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <h4>E-mail:</h2>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h4>{{ user is defined ? user.email:app.user.email }}</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <h4>Pertenece a:</h2>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h4>{{ user is defined ? user.group.description:app.user.group.description}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-4 col-sm-4">
+                                <div class="callout callout-success"><small class="text-muted">Proyectos Realizados</small><br /><strong class="h4">{{ proyects.done??"400" }}</strong>
+                                    <div class="chart-wrapper">
+                                        <canvas id="sparkline-chart-1" width="100" height="30"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4 col-sm-4">
+                                <div class="callout callout-warning"><small class="text-muted">Proyectos En proceso</small><br /><strong class="h4">{{ proyects.now??"100" }}</strong>
+                                    <div class="chart-wrapper">
+                                        <canvas id="sparkline-chart-2" width="100" height="30"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-sm-4">
+                                <div class="callout callout-danger"><small class="text-muted">Proyectos Retrasados</small><br /><strong class="h4">{{ proyects.late??"100" }}</strong>
+                                    <div class="chart-wrapper">
+                                        <canvas id="sparkline-chart-3" width="100" height="30"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col-->
+            </div>
+            <!-- /.row-->
+        </div>
+    {% endblock %}

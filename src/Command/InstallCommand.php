@@ -97,7 +97,7 @@ class InstallCommand extends Command {
             if ($force) {
 
                 $command = $this->getApplication()->find('doctrine:schema:drop');
-                $returnCode = $command->run(new ArrayInput([]), $output);
+                $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
 
                 $command = $this->getApplication()->find('doctrine:schema:create');
                 $returnCode = $command->run(new ArrayInput([]), $output);
@@ -164,9 +164,9 @@ class InstallCommand extends Command {
         $ggroup->setDescription("Grupo de Usuarios Temporales");
         $ggroup->setOwner($user);
         $ggroup->setGroup($group);
-
-        $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
         $this->em->persist($ggroup);
+        $this->em->flush();
+        $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
         $this->em->flush();
     }
 

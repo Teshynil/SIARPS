@@ -13,7 +13,6 @@ class User extends Properties implements UserInterface {
     private $password;
     private $firstName;
     private $lastName;
-
     private $username;
 
     public function getId(): ?string {
@@ -45,7 +44,7 @@ class User extends Properties implements UserInterface {
     }
 
     public function getRoles() {
-
+        return ['ROLE_USER'];
     }
 
     public function getSalt() {
@@ -53,7 +52,7 @@ class User extends Properties implements UserInterface {
     }
 
     public function getUsername(): string {
-        return $this->getEmail();
+        return $this->username;
     }
 
     public function getFirstName(): ?string {
@@ -76,11 +75,14 @@ class User extends Properties implements UserInterface {
         return $this;
     }
 
-    public function setUsername(string $username): self
-    {
+    public function setUsername(string $username): self {
         $this->username = $username;
 
         return $this;
+    }
+
+    public function getFullName(): ?string {
+        return $this->getFirstName() . (empty($this->getLastName()) ? "" : " " . $this->getLastName());
     }
 
 }

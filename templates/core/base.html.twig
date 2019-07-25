@@ -29,7 +29,14 @@
                 {% include 'core/aside.html.twig' %}
             </aside>
         </div>
-        {{ encore_entry_script_tags('app') }}
-        {% block javascripts %}{% endblock %}
-    </body>
+        {% if messages is defined and messages|length > 0 %}
+        <messages style="display: none;">
+            {% for msg in messages %}
+                <msg id="msg-{{ loop.index }}" mode="{{ msg.mode }}" text="{{ msg.text|escape('html') }}"/>
+            {% endfor %}
+        </messages>
+    {% endif %}
+    {{ encore_entry_script_tags('app') }}
+    {% block javascripts %}{% endblock %}
+</body>
 </html>
