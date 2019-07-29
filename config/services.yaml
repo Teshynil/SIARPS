@@ -9,7 +9,9 @@ parameters:
     app.db.column_prefix: c_
     env(READ_ONLY_USER): ~
     env(READ_ONLY_USER_PASSWORD): ~
-    env(SIARPS_LDAP_GROUP_DN): 'CN=SIARPS,CN=Groups'
+    env(SIARPS_LDAP_BASE_GROUP_DN): 'CN=SIARPS,CN=Groups'
+    env(SIARPS_LDAP_GROUP_PREFIX): 'SIARPS.GROUPS.'
+    env(SIARPS_LDAP_GROUP_OWNER_DN): 'CN=SIARPS.GROUP.OWNER,CN=Groups'
 
 services:
     # default configuration for services in *this* file
@@ -19,11 +21,13 @@ services:
         bind:
             $ro_dn: '%env(READ_ONLY_USER)%'
             $ro_password: '%env(READ_ONLY_USER_PASSWORD)%'
-            $siarps_ldap_group_dn: '%env(SIARPS_LDAP_GROUP_DN)%'
+            $siarps_ldap_base_group_dn: '%env(SIARPS_LDAP_BASE_GROUP_DN)%'
+            $siarps_ldap_group_prefix: '%env(SIARPS_LDAP_GROUP_PREFIX)%'
+            $siarps_ldap_group_owner_dn: '%env(SIARPS_LDAP_GROUP_OWNER_DN)%'
             $base_dn: '%env(BASE_DN)%'
     App\Security\Ldap:
         class: App\Security\Ldap
-            
+
     Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
         arguments:
             -   host: '%env(LDAP_HOST)%'

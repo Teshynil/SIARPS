@@ -32,18 +32,27 @@ class InstallCommand extends Command {
         $this
                 ->setDescription('Inicia el proceso de instalación de SIARPS')
                 ->addOption('force', null, InputOption::VALUE_NONE, 'Forza la ejecución de la instalación sin importar el estado de instalación')
+                ->addOption('reconfigure', null, InputOption::VALUE_NONE, 'Permite cambiar la configuración inicial sin alterar el estado de la instalación')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $io = new SymfonyStyle($input, $output);
         $force = false;
+        $reconfigure = false;
         if ($input->getOption('force')) {
             $force = true;
         }
 
-        $validator = new SchemaValidator($this->em);
+        if ($input->getOption('reconfigure')) {
+            $reconfigure = true;
+            if ($force) {
+                $io->text('No se puede usar la opcion --reconfigure con la opcion --force.');
+                return;
+            }
+        }
 
+        $validator = new SchemaValidator($this->em);
         $io->section('Verificación');
         $verificacion = 0;
         if ($errors = $validator->validateMapping()) {
@@ -91,30 +100,40 @@ class InstallCommand extends Command {
         }
 
         $installStatus = $this->em->find(Setting::class, "installStatus");
-        if ($installStatus == null) {
-            $this->install($io, $input, $output);
-        } elseif ($installStatus->getValue() != false) {
-            if ($force) {
 
-                $command = $this->getApplication()->find('doctrine:schema:drop');
-                $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
-
-                $command = $this->getApplication()->find('doctrine:schema:create');
-                $returnCode = $command->run(new ArrayInput([]), $output);
-
-                $this->install($io, $input, $output);
+        if ($reconfigure) {
+            if ($installStatus == null) {
+                $io->error('No se encontro la base de datos de la instalacion.');
+            } elseif ($installStatus->getValue() == true) {
+                $this->reconfigure($io, $input, $output);
             } else {
-                $io->warning('Se encontro informacion en la base de datos, Puede usar la opcion --force para ignorar y continuar.');
+                $io->error('Hay un error en la instalación, favor de reinstalar.');
             }
         } else {
-            if ($force) {
+            if ($installStatus == null) {
                 $this->install($io, $input, $output);
+            } elseif ($installStatus->getValue() != false) {
+                if ($force) {
+
+                    $command = $this->getApplication()->find('doctrine:schema:drop');
+                    $returnCode = $command->run(new ArrayInput(['--force' => true]), $output);
+
+                    $command = $this->getApplication()->find('doctrine:schema:create');
+                    $returnCode = $command->run(new ArrayInput([]), $output);
+
+                    $this->install($io, $input, $output);
+                } else {
+                    $io->warning('Se encontro informacion en la base de datos, Puede usar la opcion --force para ignorar y continuar.');
+                }
+            } else {
+                if ($force) {
+                    $this->install($io, $input, $output);
+                }
             }
         }
     }
 
     protected function install(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {
-        $helper = $this->getHelper('question');
         $io->section("Instalacion SIARPS");
 
         $io->section("Creacion de Grupo Administrativo");
@@ -128,7 +147,6 @@ class InstallCommand extends Command {
 
         $io->section("Creacion de Usuario Administrativo");
 
-
         $firstName = $io->ask("Ingresa primer nombre del SuperUsuario: ", "Administrador");
         $lastName = $io->ask("Ingresa los apellidos del SuperUsuario: ", "");
         $email = $io->ask("Ingresa el nombre de usuario del SuperUsuario: ", "admin");
@@ -137,8 +155,9 @@ class InstallCommand extends Command {
             $password = $io->askHidden("Ingresa la contraseña del SuperUsuario: ");
         } while (empty($password));
 
+        $io->section("Conexión LDAP");
+        $groupsConfig = $io->choice("Como se usaran los grupos del SIARPS", ["Usar conexion con LDAP", "Usar grupos internos"]);
 
-        $io->section("Guardando cambios a la Base de datos");
         $user = new User();
         $user->setFirstName($firstName)
                 ->setLastName($lastName)
@@ -158,16 +177,33 @@ class InstallCommand extends Command {
         $this->em->persist(new Setting("adminGroup", Group::class, $group->getId(), $user, $group, 07, 07, 00));
         $this->em->flush();
 
-        $ggroup = new Group();
-        $ggroup->setName("Guest");
-        $ggroup->setPermissions(07, 00, 00);
-        $ggroup->setDescription("Grupo de Usuarios Temporales");
-        $ggroup->setOwner($user);
-        $ggroup->setGroup($group);
-        $this->em->persist($ggroup);
-        $this->em->flush();
-        $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
-        $this->em->flush();
+        if ($groupsConfig == 0) {
+            $this->em->persist(new Setting("groupConfig", null, "LDAP", $user, $group, 07, 07, 00));
+            $ldapGroupConfig = $io->choice("Como se usaran los grupos del SIARPS", ["Usar Unidades Organizacionales como grupos", "Usar grupos con un prefijo"]);
+            if ($ldapGroupConfig == 0) {
+                $this->em->persist(new Setting("ldapGroupConfig", null, "OU", $user, $group, 07, 07, 00));
+            } else {
+                $this->em->persist(new Setting("ldapGroupConfig", null, "PREFIX", $user, $group, 07, 07, 00));
+            }
+        } else {
+            $this->em->persist(new Setting("ldapGroupConfig", null, null, $user, $group, 07, 07, 00));
+            $this->em->persist(new Setting("groupConfig", null, "INTERNAL", $user, $group, 07, 07, 00));
+            $ggroup = new Group();
+            $ggroup->setName("Guest");
+            $ggroup->setPermissions(07, 00, 00);
+            $ggroup->setDescription("Grupo de Usuarios Temporales");
+            $ggroup->setOwner($user);
+            $ggroup->setGroup($group);
+            $this->em->persist($ggroup);
+            $this->em->flush();
+            $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
+            $this->em->flush();
+        }
+    }
+
+    protected function reconfigure(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {
+        $io->section("Reconfiguración SIARPS");
+        $io->section("");
     }
 
 }

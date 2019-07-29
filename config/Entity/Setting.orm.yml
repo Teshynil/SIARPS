@@ -13,4 +13,5 @@ App\Entity\Setting:
             nullable: true
         value:
             type: object
+            nullable: true
     lifecycleCallbacks: {  }
