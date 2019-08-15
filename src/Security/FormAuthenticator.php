@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Group;
 use App\Entity\Setting;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -79,14 +80,31 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
             $result = $result[0];
             $user = new User();
             try {
-                $this->ldap->bindUser($credentials['username'], $credentials['password']);
+                $dn = $result->getAttribute('distinguishedName')[0];
+                $this->ldap->bindUser($dn, $credentials['password']);
                 $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+
+                if ($group == null) {
+                    $this->ldap->bind();
+                    $ou = substr(strstr($dn, ',', false), 1);
+                    $group = $this->entityManager->getRepository(Group::class)->findOneBy(['dn' => $ou]);
+                    if ($group == null) {
+                        $ou = $this->ldap->findOU($ou)->execute();
+                        if (\Count($ou) == 1) {
+                            $group = new Group();
+                            $group->setName($ou->getAttribute('name')[0])
+                                    ->setGroup($this->entityManager->getRepository(Setting::class)->getValue("adminGroup"))
+                                    ->setPermissions(07, 04, 04);
+                            $this->entityManager->persist($group);
+                        }
+                    }
+                }
                 /** @var User * */
                 $user = new User();
                 $user->setFirstName($result->getAttribute('givenName')[0])
                         ->setLastName($result->getAttribute('sn')[0])
                         ->setUsername($result->getAttribute('cn')[0])
-                        ->setEmail($result->getAttribute('mail')[0])
+                        ->setEmail($result->getAttribute('mail')[0] ?? "")
                         ->setPermissions(07, 04, 00)
                         ->setOwner($user)
                         ->setGroup($group);

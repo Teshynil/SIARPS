@@ -15,24 +15,32 @@ use Symfony\Component\Ldap\LdapInterface;
 final class Ldap implements LdapInterface {
 
     private $adapter;
-    private $ro_dn;
-    private $ro_password;
-    private $siarps_ldap_base_group_dn;
-    private $siarps_ldap_group_prefix;
-    private $siarps_ldap_group_owner_dn;
-    private $base_dn;
+    private $READ_ONLY_USER;
+    private $READ_ONLY_USER_PASSWORD;
+    private $SIARPS_LDAP_BASE_GROUP_DN;
+    private $SIARPS_LDAP_GROUP_PREFIX;
+    private $SIARPS_LDAP_GROUP_OWNER_DN;
+    private $BASE_DN;
+    private $SIARPS_MAIN_OU;
+    private $SIARPS_LOGIN_ATTRIBUTE;
+    private $SIARPS_FIRST_NAME_ATTRIBUTE;
+    private $SIARPS_LAST_NAME_ATTRIBUTE;
     private static $adapterMap = [
         'ext_ldap' => 'Symfony\Component\Ldap\Adapter\ExtLdap\Adapter',
     ];
 
-    public function __construct(Adapter $adapter, $ro_dn, $ro_password, $siarps_ldap_base_group_dn, $siarps_ldap_group_prefix, $siarps_ldap_group_owner_dn, $base_dn) {
+    public function __construct(Adapter $adapter, Array $ldapSettings) {
         $this->adapter = $adapter;
-        $this->ro_dn = $ro_dn;
-        $this->ro_password = $ro_password;
-        $this->siarps_ldap_base_group_dn = $siarps_ldap_base_group_dn;
-        $this->siarps_ldap_group_prefix = $siarps_ldap_group_prefix;
-        $this->siarps_ldap_group_owner_dn = $siarps_ldap_group_owner_dn;
-        $this->base_dn = $base_dn;
+        $this->READ_ONLY_USER = $ldapSettings["READ_ONLY_USER"];
+        $this->READ_ONLY_USER_PASSWORD = $ldapSettings["READ_ONLY_USER_PASSWORD"];
+        $this->SIARPS_LDAP_BASE_GROUP_DN = $ldapSettings["SIARPS_LDAP_BASE_GROUP_DN"];
+        $this->SIARPS_LDAP_GROUP_PREFIX = $ldapSettings["SIARPS_LDAP_GROUP_PREFIX"];
+        $this->SIARPS_LDAP_GROUP_OWNER_DN = $ldapSettings["SIARPS_LDAP_GROUP_OWNER_DN"];
+        $this->BASE_DN = $ldapSettings["BASE_DN"];
+        $this->SIARPS_MAIN_OU = $ldapSettings["SIARPS_MAIN_OU"];
+        $this->SIARPS_LOGIN_ATTRIBUTE = $ldapSettings["SIARPS_LOGIN_ATTRIBUTE"];
+        $this->SIARPS_FIRST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_FIRST_NAME_ATTRIBUTE"];
+        $this->SIARPS_LAST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_LAST_NAME_ATTRIBUTE"];
     }
 
     /**
@@ -40,23 +48,28 @@ final class Ldap implements LdapInterface {
      */
     public function bind($dn = null, $password = null) {
         if ($dn == $password && $dn == null) {
-            $dn = $this->ro_dn;
-            $password = $this->ro_password;
+            $dn = $this->READ_ONLY_USER;
+            $password = $this->READ_ONLY_USER_PASSWORD;
         }
         $this->adapter->getConnection()->bind($dn, $password);
     }
 
     public function bindUser($username, $password) {
-        $username = $this->escape($username, '', LdapInterface::ESCAPE_DN);
-        $dn = "CN=$username,CN=Users,$this->base_dn";
-        $this->adapter->getConnection()->bind($dn, $password);
+        $this->adapter->getConnection()->bind($username, $password);
     }
 
     public function findUserQuery($username) {
-        $query_string = "(&(memberOf=$this->siarps_ldap_base_group_dn,$this->base_dn)(cn={username}))";
+        $query_string = "(&(memberOf=$this->SIARPS_LDAP_BASE_GROUP_DN,$this->BASE_DN)($this->SIARPS_LOGIN_ATTRIBUTE={username}))";
         $username = $this->escape($username, '', LdapInterface::ESCAPE_FILTER);
         $query = str_replace('{username}', $username, $query_string);
-        return $this->query($this->base_dn, $query);
+        return $this->query($this->BASE_DN, $query);
+    }
+
+    public function findOU($dn) {
+        $query_string = "(&(objectClass=organizationalUnit)(objectClass=top)(distinguishedName={ou}))";
+        $dn = $this->escape($dn, '', LdapInterface::ESCAPE_FILTER);
+        $query = str_replace('{ou}', $dn, $query_string);
+        return $this->query($this->BASE_DN, $query);
     }
 
     /**

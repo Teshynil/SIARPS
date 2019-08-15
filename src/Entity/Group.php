@@ -9,6 +9,7 @@ class Group extends Properties {
     private $id;
     private $name;
     private $description;
+    private $dn;
 
     public function getId(): ?string {
         return $this->id;
@@ -30,6 +31,18 @@ class Group extends Properties {
 
     public function setDescription(?string $description): self {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDn(): ?string
+    {
+        return $this->dn;
+    }
+
+    public function setDn(?string $dn): self
+    {
+        $this->dn = $dn;
 
         return $this;
     }

@@ -197,8 +197,8 @@ class InstallCommand extends Command {
             $this->em->persist($ggroup);
             $this->em->flush();
             $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
-            $this->em->flush();
         }
+        $this->em->flush();
     }
 
     protected function reconfigure(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {

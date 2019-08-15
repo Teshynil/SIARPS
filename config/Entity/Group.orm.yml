@@ -12,7 +12,10 @@ App\Entity\Group:
             type: string
             length: 180
             nullable: false
-            precision: 0
+        dn:
+            type: string
+            length: 512
+            nullable: true
         description:
             type: string
             nullable: true

@@ -7,24 +7,23 @@ parameters:
     locale: 'es'
     app.db.table_prefix: t_
     app.db.column_prefix: c_
-    env(READ_ONLY_USER): ~
-    env(READ_ONLY_USER_PASSWORD): ~
-    env(SIARPS_LDAP_BASE_GROUP_DN): 'CN=SIARPS,CN=Groups'
-    env(SIARPS_LDAP_GROUP_PREFIX): 'SIARPS.GROUPS.'
-    env(SIARPS_LDAP_GROUP_OWNER_DN): 'CN=SIARPS.GROUP.OWNER,CN=Groups'
-
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $ro_dn: '%env(READ_ONLY_USER)%'
-            $ro_password: '%env(READ_ONLY_USER_PASSWORD)%'
-            $siarps_ldap_base_group_dn: '%env(SIARPS_LDAP_BASE_GROUP_DN)%'
-            $siarps_ldap_group_prefix: '%env(SIARPS_LDAP_GROUP_PREFIX)%'
-            $siarps_ldap_group_owner_dn: '%env(SIARPS_LDAP_GROUP_OWNER_DN)%'
-            $base_dn: '%env(BASE_DN)%'
+            $ldapSettings:
+                READ_ONLY_USER: '%env(READ_ONLY_USER)%'
+                READ_ONLY_USER_PASSWORD: '%env(READ_ONLY_USER_PASSWORD)%'
+                SIARPS_LDAP_BASE_GROUP_DN: '%env(SIARPS_LDAP_BASE_GROUP_DN)%'
+                SIARPS_LDAP_GROUP_PREFIX: '%env(SIARPS_LDAP_GROUP_PREFIX)%'
+                SIARPS_LDAP_GROUP_OWNER_DN: '%env(SIARPS_LDAP_GROUP_OWNER_DN)%'
+                BASE_DN: '%env(BASE_DN)%'
+                SIARPS_MAIN_OU: '%env(SIARPS_MAIN_OU)%'
+                SIARPS_LOGIN_ATTRIBUTE: '%env(SIARPS_LOGIN_ATTRIBUTE)%'
+                SIARPS_FIRST_NAME_ATTRIBUTE: '%env(SIARPS_FIRST_NAME_ATTRIBUTE)%'
+                SIARPS_LAST_NAME_ATTRIBUTE: '%env(SIARPS_LAST_NAME_ATTRIBUTE)%'
     App\Security\Ldap:
         class: App\Security\Ldap
 
