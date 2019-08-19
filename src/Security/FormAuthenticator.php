@@ -91,15 +91,19 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                     if ($group == null) {
                         $ou = $this->ldap->findOU($ou)->execute();
                         if (\Count($ou) == 1) {
+                            $ou = $ou[0];
                             $group = new Group();
                             $group->setName($ou->getAttribute('name')[0])
+                                    ->setDn($ou->getAttribute('distinguishedName')[0])
                                     ->setGroup($this->entityManager->getRepository(Setting::class)->getValue("adminGroup"))
                                     ->setPermissions(07, 04, 04);
                             $this->entityManager->persist($group);
                         }
                     }
+                    if($group->getDn()==null){
+                        
+                    }
                 }
-                /** @var User * */
                 $user = new User();
                 $user->setFirstName($result->getAttribute('givenName')[0])
                         ->setLastName($result->getAttribute('sn')[0])
