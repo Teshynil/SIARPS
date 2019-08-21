@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,6 +16,11 @@ class User extends Properties implements UserInterface {
     private $firstName;
     private $lastName;
     private $username;
+    private $notifications;
+
+    public function __construct() {
+        $this->notifications = new ArrayCollection();
+    }
 
     public function getId(): ?string {
         return $this->id;
@@ -23,7 +30,7 @@ class User extends Properties implements UserInterface {
         return $this->email;
     }
 
-    public function setEmail(string $email): self {
+    public function setEmail(?string $email): self {
         $this->email = $email;
 
         return $this;
@@ -83,6 +90,34 @@ class User extends Properties implements UserInterface {
 
     public function getFullName(): ?string {
         return $this->getFirstName() . (empty($this->getLastName()) ? "" : " " . $this->getLastName());
+    }
+
+    /**
+     * @return Collection|Notification[]
+     */
+    public function getNotifications(): Collection {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+            $notification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self {
+        if ($this->notifications->contains($notification)) {
+            $this->notifications->removeElement($notification);
+            // set the owning side to null (unless already changed)
+            if ($notification->getUser() === $this) {
+                $notification->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }

@@ -1,0 +1,34 @@
+App\Entity\Notification:
+    type: entity
+    manyToOne:
+        user:
+            targetEntity: User
+            inversedBy: notifications
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        icon:
+            type: string
+            length: 32
+            nullable: true
+        color:
+            type: string
+            length: 32
+            nullable: true
+        text:
+            type: string
+            length: 320
+        creationDate:
+            type: datetime
+        path:
+            type: string
+            length: 180
+            nullable: true
+        parameters:
+            type: json
+            nullable: true
+    lifecycleCallbacks: {  }

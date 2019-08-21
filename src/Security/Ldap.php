@@ -37,10 +37,23 @@ final class Ldap implements LdapInterface {
         $this->SIARPS_LDAP_GROUP_PREFIX = $ldapSettings["SIARPS_LDAP_GROUP_PREFIX"];
         $this->SIARPS_LDAP_GROUP_OWNER_DN = $ldapSettings["SIARPS_LDAP_GROUP_OWNER_DN"];
         $this->BASE_DN = $ldapSettings["BASE_DN"];
-        $this->SIARPS_MAIN_OU = $ldapSettings["SIARPS_MAIN_OU"];
+        $this->SIARPS_MAIN_OU = ($ldapSettings["SIARPS_MAIN_OU"] == null ? '' : $ldapSettings["SIARPS_MAIN_OU"] . ',') . $this->BASE_DN;
         $this->SIARPS_LOGIN_ATTRIBUTE = $ldapSettings["SIARPS_LOGIN_ATTRIBUTE"];
         $this->SIARPS_FIRST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_FIRST_NAME_ATTRIBUTE"];
         $this->SIARPS_LAST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_LAST_NAME_ATTRIBUTE"];
+    }
+
+    public function getLdapParams() {
+        return ["READ_ONLY_USER" => $this->READ_ONLY_USER,
+            "READ_ONLY_USER_PASSWORD" => $this->READ_ONLY_USER_PASSWORD,
+            "SIARPS_LDAP_BASE_GROUP_DN" => $this->SIARPS_LDAP_BASE_GROUP_DN,
+            "SIARPS_LDAP_GROUP_PREFIX" => $this->SIARPS_LDAP_GROUP_PREFIX,
+            "SIARPS_LDAP_GROUP_OWNER_DN" => $this->SIARPS_LDAP_GROUP_OWNER_DN,
+            "BASE_DN" => $this->BASE_DN,
+            "SIARPS_MAIN_OU" => $this->SIARPS_MAIN_OU,
+            "SIARPS_LOGIN_ATTRIBUTE" => $this->SIARPS_LOGIN_ATTRIBUTE,
+            "SIARPS_FIRST_NAME_ATTRIBUTE" => $this->SIARPS_FIRST_NAME_ATTRIBUTE,
+            "SIARPS_LAST_NAME_ATTRIBUTE" => $this->SIARPS_LAST_NAME_ATTRIBUTE];
     }
 
     /**
@@ -62,14 +75,19 @@ final class Ldap implements LdapInterface {
         $query_string = "(&(memberOf=$this->SIARPS_LDAP_BASE_GROUP_DN,$this->BASE_DN)($this->SIARPS_LOGIN_ATTRIBUTE={username}))";
         $username = $this->escape($username, '', LdapInterface::ESCAPE_FILTER);
         $query = str_replace('{username}', $username, $query_string);
-        return $this->query($this->BASE_DN, $query);
+        return $this->query($this->SIARPS_MAIN_OU, $query)->execute();
+    }
+
+    public function findGroupOwner($gdn) {
+        $query = "(memberOf=$this->SIARPS_LDAP_GROUP_OWNER_DN,$this->BASE_DN)";
+        return $this->query($gdn, $query)->execute();
     }
 
     public function findOU($dn) {
         $query_string = "(&(objectClass=organizationalUnit)(objectClass=top)(distinguishedName={ou}))";
         $dn = $this->escape($dn, '', LdapInterface::ESCAPE_FILTER);
         $query = str_replace('{ou}', $dn, $query_string);
-        return $this->query($this->BASE_DN, $query);
+        return $this->query($this->BASE_DN, $query)->execute();
     }
 
     /**

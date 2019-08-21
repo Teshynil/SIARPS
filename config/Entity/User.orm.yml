@@ -1,6 +1,11 @@
 App\Entity\User:
     type: entity
     repositoryClass: App\Repository\UserRepository
+    oneToMany:
+        notifications:
+            cascade: [persist]
+            targetEntity: Notification
+            mappedBy: user
     id:
         id:
             type: guid
