@@ -104,18 +104,13 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
             throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
         }
-        $this->ldap->bind();
-        $usg = $user->getGroup();
-        $utg = $this->getGroupFromLdap($user);
-        if ($usg !== $utg) {
-            if ($usg->getOwner() == $user) {
-                $usg->setOwner(null);
-            } else {
-                $user->setGroup($utg);
-            }
-            $user->addNotification(new Notification("Tu usuario ha sido cambiado de grupo en el Directorio Activo", Notification::COLOR_RED));
-            $this->entityManager->flush();
-        }
+        $this->changeLdapGroup($user);
+        $this->verifyLdapOwner($user);
+
+        return $user;
+    }
+
+    public function verifyLdapOwner($user) {
         if ($user->getGroup()->getDn() !== null && $user->getGroup()->getOwner() == null) {
             $this->ldap->bind();
             $ldapOwner = $this->ldap->findGroupOwner($user->getGroup()->getDn());
@@ -134,7 +129,20 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 }
             }
         }
-        return $user;
+    }
+
+    public function changeLdapGroup($user) {
+        $this->ldap->bind();
+        $usg = $user->getGroup();
+        $utg = $this->getGroupFromLdap($user);
+        if ($usg !== $utg) {
+            if ($usg->getOwner() == $user) {
+                $usg->setOwner(null);
+            }
+            $user->setGroup($utg);
+            $user->addNotification(new Notification("Tu usuario ha sido cambiado de grupo en el Directorio Activo", Notification::COLOR_RED));
+            $this->entityManager->flush();
+        }
     }
 
     public function getGroupFromLdap(User $user): ?Group {

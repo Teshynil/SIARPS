@@ -31,4 +31,6 @@ App\Entity\Notification:
         parameters:
             type: json
             nullable: true
+        read:
+            type: boolean
     lifecycleCallbacks: {  }

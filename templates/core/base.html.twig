@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% if app.request.hasPreviousSession %}
-    {% set notifications = app.session.get('notifications') %}
+    {% set notifications = app.user.notifications %}
 {% endif %}
 <html lang="es">
     <head>

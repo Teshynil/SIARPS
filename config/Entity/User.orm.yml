@@ -3,6 +3,7 @@ App\Entity\User:
     repositoryClass: App\Repository\UserRepository
     oneToMany:
         notifications:
+            orderBy: { 'creationDate': 'DESC' }
             cascade: [persist]
             targetEntity: Notification
             mappedBy: user

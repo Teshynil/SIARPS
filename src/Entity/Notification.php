@@ -35,6 +35,7 @@ class Notification {
     private $path;
     private $parameters = [];
     private $user;
+    private $read;
 
     public function __construct($text, $color = null, $icon = null, $path = null, $params = null) {
         $this->color = $color;
@@ -115,6 +116,18 @@ class Notification {
 
     public function setUser(?User $user): self {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getRead(): ?bool
+    {
+        return $this->read;
+    }
+
+    public function setRead(bool $read): self
+    {
+        $this->read = $read;
 
         return $this;
     }
