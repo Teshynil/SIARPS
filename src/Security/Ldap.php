@@ -12,6 +12,10 @@ use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
 use Symfony\Component\Ldap\Exception\DriverNotFoundException;
 use Symfony\Component\Ldap\LdapInterface;
 
+final class LdapConnectionTimeout extends \Exception {
+
+}
+
 final class Ldap implements LdapInterface {
 
     private $adapter;
@@ -25,6 +29,7 @@ final class Ldap implements LdapInterface {
     private $SIARPS_LOGIN_ATTRIBUTE;
     private $SIARPS_FIRST_NAME_ATTRIBUTE;
     private $SIARPS_LAST_NAME_ATTRIBUTE;
+    private $LDAP_HOST;
     private static $adapterMap = [
         'ext_ldap' => 'Symfony\Component\Ldap\Adapter\ExtLdap\Adapter',
     ];
@@ -41,6 +46,7 @@ final class Ldap implements LdapInterface {
         $this->SIARPS_LOGIN_ATTRIBUTE = $ldapSettings["SIARPS_LOGIN_ATTRIBUTE"];
         $this->SIARPS_FIRST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_FIRST_NAME_ATTRIBUTE"];
         $this->SIARPS_LAST_NAME_ATTRIBUTE = $ldapSettings["SIARPS_LAST_NAME_ATTRIBUTE"];
+        $this->LDAP_HOST = $ldapSettings["LDAP_HOST"];
     }
 
     public function getLdapParams() {
@@ -53,13 +59,25 @@ final class Ldap implements LdapInterface {
             "SIARPS_MAIN_OU" => $this->SIARPS_MAIN_OU,
             "SIARPS_LOGIN_ATTRIBUTE" => $this->SIARPS_LOGIN_ATTRIBUTE,
             "SIARPS_FIRST_NAME_ATTRIBUTE" => $this->SIARPS_FIRST_NAME_ATTRIBUTE,
-            "SIARPS_LAST_NAME_ATTRIBUTE" => $this->SIARPS_LAST_NAME_ATTRIBUTE];
+            "SIARPS_LAST_NAME_ATTRIBUTE" => $this->SIARPS_LAST_NAME_ATTRIBUTE,
+            "LDAP_HOST" => $this->LDAP_HOST];
+    }
+
+    public function checkConnection() {
+        $op = fsockopen($this->LDAP_HOST, 389, $errno, $errstr, 2);
+        if (!$op)
+            throw new LdapConnectionTimeout();
+        else {
+            fclose($op); //explicitly close open socket connection
+            return; //DC is up & running, we can safely connect with ldap_connect
+        }
     }
 
     /**
      * {@inheritdoc}
      */
     public function bind($dn = null, $password = null) {
+        $this->checkConnection();
         if ($dn == $password && $dn == null) {
             $dn = $this->READ_ONLY_USER;
             $password = $this->READ_ONLY_USER_PASSWORD;
@@ -68,6 +86,7 @@ final class Ldap implements LdapInterface {
     }
 
     public function bindUser($username, $password) {
+        $this->checkConnection();
         $this->adapter->getConnection()->bind($username, $password);
     }
 
@@ -94,6 +113,7 @@ final class Ldap implements LdapInterface {
      * {@inheritdoc}
      */
     public function query($dn, $query, array $options = []) {
+        $this->checkConnection();
         return $this->adapter->createQuery($dn, $query, $options);
     }
 

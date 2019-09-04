@@ -44,6 +44,7 @@ class Notification {
         $this->path = $path;
         $this->params = $params;
         $this->creationDate = new \DateTime("now");
+        $this->read = false;
     }
 
     public function getId(): ?string {
@@ -120,13 +121,11 @@ class Notification {
         return $this;
     }
 
-    public function getRead(): ?bool
-    {
+    public function getRead(): ?bool {
         return $this->read;
     }
 
-    public function setRead(bool $read): self
-    {
+    public function setRead(bool $read): self {
         $this->read = $read;
 
         return $this;

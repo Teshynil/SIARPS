@@ -61,73 +61,82 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider) {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
-        $user = null;
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
-        if (!$user) {
-            $this->ldap->bind();
-            $result = $this->ldap->findUserQuery($credentials['username']);
-            $count = \count($result);
-            if (!$count) {
-                throw new CustomUserMessageAuthenticationException('No se pudo encontrar al usuario');
-            }
-            if ($count > 1) {
-                throw new CustomUserMessageAuthenticationException('Multiples usuarios encontrados en el Directorio Activo');
-            }
-            /** @var Entry * */
-            $result = $result[0];
-            $user = new User();
-            try {
-                $dn = $result->getAttribute('distinguishedName')[0];
-                $this->ldap->bindUser($dn, $credentials['password']);
-                $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
-                $user = new User();
-                $user->setFirstName($result->getAttribute('givenName')[0])
-                        ->setLastName($result->getAttribute('sn')[0])
-                        ->setUsername($result->getAttribute('cn')[0])
-                        ->setEmail($result->getAttribute('mail')[0] ?? null)
-                        ->setPermissions(07, 04, 00)
-                        ->setOwner($user);
-                if ($group == null) {
-                    $group = $this->getGroupFromLdap($user);
-                }
-                $user->setGroup($group);
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-            } catch (ConnectionException $e) {
-                throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
-            }
-        }
-        if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
-            throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
-        }
-        $this->changeLdapGroup($user);
-        $this->verifyLdapOwner($user);
+        try {
 
-        return $user;
+            $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+            if (!$this->csrfTokenManager->isTokenValid($token)) {
+                throw new InvalidCsrfTokenException();
+            }
+            $user = null;
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+            if (!$user) {
+                $this->ldap->bind();
+                $result = $this->ldap->findUserQuery($credentials['username']);
+                $count = \count($result);
+                if (!$count) {
+                    throw new CustomUserMessageAuthenticationException('No se pudo encontrar al usuario');
+                }
+                if ($count > 1) {
+                    throw new CustomUserMessageAuthenticationException('Multiples usuarios encontrados en el Directorio Activo');
+                }
+                /** @var Entry * */
+                $result = $result[0];
+                $user = new User();
+                try {
+                    $dn = $result->getAttribute('distinguishedName')[0];
+                    $this->ldap->bindUser($dn, $credentials['password']);
+                    $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+                    $user = new User();
+                    $user->setFirstName($result->getAttribute('givenName')[0])
+                            ->setLastName($result->getAttribute('sn')[0])
+                            ->setUsername($result->getAttribute('cn')[0])
+                            ->setEmail($result->getAttribute('mail')[0] ?? null)
+                            ->setPermissions(07, 04, 00)
+                            ->setOwner($user);
+                    if ($group == null) {
+                        $group = $this->getGroupFromLdap($user);
+                    }
+                    $user->setGroup($group);
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
+                } catch (ConnectionException $e) {
+                    throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
+                }
+            }
+            if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
+                throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
+            }
+            $this->changeLdapGroup($user);
+            $this->verifyLdapOwner($user);
+
+            return $user;
+        } catch (LdapConnectionTimeout $exc) {
+            throw new CustomUserMessageAuthenticationException('No se tiene acceso al Directorio Activo.');
+        }
     }
 
     public function verifyLdapOwner($user) {
-        if ($user->getGroup()->getDn() !== null && $user->getGroup()->getOwner() == null) {
-            $this->ldap->bind();
-            $ldapOwner = $this->ldap->findGroupOwner($user->getGroup()->getDn());
-            $count = \Count($ldapOwner);
-            if (!$count) {
-                throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo sin administrador en el Active Directory, una vez exista y acceda al sistema el administrador del grupo se desbloqueara el acceso.');
-            }
-            $ldapOwner = $ldapOwner[0];
-            $owner = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $ldapOwner->getAttribute($this->ldap->getLdapParams()["SIARPS_LOGIN_ATTRIBUTE"])]);
-            if ($owner == null) {
-                throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo en el que el administrador no a accedido al sistema, una vez acceda, se desbloqueara el acceso.');
-            } else {
-                if ($owner == $user) {
-                    $user->getGroup()->setOwner($user);
-                    $this->entityManager->flush();
+        try {
+            if ($user->getGroup()->getDn() !== null && $user->getGroup()->getOwner() == null) {
+                $this->ldap->bind();
+                $ldapOwner = $this->ldap->findGroupOwner($user->getGroup()->getDn());
+                $count = \Count($ldapOwner);
+                if (!$count) {
+                    throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo sin administrador en el Active Directory, una vez exista y acceda al sistema el administrador del grupo se desbloqueara el acceso.');
+                }
+                $ldapOwner = $ldapOwner[0];
+                $owner = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $ldapOwner->getAttribute($this->ldap->getLdapParams()["SIARPS_LOGIN_ATTRIBUTE"])]);
+                if ($owner == null) {
+                    throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo en el que el administrador no a accedido al sistema, una vez acceda, se desbloqueara el acceso.');
+                } else {
+                    if ($owner == $user) {
+                        $user->getGroup()->setOwner($user);
+                        $this->entityManager->flush();
+                    }
                 }
             }
+        } catch (LdapConnectionTimeout $exc) {
+            throw new CustomUserMessageAuthenticationException('No se tiene acceso al Directorio Activo.');
         }
     }
 

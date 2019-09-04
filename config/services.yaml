@@ -14,6 +14,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $ldapSettings:
+                LDAP_HOST: '%env(LDAP_HOST)%'
                 READ_ONLY_USER: '%env(READ_ONLY_USER)%'
                 READ_ONLY_USER_PASSWORD: '%env(READ_ONLY_USER_PASSWORD)%'
                 SIARPS_LDAP_BASE_GROUP_DN: '%env(SIARPS_LDAP_BASE_GROUP_DN)%'
