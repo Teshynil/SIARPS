@@ -64,12 +64,16 @@ final class Ldap implements LdapInterface {
     }
 
     public function checkConnection() {
-        $op = fsockopen($this->LDAP_HOST, 389, $errno, $errstr, 2);
-        if (!$op)
+        try {
+            $op = fsockopen($this->LDAP_HOST, 389, $errno, $errstr, 2);
+            if (!$op)
+                throw new LdapConnectionTimeout();
+            else {
+                fclose($op); //explicitly close open socket connection
+                return; //DC is up & running, we can safely connect with ldap_connect
+            }
+        } catch (\ErrorException $ex) {
             throw new LdapConnectionTimeout();
-        else {
-            fclose($op); //explicitly close open socket connection
-            return; //DC is up & running, we can safely connect with ldap_connect
         }
     }
 

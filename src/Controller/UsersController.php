@@ -7,14 +7,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UsersController extends AbstractController {
 
-    public function index() {
-        return $this->render('users/index.html.twig', [
-                    'controller_name' => 'UsersController',
+    public function user($id = null) {
+        return $this->render('users/user.html.twig', [
         ]);
     }
 
-    public function user($id = null) {
-        return $this->render('users/user.html.twig', [
+    public function users() {
+        return $this->render('users/users.html.twig', [
         ]);
     }
 
