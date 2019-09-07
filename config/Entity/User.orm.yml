@@ -34,4 +34,6 @@ App\Entity\User:
             type: string
             unique: false
             nullable: true
+        image:
+            type: file
     lifecycleCallbacks: {  }

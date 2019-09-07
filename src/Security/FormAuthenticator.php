@@ -103,11 +103,13 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                     throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
                 }
             }
-            if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
-                throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
+            if ($user->getPassword() == null) {
+                if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
+                    throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
+                }
+                $this->changeLdapGroup($user);
+                $this->verifyLdapOwner($user);
             }
-            $this->changeLdapGroup($user);
-            $this->verifyLdapOwner($user);
 
             return $user;
         } catch (LdapConnectionTimeout $exc) {

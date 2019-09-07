@@ -6,9 +6,10 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User extends Properties implements UserInterface {
+class User extends Properties implements UserInterface, EquatableInterface {
 
     private $id;
     private $email;
@@ -17,6 +18,7 @@ class User extends Properties implements UserInterface {
     private $lastName;
     private $username;
     private $notifications;
+    private $image;
 
     public function __construct() {
         $this->notifications = new ArrayCollection();
@@ -55,7 +57,7 @@ class User extends Properties implements UserInterface {
     }
 
     public function getSalt() {
-        return $this->getEmail();
+        return $this->getId();
     }
 
     public function getUsername(): string {
@@ -118,6 +120,36 @@ class User extends Properties implements UserInterface {
         }
 
         return $this;
+    }
+
+    public function getImage() {
+        return $this->image;
+    }
+
+    public function setImage($image): self {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function __sleep() {
+        return ['id', 'username', 'password'];
+    }
+
+    public function isEqualTo(UserInterface $user) {
+        if ($this->getPassword() !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->getSalt() !== $user->getSalt()) {
+            return false;
+        }
+
+        if ($this->getUsername() !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 
 }

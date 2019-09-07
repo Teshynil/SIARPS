@@ -11,4 +11,9 @@ class ViewDebugController extends AbstractController {
         return $this->render('view_debug/' . $page . ".html.twig");
     }
 
+    public function test() {
+        $this->Download($this->getUser()->getImage());
+        die();
+    }
+
 }

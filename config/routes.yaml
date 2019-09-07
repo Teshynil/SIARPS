@@ -2,6 +2,9 @@
 viewdebugMain:
     path: /d
     controller: App\Controller\ViewDebugController:index
+test:
+    path: /t
+    controller: App\Controller\ViewDebugController:test
 viewdebug:
     path: /d/{page}
     controller: App\Controller\ViewDebugController:index

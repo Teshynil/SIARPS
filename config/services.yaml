@@ -25,6 +25,10 @@ services:
                 SIARPS_LOGIN_ATTRIBUTE: '%env(SIARPS_LOGIN_ATTRIBUTE)%'
                 SIARPS_FIRST_NAME_ATTRIBUTE: '%env(SIARPS_FIRST_NAME_ATTRIBUTE)%'
                 SIARPS_LAST_NAME_ATTRIBUTE: '%env(SIARPS_LAST_NAME_ATTRIBUTE)%'
+
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments: [!service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] },{ lock_mode: 1 }]
+
     App\Security\Ldap:
         class: App\Security\Ldap
 
