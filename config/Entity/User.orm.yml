@@ -7,6 +7,9 @@ App\Entity\User:
             cascade: [persist]
             targetEntity: Notification
             mappedBy: user
+    manyToOne:
+        photo:
+            targetEntity: File
     id:
         id:
             type: guid
@@ -34,6 +37,4 @@ App\Entity\User:
             type: string
             unique: false
             nullable: true
-        image:
-            type: file
     lifecycleCallbacks: {  }

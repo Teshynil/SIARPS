@@ -21,23 +21,25 @@ Encore
         .addEntry('charts_app', './assets/js/charts.js')
         .addEntry('datatables_app', './assets/js/datatables.js')
 
-        .addEntry('calendar', './assets/js/views/calendar.js')
-        .addEntry('charts', './assets/js/views/charts.js')
-        .addEntry('code-editor', './assets/js/views/code-editor.js')
-        .addEntry('colors', './assets/js/views/colors.js')
-        .addEntry('datatables', './assets/js/views/datatables.js')
-        .addEntry('draggable-cards', './assets/js/views/draggable-cards.js')
-        .addEntry('google-maps', './assets/js/views/google-maps.js')
-        .addEntry('loading-buttons', './assets/js/views/loading-buttons.js')
-        .addEntry('main', './assets/js/views/main.js')
-        .addEntry('markdown-editor', './assets/js/views/markdown-editor.js')
-        .addEntry('popovers', './assets/js/views/popovers.js')
-        .addEntry('sliders', './assets/js/views/sliders.js')
-        .addEntry('text-editor', './assets/js/views/text-editor.js')
-        .addEntry('toastr', './assets/js/views/toastr.js')
-        .addEntry('tooltips', './assets/js/views/tooltips.js')
-        .addEntry('validation', './assets/js/views/validation.js')
-        .addEntry('widgets', './assets/js/views/widgets.js')
+        .addEntry('users', './assets/js/views/users.js')
+
+//        .addEntry('calendar', './assets/js/views/calendar.js')
+//        .addEntry('charts', './assets/js/views/charts.js')
+//        .addEntry('code-editor', './assets/js/views/code-editor.js')
+//        .addEntry('colors', './assets/js/views/colors.js')
+//        .addEntry('datatables', './assets/js/views/datatables.js')
+//        .addEntry('draggable-cards', './assets/js/views/draggable-cards.js')
+//        .addEntry('google-maps', './assets/js/views/google-maps.js')
+//        .addEntry('loading-buttons', './assets/js/views/loading-buttons.js')
+//        .addEntry('main', './assets/js/views/main.js')
+//        .addEntry('markdown-editor', './assets/js/views/markdown-editor.js')
+//        .addEntry('popovers', './assets/js/views/popovers.js')
+//        .addEntry('sliders', './assets/js/views/sliders.js')
+//        .addEntry('text-editor', './assets/js/views/text-editor.js')
+//        .addEntry('toastr', './assets/js/views/toastr.js')
+//        .addEntry('tooltips', './assets/js/views/tooltips.js')
+//        .addEntry('validation', './assets/js/views/validation.js')
+//        .addEntry('widgets', './assets/js/views/widgets.js')
 
 
 
@@ -71,6 +73,8 @@ Encore
             corejs: 3
         })
 
+
+
         // enables Sass/SCSS support
         //.enableSassLoader()
 
@@ -88,5 +92,11 @@ Encore
         //.enableReactPreset()
         //.addEntry('admin', './assets/js/admin.js')
         ;
+var config = Encore.getWebpackConfig();
 
-module.exports = Encore.getWebpackConfig();
+config.module.rules.unshift({
+    parser: {
+        amd: false,
+    }
+});
+module.exports = config;

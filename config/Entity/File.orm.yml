@@ -1,0 +1,38 @@
+App\Entity\File:
+    type: entity
+    repositoryClass: App\Repository\FileRepository
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        path:
+            type: string
+            length: 512
+            unique: true
+            nullable: false
+        name:
+            type: string
+            length: 255
+            unique: false
+            nullable: false
+        mimeType:
+            type: string
+            length: 255
+            unique: false
+            nullable: false
+        size:
+            type: integer
+            nullable: false
+        valid:
+            type: boolean
+            nullable: false
+        creationDate:
+            type: datetime
+        modificationDate:
+            type: datetime
+lifecycleCallbacks:
+    postLoad: [ update ]
+    preRemove: [ remove ]

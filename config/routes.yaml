@@ -17,6 +17,10 @@ login:
 logout:
     path: /logout
 
+resource:
+    path: /file/{method}/{id}
+    controller: App\Controller\ResourceController::serve
+
 #Main pages
 dashboard:
     path: /

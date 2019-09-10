@@ -26,9 +26,16 @@ services:
                 SIARPS_FIRST_NAME_ATTRIBUTE: '%env(SIARPS_FIRST_NAME_ATTRIBUTE)%'
                 SIARPS_LAST_NAME_ATTRIBUTE: '%env(SIARPS_LAST_NAME_ATTRIBUTE)%'
 
+
+    App\Helpers\EntityLogger:
+        tags:
+        - { name: doctrine.event_listener, event: onFlush }
+
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments: [!service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] },{ lock_mode: 1 }]
 
+    App\Security\PermissionService:
+        class: App\Security\PermissionService
     App\Security\Ldap:
         class: App\Security\Ldap
 

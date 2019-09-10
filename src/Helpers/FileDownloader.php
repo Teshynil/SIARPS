@@ -15,6 +15,10 @@ namespace App\Helpers;
  */
 class FileDownloader {
 
+    public static function Link(File $ifile) {
+        
+    }
+
     public static function Download(File $ifile, $speed = null, $multipart = true) {
         while (ob_get_level() > 0) {
             ob_end_clean();

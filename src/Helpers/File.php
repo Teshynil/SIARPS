@@ -43,6 +43,10 @@ class File extends SysFile implements \JsonSerializable {
         FileDownloader::Download($this);
     }
 
+    public function getLink() {
+        FileDownloader::Link($this);
+    }
+
     public function getBase64() {
         return 'data:' . $this->getDBMimeType() . ';base64,' . base64_encode($this->openFile()->fread($this->getDBSize()));
     }

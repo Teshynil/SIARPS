@@ -18,7 +18,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
     private $lastName;
     private $username;
     private $notifications;
-    private $image;
+    private $photo;
 
     public function __construct() {
         $this->notifications = new ArrayCollection();
@@ -122,16 +122,6 @@ class User extends Properties implements UserInterface, EquatableInterface {
         return $this;
     }
 
-    public function getImage() {
-        return $this->image;
-    }
-
-    public function setImage($image): self {
-        $this->image = $image;
-
-        return $this;
-    }
-
     public function __sleep() {
         return ['id', 'username', 'password'];
     }
@@ -150,6 +140,16 @@ class User extends Properties implements UserInterface, EquatableInterface {
         }
 
         return true;
+    }
+
+    public function getPhoto(): ?File {
+        return $this->photo;
+    }
+
+    public function setPhoto(?File $photo): self {
+        $this->photo = $photo;
+
+        return $this;
     }
 
 }
