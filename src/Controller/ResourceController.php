@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Security\PermissionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -10,9 +11,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ResourceController extends AbstractController {
 
-    public function serve($method = null, $id = null) {
+    public function serve(PermissionService $ps, $method = null, $id = null) {
         $file = $this->getDoctrine()->getManager()->getRepository(File::class)->find($id);
         if ($file instanceof File) {
+            if (!$ps->hasRead($file)) {
+                throw $this->createAccessDeniedException();
+            }
             $file->prepareFile();
             $file->update();
             if ($file->isValid()) {

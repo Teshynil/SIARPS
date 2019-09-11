@@ -34,13 +34,19 @@
                     <tbody>
                         {% for user in users %}
                             <tr>
-                                <td class="text-center"><img  src="{{ user.image is defined ? user.image.base64 :asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/></td>
-                                <td>{{ user.fullName }}</td>
-                                <td>{{ user.group.name }}</td>
-                                <td><span class="badge badge-success">Active</span></td>
-                                <td><a class="btn btn-success" href="#"><i class="fa fa-search-plus"></i></a><a class="btn btn-info" href="#"><i class="fa fa-edit"></i></a><a class="btn btn-danger" href="#"><i class="fa fa-trash-o"></i></a></td>
-                            </tr>
-                        {% endfor %}
+                                <td class="text-center">
+                                    <img srcset="{{ user.photo is not null ? resource(user.photo) : "#"  }}"  src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/>
+                        <picture>
+                            <source srcset="{{ user.photo is not null ? resource(user.photo) : ""  }}" onerror="javascript:this.remove()">
+                            <img src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/>
+                        </picture>
+                        </td>
+                        <td>{{ user.fullName }}</td>
+                        <td>{{ user.group.name }}</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><a class="btn btn-success" href="#"><i class="fa fa-search-plus"></i></a><a class="btn btn-info" href="#"><i class="fa fa-edit"></i></a><a class="btn btn-danger" href="#"><i class="fa fa-trash-o"></i></a></td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>

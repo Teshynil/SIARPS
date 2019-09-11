@@ -38,6 +38,16 @@ class Properties {
         return $this->groupsPermissions;
     }
 
+    public function getOwnGroupPermissions(): ?int {
+        return $this->groupsPermissions[0];
+    }
+
+    public function getOthersGroupPermissions(): ?array {
+        $tmp = $this->groupsPermissions;
+        unset($tmp[0]);
+        return $tmp;
+    }
+
     public function setGroupsPermissions(array $groupsPermissions): self {
         $this->groupsPermissions = $groupsPermissions;
 
