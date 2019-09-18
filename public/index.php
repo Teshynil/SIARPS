@@ -4,6 +4,9 @@ use App\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
+ini_set('xdebug.var_display_max_depth', '2');
+ini_set('xdebug.var_display_max_children', '256');
+ini_set('xdebug.var_display_max_data', '1024');
 require dirname(__DIR__) . '/config/bootstrap.php';
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);

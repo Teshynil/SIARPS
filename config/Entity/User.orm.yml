@@ -22,6 +22,11 @@ App\Entity\User:
             length: 180
             unique: true
             nullable: false
+        dn:
+            type: string
+            length: 512
+            unique: true
+            nullable: true
         email:
             type: string
             length: 180

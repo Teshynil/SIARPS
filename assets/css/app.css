@@ -12737,7 +12737,7 @@ app-root {
     flex-direction: row;
     -ms-flex-positive: 1;
     flex-grow: 1;
-    overflow-x: hidden;
+    overflow-x: initial;
 }
 
 .app-body .main {

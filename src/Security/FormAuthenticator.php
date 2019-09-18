@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -22,6 +23,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class FormAuthenticator extends AbstractFormLoginAuthenticator {
@@ -33,6 +35,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
     private $ldap;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $ldapResult;
 
     public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Ldap $ldap) {
         $this->entityManager = $entityManager;
@@ -81,6 +84,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 }
                 /** @var Entry * */
                 $result = $result[0];
+                $this->ldapResult = $result;
                 $user = new User();
                 try {
                     $dn = $result->getAttribute('distinguishedName')[0];
@@ -90,11 +94,12 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                     $user->setFirstName($result->getAttribute('givenName')[0])
                             ->setLastName($result->getAttribute('sn')[0])
                             ->setUsername($result->getAttribute('cn')[0])
+                            ->setDn($dn)
                             ->setEmail($result->getAttribute('mail')[0] ?? null)
                             ->setPermissions(07, 04, 00)
                             ->setOwner($user);
                     if ($group == null) {
-                        $group = $this->getGroupFromLdap($user);
+                        $group = $this->getGroupFromLdap();
                     }
                     $user->setGroup($group);
                     $this->entityManager->persist($user);
@@ -156,30 +161,37 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         }
     }
 
-    public function getGroupFromLdap(User $user): ?Group {
-        $ldapUser = $this->ldap->findUserQuery($user->getUsername());
-        $count = \count($ldapUser);
-        if (!$count) {
-            throw new CustomUserMessageAuthenticationException('No se pudo encontrar al usuario');
+    public function getGroupFromLdap(User $user = null): ?Group {
+        if ($user != null) {
+            $this->ldapResult = $this->ldap->findUserQuery($user->getUsername());
+            $count = \count($this->ldapResult);
+            if (!$count) {
+                throw new CustomUserMessageAuthenticationException('No se pudo encontrar al usuario');
+            }
+            if ($count > 1) {
+                throw new CustomUserMessageAuthenticationException('Multiples usuarios encontrados en el Directorio Activo');
+            }
+            $this->ldapResult = $this->ldapResult[0];
         }
-        if ($count > 1) {
-            throw new CustomUserMessageAuthenticationException('Multiples usuarios encontrados en el Directorio Activo');
-        }
-        $ldapUser = $ldapUser[0];
-        $udn = $ldapUser->getAttribute('distinguishedName')[0];
-        $gdn = substr(strstr($udn, ',', false), 1);
-        $group = $this->entityManager->getRepository(Group::class)->findOneBy(['dn' => $gdn]);
-        if ($group == null) {
-            $ldapGroup = $this->ldap->findOU($gdn);
-            if (\Count($ldapGroup) == 1) {
-                $ldapGroup = $ldapGroup[0];
-                $group = new Group();
-                $group->setName($ldapGroup->getAttribute('name')[0])
-                        ->setDn($ldapGroup->getAttribute('distinguishedName')[0])
-                        ->setGroup($this->entityManager->getRepository(Setting::class)->getValue("adminGroup"))
-                        ->setPermissions(07, 04, 04);
-                $this->entityManager->persist($group);
-                $this->entityManager->flush();
+
+        if ($this->getLdapUserType($this->ldapResult) == Ldap::ADMIN) {
+            return $this->entityManager->getRepository(Setting::class)->getValue("adminGroup");
+        } else {
+            $udn = $this->ldapResult->getAttribute('distinguishedName')[0];
+            $gdn = substr(strstr($udn, ',', false), 1);
+            $group = $this->entityManager->getRepository(Group::class)->findOneBy(['dn' => $gdn]);
+            if ($group == null) {
+                $ldapGroup = $this->ldap->findOU($gdn);
+                if (\Count($ldapGroup) == 1) {
+                    $ldapGroup = $ldapGroup[0];
+                    $group = new Group();
+                    $group->setName($ldapGroup->getAttribute('name')[0])
+                            ->setDn($ldapGroup->getAttribute('distinguishedName')[0])
+                            ->setGroup($this->entityManager->getRepository(Setting::class)->getValue("adminGroup"))
+                            ->setPermissions(07, 04, 04);
+                    $this->entityManager->persist($group);
+                    $this->entityManager->flush();
+                }
             }
         }
         return $group;
@@ -191,7 +203,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
             $valid = $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
         } else {
             try {
-                $this->ldap->bindUser('CN=' . $user->getUsername() . ',' . $user->getGroup()->getDn(), $credentials['password']);
+                $this->ldap->bindUser($user->getDn(), $credentials['password']);
                 $valid = true;
             } catch (ConnectionException $e) {
                 $valid = false;
@@ -200,7 +212,35 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         return $valid;
     }
 
+    public function getLdapUserType($ldapUser) {
+        $groups = $ldapUser->getAttribute('memberOf');
+        $type = 0;
+        foreach ($groups as $group) {
+            if ($group == $this->ldap->getLdapParams()->SIARPS_LDAP_ADMIN_GROUP_DN) {
+                $type |= Ldap::ADMIN;
+            } else if ($group == $this->ldap->getLdapParams()->SIARPS_LDAP_USER_GROUP_DN) {
+                $type |= Ldap::USER;
+            }
+        }
+        return $type;
+    }
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
+        $user = $token->getUser();
+        if ($user->getPassword() == null) {
+            if ($this->ldapResult == null) {
+                $this->ldapResult = $this->ldap->findUserQuery($token->getUsername());
+                $this->ldapResult = $this->ldapResult[0];
+            }
+            if (($this->getLdapUserType($this->ldapResult) & Ldap::ADMIN) > 0) {
+                $request->getSession()->set("selectLoginMode", true);
+                return new RedirectResponse($this->urlGenerator->generate('selectLoginMode'));
+            }
+        } else if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("adminGroup")) {
+            $request->getSession()->set("selectLoginMode", true);
+            return new RedirectResponse($this->urlGenerator->generate('selectLoginMode'));
+        }
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }

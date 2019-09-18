@@ -14,6 +14,7 @@ class PermissionService {
     const READ = 4;
     const WRITE = 2;
     const LOCK = 1;
+    const DELETE = 3;
 
     private $entityManager;
     private $security;
@@ -21,6 +22,10 @@ class PermissionService {
     public function __construct(Security $security, EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
         $this->security = $security;
+    }
+
+    public function hasDelete(Properties $object, User $user = null): ?bool {
+        return $this->hasAccess($object, $user, PermissionService::DELETE);
     }
 
     public function hasRead(Properties $object, User $user = null): ?bool {
@@ -42,7 +47,7 @@ class PermissionService {
         $hasAccess = false;
         if ($user instanceof Properties) {
             $group = $user->getGroup();
-            if ($this->entityManager->getRepository(\App\Entity\Setting::class)->getValue("adminGroup") == $group) {
+            if ($user->getAdminMode() || $this->entityManager->getRepository(\App\Entity\Setting::class)->getValue("adminGroup") == $group) {
                 return true;
             }
             if ($object->getOwner() == $user) {

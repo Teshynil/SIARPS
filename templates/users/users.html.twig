@@ -11,7 +11,7 @@
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="fa fa-edit"></i> Usuarios
+            <div class="card-header"><i class="fas fa-edit"></i> Usuarios
             </div>
             <div class="card-body">
                 <table class="table table-striped table-bordered datatable">
@@ -21,32 +21,26 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                         </tr>
                         <tr>
                             <th class="text-center"><i class="icon-people"></i></th>
                             <th>Nombre</th>
                             <th data-column-filter>Grupo de trabajo</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
                             <tr>
                                 <td class="text-center">
-                                    <img srcset="{{ user.photo is not null ? resource(user.photo) : "#"  }}"  src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/>
-                        <picture>
-                            <source srcset="{{ user.photo is not null ? resource(user.photo) : ""  }}" onerror="javascript:this.remove()">
-                            <img src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/>
-                        </picture>
-                        </td>
-                        <td>{{ user.fullName }}</td>
-                        <td>{{ user.group.name }}</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                        <td><a class="btn btn-success" href="#"><i class="fa fa-search-plus"></i></a><a class="btn btn-info" href="#"><i class="fa fa-edit"></i></a><a class="btn btn-danger" href="#"><i class="fa fa-trash-o"></i></a></td>
-                        </tr>
-                    {% endfor %}
+                                    <img class="img-avatar" src="{{ user.photo is not null ? resource(user.photo) : ""  }}" fallback-src="{{ asset('img/avatars/Default-Profile.jpg') }}" width="32" height="32"/>
+                                </td>
+                                <td>{{ user.fullName }}</td>
+                                <td>{{ user.group.name }}</td>
+                                <td>
+                                    <a class="btn btn-info" href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-edit"></i></a>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

@@ -76,7 +76,7 @@ class Properties {
         return $this;
     }
 
-    public function getGroup(): ?Group {
+    public function getGroup() {
         return $this->group;
     }
 

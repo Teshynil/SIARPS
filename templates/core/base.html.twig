@@ -19,10 +19,8 @@
             {% include 'core/sidebar.html.twig' %}
             <main class="main">
                 <div class="container-fluid mt-4">
-                    <div id="ui-view">
-                        {% block body %}
-                        {% endblock %}
-                    </div>
+                    {% block body %}
+                    {% endblock %}
                 </div>
             </main>
             <aside class="aside-menu">
@@ -38,5 +36,29 @@
     {% endif %}
     {{ encore_entry_script_tags('app') }}
     {% block javascripts %}{% endblock %}
+    <script>
+        {% if app.request.hasPreviousSession %}
+            {% for msg in app.session.flashbag.get('error') %}
+                {% set title = msg|split('|')|length == 2 ? msg|split('|')[0] : "" %}
+                {% set msg = msg|split('|')|length == 2 ? msg|split('|')[1] : msg %}
+                    toastr.error("{{title}}", "{{ msg }}");
+            {% endfor %}
+            {% for msg in app.session.flashbag.get('warning') %}
+                {% set title = msg|split('|')|length == 2 ? msg|split('|')[0] : "" %}
+                {% set msg = msg|split('|')|length == 2 ? msg|split('|')[1] : msg %}
+                    toastr.warning("{{title}}", "{{ msg }}");
+            {% endfor %}
+            {% for msg in app.session.flashbag.get('info') %}
+                {% set title = msg|split('|')|length == 2 ? msg|split('|')[0] : "" %}
+                {% set msg = msg|split('|')|length == 2 ? msg|split('|')[1] : msg %}
+                    toastr.info("{{title}}", "{{ msg }}");
+            {% endfor %}
+            {% for msg in app.session.flashbag.get('success') %}
+                {% set title = msg|split('|')|length == 2 ? msg|split('|')[0] : "" %}
+                {% set msg = msg|split('|')|length == 2 ? msg|split('|')[1] : msg %}
+                    toastr.success("{{title}}", "{{ msg }}");
+            {% endfor %}
+        </script>
+    {% endif %}
 </body>
 </html>

@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User extends Properties implements UserInterface, EquatableInterface {
 
     private $id;
+    private $dn;
     private $email;
     private $password;
     private $firstName;
@@ -19,6 +20,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
     private $username;
     private $notifications;
     private $photo;
+    private $adminMode = false;
 
     public function __construct() {
         $this->notifications = new ArrayCollection();
@@ -62,6 +64,15 @@ class User extends Properties implements UserInterface, EquatableInterface {
 
     public function getUsername(): string {
         return $this->username;
+    }
+
+    public function getDn() {
+        return $this->dn;
+    }
+
+    public function setDn($dn) {
+        $this->dn = $dn;
+        return $this;
     }
 
     public function getFirstName(): ?string {
@@ -123,7 +134,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
     }
 
     public function __sleep() {
-        return ['id', 'username', 'password'];
+        return ['id', 'username', 'password', 'adminMode'];
     }
 
     public function isEqualTo(UserInterface $user) {
@@ -149,6 +160,15 @@ class User extends Properties implements UserInterface, EquatableInterface {
     public function setPhoto(?File $photo): self {
         $this->photo = $photo;
 
+        return $this;
+    }
+
+    public function getAdminMode() {
+        return $this->adminMode;
+    }
+
+    public function setAdminMode($adminMode) {
+        $this->adminMode = $adminMode;
         return $this;
     }
 

@@ -14,6 +14,10 @@ login:
     path: /login
     controller: App\Controller\AuthenticationController::login
 
+selectLoginMode:
+    path: /login/mode
+    controller: App\Controller\AuthenticationController::selectLoginMode
+
 logout:
     path: /logout
 
@@ -35,7 +39,11 @@ users:
     controller: App\Controller\UsersController::users
 
 me:
-    path: /me
+    path: /user/me
+    controller: App\Controller\UsersController::user
+
+user-edit:
+    path: /user/edit/{id}
     controller: App\Controller\UsersController::user
 
 user:
@@ -57,3 +65,7 @@ proyect-settings:
 settings:
     path: /settings
     controller: App\Controller\SettingsController::index
+
+settings-action:
+    path: /settings/{action}
+    controller: App\Controller\SettingsController::action
