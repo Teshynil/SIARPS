@@ -31,15 +31,16 @@ class SettingRepository extends ServiceEntityRepository {
         return $value;
     }
 
-    /*
-      public function findOneBySomeField($value): ?Setting
-      {
-      return $this->createQueryBuilder('s')
-      ->andWhere('s.exampleField = :val')
-      ->setParameter('val', $value)
-      ->getQuery()
-      ->getOneOrNullResult()
-      ;
-      }
-     */
+    public function setValue($key, $value) {
+        $setting = $this->find($key);
+        if ($setting !== null) {
+            if ($setting->getEntity()) {
+                $setting->setValue($value->getId());
+            } else {
+                $setting->setValue($value);
+            }
+        }
+        $this->getEntityManager()->persist($setting);
+    }
+
 }

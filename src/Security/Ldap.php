@@ -72,6 +72,20 @@ final class Ldap implements LdapInterface {
         $this->adapter->getConnection()->bind($username, $password);
     }
 
+    public function findAllUsers() {
+        $query = "("
+                . "memberOf=" . $this->LDAP->SIARPS_LDAP_USER_GROUP_DN
+                . ")";
+        return $this->query($this->LDAP->SIARPS_MAIN_OU, $query)->execute();
+    }
+
+    public function findAllAdmins() {
+        $query = "("
+                . "memberOf=" . $this->LDAP->SIARPS_LDAP_ADMIN_GROUP_DN
+                . ")";
+        return $this->query($this->LDAP->SIARPS_MAIN_OU, $query)->execute();
+    }
+
     public function findUserQuery($username) {
         $query_string = "(&"
                 . "(|"
