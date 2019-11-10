@@ -20,8 +20,9 @@ Encore
         .addEntry('app', './assets/js/app.js')
         .addEntry('charts_app', './assets/js/charts.js')
         .addEntry('datatables_app', './assets/js/datatables.js')
-
+        
         .addEntry('users', './assets/js/views/users.js')
+        .addEntry('proyects', './assets/js/views/proyects.js')
 
 //        .addEntry('calendar', './assets/js/views/calendar.js')
 //        .addEntry('charts', './assets/js/views/charts.js')

@@ -1,0 +1,19 @@
+App\Entity\Version:
+    type: entity
+    repositoryClass: App\Repository\VersionRepository
+    manyToOne:
+        file:
+            targetEntity: File
+        document:
+            targetEntity: Document
+            inversedBy: versions
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        date:
+            type: datetime
+    lifecycleCallbacks: {  }

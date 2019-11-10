@@ -52,14 +52,14 @@ user:
 
 proyects:
     path: /proyects
-    controller: App\Controller\ProyectsController::index
+    controller: App\Controller\ProyectController::index
 
 proyect:
-    path: /proyects/{id}
-    controller: App\Controller\ProyectsController::index
+    path: /proyect/{id}
+    controller: App\Controller\ProyectController::index
 
 proyect-settings:
-    path: /proyects/{id}/settings
+    path: /proyect/{id}/settings
     controller: App\Controller\ProyectsController::index
 
 settings:

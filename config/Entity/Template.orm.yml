@@ -1,0 +1,23 @@
+App\Entity\Template:
+    type: entity
+    repositoryClass: App\Repository\TemplateRepository
+    manyToOne:
+        file:
+            targetEntity: File
+    id:
+        id:
+            type: guid
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        name:
+            type: string
+            length: 180
+            unique: true
+            nullable: false
+        type:
+            type: string
+        settings:
+            type: json
+    lifecycleCallbacks: {  }

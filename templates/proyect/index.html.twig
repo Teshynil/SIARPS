@@ -1,20 +1,48 @@
-{% extends 'base.html.twig' %}
+{% extends "core/base.html.twig" %}
 
-{% block title %}Hello ProyectController!{% endblock %}
-
+{% block stylesheets %}
+    {{ encore_entry_link_tags('datatables_app') }}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('datatables_app') }}
+    {{ encore_entry_script_tags('proyects') }}
+{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp/www/SIARPS/src/Controller/ProyectController.php'|file_link(0) }}">src/Controller/ProyectController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp/www/SIARPS/templates/proyect/index.html.twig'|file_link(0) }}">templates/proyect/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header"><i class="icon-layers"></i> Proyectos
+            </div>
+            <div class="card-body">
+                <table class="table table-striped datatable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ultima actualización</th>
+                            <th>Avance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <a class=""></a>
+                        {% for proyect in proyects %}
+                            <tr href="{{ path('proyect',{'id':proyect.id}) }}">
+                            <td>{{ proyect.name }}</td>
+                            <td>{{ proyect.lastUpdate|date('d/m/Y H:i:s') }}</td>
+                            <td>
+                                <div class="progress-group m-0 p-1">
+                                    <div class="progress-group-bars">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{proyect.progress}}%" aria-valuenow="{{ proyect.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-2"><span class="h6">{{proyect.progress}}%</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

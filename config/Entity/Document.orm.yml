@@ -1,6 +1,18 @@
 App\Entity\Document:
     type: entity
     repositoryClass: App\Repository\DocumentRepository
+    manyToOne:
+        proyect:
+            targetEntity: Proyect
+            inversedBy: documents
+        template:
+            targetEntity: File
+    oneToMany:
+        versions:
+            orderBy: { 'date': 'DESC' }
+            cascade: [persist]
+            targetEntity: Version
+            mappedBy: document
     id:
         id:
             type: guid
