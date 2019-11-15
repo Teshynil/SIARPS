@@ -1,0 +1,40 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header"><i class="icon-layers"></i> Nuevo Proyecto
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header bg-gray-300">
+                        General
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.owner) }}
+                        {{ form_row(form.group) }}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-gray-300">
+                        Documentos
+                    </div>
+                    <div class="card-body">
+                        {% form_theme form.documents 'jquery.collection.html.twig'%}
+                        {{ form_widget(form.documents) }}
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

@@ -54,6 +54,10 @@ proyects:
     path: /proyects
     controller: App\Controller\ProyectController::index
 
+proyect-new:
+    path: /proyect/new
+    controller: App\Controller\ProyectController::new
+
 proyect:
     path: /proyect/{id}
     controller: App\Controller\ProyectController::index

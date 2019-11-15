@@ -163,11 +163,11 @@ class User extends Properties implements UserInterface, EquatableInterface {
         return $this;
     }
 
-    public function getAdminMode() {
+    public function getAdminMode(): bool {
         return $this->adminMode;
     }
 
-    public function setAdminMode($adminMode) {
+    public function setAdminMode(bool $adminMode): self {
         $this->adminMode = $adminMode;
         return $this;
     }

@@ -4,7 +4,9 @@ namespace App\Command;
 
 use App\Entity\Group;
 use App\Entity\Setting;
+use App\Entity\Template;
 use App\Entity\User;
+use Doctrine\DBAL\Driver\SQLSrv\SQLSrvException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaValidator;
 use Symfony\Component\Console\Command\Command;
@@ -12,7 +14,6 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -76,7 +77,7 @@ class InstallCommand extends Command {
         $databaseValidator = true;
         try {
             $databaseValidator = $validator->schemaInSyncWithMetadata();
-        } catch (\Doctrine\DBAL\Driver\SQLSrv\SQLSrvException $exc) {
+        } catch (SQLSrvException $exc) {
             $io->error('No se pudo realizar la conexion con la base de datos.\n Revise la cadena de conexión en el archivo .env');
             return;
         }
@@ -179,6 +180,7 @@ class InstallCommand extends Command {
 
         if ($groupsConfig == 0) {
             $this->em->persist(new Setting("groupConfig", null, "LDAP", $user, $group, 07, 07, 00));
+            $this->em->persist(new Setting("guestGroup", Group::class, null, $user, $group, 07, 07, 00));
             $ldapGroupConfig = $io->choice("Como se usaran los grupos del SIARPS", ["Usar Unidades Organizacionales como grupos", "Usar grupos con un prefijo"]);
             if ($ldapGroupConfig == 0) {
                 $this->em->persist(new Setting("ldapGroupConfig", null, "OU", $user, $group, 07, 07, 00));
@@ -198,6 +200,18 @@ class InstallCommand extends Command {
             $this->em->flush();
             $this->em->persist(new Setting("guestGroup", Group::class, $ggroup->getId(), $user, $group, 07, 07, 00));
         }
+        
+        $nullTemplate = new Template();
+        $nullTemplate->setPermissions(07, 07, 04)
+                ->setName("Archivo")
+                ->setType('File')
+                ->setSettings([
+                    'repeatable'=>true
+                ])
+                ->setFile(null);
+        $this->em->persist($nullTemplate);
+        $this->em->flush();
+        $this->em->persist(new Setting("nullTemplate", Template::class, $nullTemplate->getId(), $user, $group, 07, 07, 00));
         $this->em->flush();
     }
 
