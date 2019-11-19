@@ -12,7 +12,12 @@ class Properties {
     protected $group;
     protected $ownerPermissions;
     protected $otherPermissions;
+    protected $groupPermissions;
     protected $groupsPermissions;
+    
+    public function __construct() {
+        $this->groupsPermissions=[];
+    }
 
     public function getOwnerPermissions(): ?int {
         return $this->ownerPermissions;
@@ -36,16 +41,6 @@ class Properties {
 
     public function getGroupsPermissions(): ?array {
         return $this->groupsPermissions;
-    }
-
-    public function getOwnGroupPermissions(): ?int {
-        return $this->groupsPermissions[0];
-    }
-
-    public function getOthersGroupPermissions(): ?array {
-        $tmp = $this->groupsPermissions;
-        unset($tmp[0]);
-        return $tmp;
     }
 
     public function setGroupsPermissions(array $groupsPermissions): self {
@@ -88,8 +83,20 @@ class Properties {
 
     public function setPermissions(int $owner, int $group, int $other) {
         $this->setOwnerPermissions($owner);
-        $this->addGroupsPermissions(0, $group);
+        $this->setGroupPermissions($group);
         $this->setOtherPermissions($other);
+        return $this;
+    }
+
+    public function getGroupPermissions(): ?int
+    {
+        return $this->groupPermissions;
+    }
+
+    public function setGroupPermissions(int $groupPermissions): self
+    {
+        $this->groupPermissions = $groupPermissions;
+
         return $this;
     }
 

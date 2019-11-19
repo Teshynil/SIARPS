@@ -8,7 +8,9 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use ArrayObject;
+use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
 use Symfony\Component\Ldap\Exception\DriverNotFoundException;

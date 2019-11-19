@@ -56,11 +56,11 @@ class PermissionService {
             if ($hasAccess)
                 return true;
             if ($object->getGroup() == $group && $object->getGroup() !== null) {
-                $hasAccess |= $this->checkPermission($object->getOwnGroupPermissions(), $permission);
+                $hasAccess |= $this->checkPermission($object->getGroupPermissions(), $permission);
             }
             if ($hasAccess)
                 return true;
-            $othersgroups = $object->getOthersGroupPermissions();
+            $othersgroups = $object->getGroupsPermissions();
             $userGroupId = $group->getId();
             if (count($othersgroups) > 0) {
                 foreach ($othersgroups as $id => $value) {

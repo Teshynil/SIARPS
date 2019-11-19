@@ -34,6 +34,7 @@ class File extends Properties {
         }
         $this->creationDate = new DateTime();
         $this->modificationDate = $this->creationDate;
+        parent::__construct();
     }
 
     public function prepareFile() {

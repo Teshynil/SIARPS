@@ -12,6 +12,9 @@ App\Entity\Properties:
         otherPermissions:
             type: integer
             nullable: false
+        groupPermissions:
+            type: integer
+            nullable: false
         groupsPermissions:
             type: json
             nullable: false

@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Setting;
 use App\Form\SettingsType;
+use App\Security\FormAuthenticator;
+use App\Security\Ldap;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +19,7 @@ class SettingsController extends AbstractController {
         $form = $this->createForm(SettingsType::class);
         $originalData = $form->getData();
         $form->handleRequest($request);
-        $settingRepo = $this->getDoctrine()->getRepository(\App\Entity\Setting::class);
+        $settingRepo = $this->getDoctrine()->getRepository(Setting::class);
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($form->getData() as $key => $value) {
                 if ($originalData[$key] !== $value) {
@@ -29,11 +32,18 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    public function action($action = null, \App\Security\Ldap $ldap) {
+    public function action($action = null, Ldap $ldap, FormAuthenticator $auth) {
         if ($action != null) {
             switch ($action) {
                 case 'fillUsers':
+                    $ldap->bind();
                     $users = $ldap->findAllUsers();
+                    foreach ($users as $user) {
+                        $result=$this->getDoctrine()->getRepository(\App\Entity\User::class)->findByUsername($user->getAttribute('sAMAccountName')[0]);
+                        if($result==null){
+                            $auth->createUserFromLdap($user);
+                        }
+                    }
                     $this->addFlash('success', "Proceso Completado|Se rellenaron correctamente los usuarios");
                     break;
             }

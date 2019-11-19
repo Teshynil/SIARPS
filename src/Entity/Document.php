@@ -20,6 +20,7 @@ class Document extends Properties {
     public function __construct()
     {
         $this->versions = new ArrayCollection();
+        parent::__construct();
     }
 
     public function getId(): ?string {

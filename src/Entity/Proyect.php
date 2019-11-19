@@ -20,6 +20,7 @@ class Proyect extends Properties
     public function __construct()
     {
         $this->documents = new ArrayCollection();
+        parent::__construct();
     }
 
     public function getId(): ?string

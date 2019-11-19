@@ -31,7 +31,9 @@ class ProyectController extends AbstractController {
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
+            $data=$form->getData();
+            var_dump($data);
+            die();
         }
         $formView=$form->createView();
         return $this->render('proyect/new.html.twig', [

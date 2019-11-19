@@ -65,7 +65,6 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
 
     public function getUser($credentials, UserProviderInterface $userProvider) {
         try {
-
             $token = new CsrfToken('authenticate', $credentials['csrf_token']);
             if (!$this->csrfTokenManager->isTokenValid($token)) {
                 throw new InvalidCsrfTokenException();
@@ -85,29 +84,9 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 /** @var Entry * */
                 $result = $result[0];
                 $this->ldapResult = $result;
-                $user = new User();
-                try {
-                    $dn = $result->getAttribute('distinguishedName')[0];
-                    $this->ldap->bindUser($dn, $credentials['password']);
-                    $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
-                    $user = new User();
-                    $user->setFirstName($result->getAttribute('givenName')[0])
-                            ->setLastName($result->getAttribute('sn')[0])
-                            ->setUsername($result->getAttribute('cn')[0])
-                            ->setDn($dn)
-                            ->setEmail($result->getAttribute('mail')[0] ?? null)
-                            ->setPermissions(07, 04, 00)
-                            ->setOwner($user);
-                    if ($group == null) {
-                        $group = $this->getGroupFromLdap();
-                    }
-                    $user->setGroup($group);
-                    $this->entityManager->persist($user);
-                    $this->entityManager->flush();
-                } catch (ConnectionException $e) {
-                    throw new CustomUserMessageAuthenticationException('Contraseña invalida.');
-                }
+                $user = $this->createUserFromLdap($result);
             }
+            
             if ($user->getPassword() == null) {
                 if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
                     throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
@@ -120,6 +99,26 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         } catch (LdapConnectionTimeout $exc) {
             throw new CustomUserMessageAuthenticationException('No se tiene acceso al Directorio Activo.');
         }
+    }
+
+    public function createUserFromLdap($ldapUser): User {
+        $user = new User();
+        $dn = $ldapUser->getAttribute('distinguishedName')[0];
+        $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+        $user->setFirstName($ldapUser->getAttribute('givenName')[0])
+                ->setLastName($ldapUser->getAttribute('sn')[0])
+                ->setUsername($ldapUser->getAttribute('sAMAccountName')[0])
+                ->setDn($dn)
+                ->setEmail($ldapUser->getAttribute('mail')[0] ?? null)
+                ->setPermissions(07, 04, 00)
+                ->setOwner($user);
+        if ($group == null) {
+            $group = $this->getGroupFromLdap($user);
+        }
+        $user->setGroup($group);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 
     public function verifyLdapOwner($user) {

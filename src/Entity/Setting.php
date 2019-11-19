@@ -15,6 +15,7 @@ class Setting extends Properties {
         $this->setOwner($owner);
         $this->setGroup($group);
         $this->setPermissions($ownerPermissions, $groupPermissions, $otherPermissions);
+        parent::__construct();
     }
 
     public function getId(): ?string {

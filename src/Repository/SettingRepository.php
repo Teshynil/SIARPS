@@ -23,7 +23,11 @@ class SettingRepository extends ServiceEntityRepository {
         $value = null;
         if ($setting !== null) {
             if ($setting->getEntity()) {
-                $value = $this->getEntityManager()->getRepository($setting->getEntity())->find($setting->getValue());
+                if ($setting->getValue() !== null) {
+                    $value = $this->getEntityManager()->getRepository($setting->getEntity())->find($setting->getValue());
+                }else{
+                    $value=null;
+                }
             } else {
                 $value = $setting->getValue();
             }

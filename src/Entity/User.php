@@ -24,6 +24,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
 
     public function __construct() {
         $this->notifications = new ArrayCollection();
+        parent::__construct();
     }
 
     public function getId(): ?string {
