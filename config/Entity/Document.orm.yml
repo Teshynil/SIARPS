@@ -6,7 +6,7 @@ App\Entity\Document:
             targetEntity: Proyect
             inversedBy: documents
         template:
-            targetEntity: File
+            targetEntity: Template
     oneToMany:
         versions:
             orderBy: { 'date': 'DESC' }
@@ -27,4 +27,5 @@ App\Entity\Document:
             nullable: false
         creationDate:
             type: datetime
-    lifecycleCallbacks: {  }
+    lifecycleCallbacks:
+        prePersist: [ updateCreationDate ]

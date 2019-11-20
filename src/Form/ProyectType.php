@@ -18,14 +18,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ProyectType extends AbstractType {
 
-    private $tk;
-
-    public function __construct(TokenStorageInterface $ts) {
-        $this->tk = $ts->getToken();
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $user = $this->tk->getUser();
+        $user = $options['usr'];
+        $em = $options['em'];
         $group = $user->getGroup();
         $builder
                 ->add('name', TextType::class, ['label' => 'Nombre'])
@@ -73,21 +68,27 @@ class ProyectType extends AbstractType {
                     'allow_delete' => true,
                     'prototype' => true,
                     'required' => false,
-                    'entry_options' => ['label' => false],
+                    'entry_options' => [
+                        'label' => false,
+                        'em'=>$options['em'],
+                        'usr'=>$options['usr']
+                    ],
                     'attr' => [
                         'class' => "symfony-collection",
                     ],
                 ])
-                ->add('ownerPermissions', PermissionType::class,['preferred_choices'=>[7]])
-                ->add('groupPermissions', PermissionType::class,['preferred_choices'=>[4],'returnArray'=>true])
-                ->add('otherPermissions', PermissionType::class,['preferred_choices'=>[0]])
-                ->add('submit', SubmitType::class,['label'=>'Crear documento'])
+                ->add('ownerPermissions', PermissionType::class, ['label' => 'Permisos del dueño', 'preferred_choices' => [7]])
+                ->add('groupPermissions', PermissionType::class, ['label' => 'Permisos del Grupo', 'preferred_choices' => [4]])
+                ->add('otherPermissions', PermissionType::class, ['label' => 'Permisos de otros', 'preferred_choices' => [0]])
+                ->add('submit', SubmitType::class, ['label' => 'Crear documento'])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
             'data_class' => Proyect::class,
+            'em' => null,
+            'usr' => null,
         ]);
     }
 

@@ -11,13 +11,7 @@ class ProyectController extends AbstractController {
 
     public function index() {
 
-        $ps = [
-            ['id' => 12038102, 'name' => 'test', 'lastUpdate' => date_create(rand(strtotime('01/01/2018'), strtotime('01/06/2019'))), 'progress' => rand(0, 100)],
-            ['id' => 12038102, 'name' => 'test', 'lastUpdate' => date_create(rand(strtotime('01/01/2018'), strtotime('01/06/2019'))), 'progress' => rand(0, 100)],
-            ['id' => 12038102, 'name' => 'test', 'lastUpdate' => date_create(rand(strtotime('01/01/2018'), strtotime('01/06/2019'))), 'progress' => rand(0, 100)],
-            ['id' => 12038102, 'name' => 'test', 'lastUpdate' => date_create(rand(strtotime('01/01/2018'), strtotime('01/06/2019'))), 'progress' => rand(0, 100)],
-            ['id' => 12038102, 'name' => 'test', 'lastUpdate' => date_create(rand(strtotime('01/01/2018'), strtotime('01/06/2019'))), 'progress' => rand(0, 100)]
-        ];
+        
         return $this->render('proyect/index.html.twig', [
                     'proyects' => $ps
         ]);
@@ -27,13 +21,14 @@ class ProyectController extends AbstractController {
         if (!$ps->hasWrite($this->getUser()->getGroup())) {
             throw $this->createAccessDeniedException();
         }
-        $form = $this->createForm(ProyectType::class);
+        $form = $this->createForm(ProyectType::class,null,['em'=>$this->getDoctrine(),'usr'=>$this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data=$form->getData();
-            var_dump($data);
-            die();
+            $this->getDoctrine()->getManager()->persist($data);
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute("proyects");
         }
         $formView=$form->createView();
         return $this->render('proyect/new.html.twig', [

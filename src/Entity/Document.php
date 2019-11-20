@@ -40,8 +40,15 @@ class Document extends Properties {
     public function getCreationDate(): ?\DateTimeInterface {
         return $this->creationDate;
     }
-
-    public function setCreationDate(\DateTimeInterface $creationDate): self {
+    
+    public function updateCreationDate(){
+        $this->creationDate = new \DateTime("now");
+    }
+    
+    public function setCreationDate(?\DateTimeInterface $creationDate=null): self {
+        if($creationDate==null){
+            $creationDate= new \DateTime("now");
+        }
         $this->creationDate = $creationDate;
 
         return $this;
@@ -90,12 +97,12 @@ class Document extends Properties {
         return $this;
     }
 
-    public function getTemplate(): ?File
+    public function getTemplate(): ?Template
     {
         return $this->template;
     }
 
-    public function setTemplate(?File $template): self
+    public function setTemplate(?Template $template): self
     {
         $this->template = $template;
 
