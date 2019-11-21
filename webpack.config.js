@@ -22,7 +22,7 @@ Encore
         .addEntry('datatables_app', './assets/js/datatables.js')
         
         .addEntry('users', './assets/js/views/users.js')
-        .addEntry('proyects', './assets/js/views/proyects.js')
+        .addEntry('projects', './assets/js/views/projects.js')
 
 //        .addEntry('calendar', './assets/js/views/calendar.js')
 //        .addEntry('charts', './assets/js/views/charts.js')

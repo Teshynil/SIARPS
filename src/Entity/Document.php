@@ -13,7 +13,7 @@ class Document extends Properties {
 
     private $versions;
 
-    private $proyect;
+    private $project;
 
     private $template;
 
@@ -85,14 +85,14 @@ class Document extends Properties {
         return $this;
     }
 
-    public function getProyect(): ?Proyect
+    public function getProject(): ?Project
     {
-        return $this->proyect;
+        return $this->project;
     }
 
-    public function setProyect(?Proyect $proyect): self
+    public function setProject(?Project $project): self
     {
-        $this->proyect = $proyect;
+        $this->project = $project;
 
         return $this;
     }

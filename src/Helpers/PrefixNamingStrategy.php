@@ -25,7 +25,7 @@ class PrefixNamingStrategy extends UnderscoreNamingStrategy {
         $this->tablePrefix = $tablePrefix;
         $this->columnPrefix = $columnPrefix;
 
-        parent::__construct(CASE_LOWER);
+        parent::__construct(CASE_LOWER,true);
     }
 
     public function classToTableName($className) {

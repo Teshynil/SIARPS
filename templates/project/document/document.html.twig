@@ -1,0 +1,50 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header">
+                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ document.group.name }} | {{ document.project.name }} \ {{ document.name }}</span>
+                {% if hasWrite(document) %}
+                    <div class="card-header-actions">
+                        <a class="btn btn-pill btn-success" href="{{ path('version-new',{'id':document.id}) }}"><i class="fa fa-plus"></i>&nbsp;Añadir Version</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <h3>Versiones</h3>
+                <table class="table table-responsive-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Status</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for version in document.versions %}
+                            <tr>
+                                <td>{{ version.date|date('d/m/Y H:i') }}</td>
+                                <td><span class="badge badge-{{version.lockState?'success':'danger'}}">{{ version.lockState?'Cerrado':'Abierto' }}</span></td>
+                                <td>
+                                    <a class="btn btn-info" href="{{ path('document',{'id':version.id}) }}"><i class="fas fa-eye"></i></a>
+                                </td>
+                                
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Sin versiones</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

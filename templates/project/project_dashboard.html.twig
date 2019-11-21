@@ -1,0 +1,54 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header">
+                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ project.group.name }} | {{ project.name }}</span>
+                {% if hasWrite(project) %}
+                    <div class="card-header-actions">
+                        <a class="btn btn-pill btn-secondary" href="{{ path('project-settings',{'id':project.id}) }}"><i class="fa fa-cog"></i>&nbsp;Configuración</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <h3>Documentos</h3>
+                <table class="table table-responsive-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Tipo de documento</th>
+                            <th>Ultima actualización</th>
+                            <th>Status</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in project.documents %}
+                            <tr>
+                                <td>{{ document.name }}</td>
+                                <td>{{ document.template.type }}</td>
+                                <td>{{ document.versions.date|default('Sin actualización') }}</td>
+                                <td><span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span></td>
+                                <td>
+                                    <a class="btn btn-info" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-eye"></i></a>
+                                </td>
+                                
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Sin documentos</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

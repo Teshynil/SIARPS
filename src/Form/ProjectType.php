@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Group;
-use App\Entity\Proyect;
+use App\Entity\Project;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ProyectType extends AbstractType {
+class ProjectType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $user = $options['usr'];
@@ -86,7 +86,7 @@ class ProyectType extends AbstractType {
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
-            'data_class' => Proyect::class,
+            'data_class' => Project::class,
             'em' => null,
             'usr' => null,
         ]);

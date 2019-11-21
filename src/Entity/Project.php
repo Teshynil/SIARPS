@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-class Proyect extends Properties 
+class Project extends Properties 
 {
     private $id;
 
@@ -76,7 +76,7 @@ class Proyect extends Properties
     {
         if (!$this->documents->contains($document)) {
             $this->documents[] = $document;
-            $document->setProyect($this);
+            $document->setProject($this);
         }
 
         return $this;
@@ -87,8 +87,8 @@ class Proyect extends Properties
         if ($this->documents->contains($document)) {
             $this->documents->removeElement($document);
             // set the owning side to null (unless already changed)
-            if ($document->getProyect() === $this) {
-                $document->setProyect(null);
+            if ($document->getProject() === $this) {
+                $document->setProject(null);
             }
         }
 

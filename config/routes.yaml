@@ -50,21 +50,34 @@ user:
     path: /user/{id}
     controller: App\Controller\UsersController::user
 
-proyects:
-    path: /proyects
-    controller: App\Controller\ProyectController::index
+projects:
+    path: /projects
+    controller: App\Controller\ProjectController::index
 
-proyect-new:
-    path: /proyect/new
-    controller: App\Controller\ProyectController::new
+project-new:
+    path: /project/new
+    controller: App\Controller\ProjectController::new
 
-proyect:
-    path: /proyect/{id}
-    controller: App\Controller\ProyectController::index
+project:
+    path: /project/{id}
+    controller: App\Controller\ProjectController::project
 
-proyect-settings:
-    path: /proyect/{id}/settings
-    controller: App\Controller\ProyectsController::index
+project-settings:
+    path: /project/{id}/settings
+    controller: App\Controller\ProjectController::index
+
+
+document:
+    path: /document/{id}
+    controller: App\Controller\DocumentController::document
+    
+document-settings:
+    path: /document/{id}/settings
+    controller: App\Controller\DocumentController::document
+
+version-new:
+    path: /document/{id}/new
+    controller: App\Controller\DocumentController::newVersion
 
 settings:
     path: /settings

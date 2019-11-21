@@ -2,8 +2,8 @@ App\Entity\Document:
     type: entity
     repositoryClass: App\Repository\DocumentRepository
     manyToOne:
-        proyect:
-            targetEntity: Proyect
+        project:
+            targetEntity: Project
             inversedBy: documents
         template:
             targetEntity: Template
@@ -23,7 +23,6 @@ App\Entity\Document:
         name:
             type: string
             length: 180
-            unique: true
             nullable: false
         creationDate:
             type: datetime

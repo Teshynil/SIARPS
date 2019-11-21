@@ -18,3 +18,6 @@ App\Entity\Properties:
         groupsPermissions:
             type: json
             nullable: false
+        lockState:
+            type: boolean
+            nullable: false

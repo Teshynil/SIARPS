@@ -81,7 +81,7 @@ $('.symfony-collection').each(function () {
             });
         },
         init_with_n_elements: 0,
-        add_at_the_end: false,
+        add_at_the_end: true,
         drag_drop: true,
         fade_in: false,
         fade_out: false

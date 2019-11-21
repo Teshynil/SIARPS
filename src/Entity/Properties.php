@@ -14,9 +14,11 @@ class Properties {
     protected $otherPermissions;
     protected $groupPermissions;
     protected $groupsPermissions;
+    protected $lockState;
     
     public function __construct() {
         $this->groupsPermissions=[];
+        $this->lockState=false;
     }
 
     public function getOwnerPermissions(): ?int {
@@ -97,6 +99,15 @@ class Properties {
     {
         $this->groupPermissions = $groupPermissions;
 
+        return $this;
+    }
+    
+    public function getLockState(): bool {
+        return $this->lockState;
+    }
+
+    public function setLockState($lockState): self {
+        $this->lockState = $lockState;
         return $this;
     }
 

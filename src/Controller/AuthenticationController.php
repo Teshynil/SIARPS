@@ -4,15 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Setting;
 use App\Form\SelectLoginModeType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Helpers\SIARPSController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class AuthenticationController extends AbstractController {
+class AuthenticationController extends SIARPSController {
 
     public function login(AuthenticationUtils $authenticationUtils): Response {
         // get the login error if there is one

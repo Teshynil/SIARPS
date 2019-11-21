@@ -3,14 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Setting;
+use App\Entity\User;
 use App\Form\SettingsType;
+use App\Helpers\SIARPSController;
 use App\Security\FormAuthenticator;
 use App\Security\Ldap;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingsController extends AbstractController {
+class SettingsController extends SIARPSController {
 
     /**
      * @Route("/settings", name="settings")
@@ -39,7 +40,7 @@ class SettingsController extends AbstractController {
                     $ldap->bind();
                     $users = $ldap->findAllUsers();
                     foreach ($users as $user) {
-                        $result=$this->getDoctrine()->getRepository(\App\Entity\User::class)->findByUsername($user->getAttribute('sAMAccountName')[0]);
+                        $result=$this->getDoctrine()->getRepository(User::class)->findByUsername($user->getAttribute('sAMAccountName')[0]);
                         if($result==null){
                             $auth->createUserFromLdap($user);
                         }

@@ -5,7 +5,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('datatables_app') }}
-    {{ encore_entry_script_tags('proyects') }}
+    {{ encore_entry_script_tags('projects') }}
 {% endblock %}
 {% block body %}
 
@@ -14,38 +14,38 @@
             <div class="card-header"><i class="icon-layers"></i> Proyectos
                 {% if hasWrite(app.user.group) %}
                 <div class="card-header-actions">
-                    <a class="btn btn-pill btn-success" href="{{ path('proyect-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un proyecto</a>
+                    <a class="btn btn-pill btn-success" href="{{ path('project-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un proyecto</a>
                 </div>
                 {% endif %}
             </div>
             <div class="card-body">
-                <table class="table table-striped datatable">
+                <table class="table table-striped datatable" style="width:100%">
                     <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Ultima actualización</th>
-                            <th>Avance</th>
+                            <th data-width="35%">Avance</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                     <a class=""></a>
-                    {% for proyect in proyects %}
+                    {% for project in projects %}
                         <tr>
-                            <td>{{ proyect.name }}</td>
-                            <td>{{ proyect.lastUpdate|date('d/m/Y H:i:s') }}</td>
+                            <td>{{ project.name }}</td>
+                            <td>{{ project.lastUpdate|default('now')|date('d/m/Y H:i:s') }}</td>
                             <td>
                                 <div class="progress-group m-0 p-1">
                                     <div class="progress-group-bars">
                                         <div class="progress progress-xs">
-                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{proyect.progress}}%" aria-valuenow="{{ proyect.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{project.progress|default('55')}}%" aria-valuenow="{{ project.progress|default('55') }}" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </div>
-                                    <div class="ml-2"><span class="h6">{{proyect.progress}}%</span></div>
+                                            <div class="ml-2"><span class="h6">{{project.progress|default('55')}}%</span></div>
                                 </div>
                             </td>
                             <td>
-                                <a class="btn btn-info" href="{{ path('proyect',{'id':proyect.id}) }}"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-info" href="{{ path('project',{'id':project.id}) }}"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

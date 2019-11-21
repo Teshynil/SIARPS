@@ -3,18 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Helpers\SIARPSController;
 use App\Security\PermissionService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 
-class ResourceController extends AbstractController {
+class ResourceController extends SIARPSController {
 
-    public function serve(PermissionService $ps, $method = null, $id = null) {
-        $file = $this->getDoctrine()->getManager()->getRepository(File::class)->find($id);
+    public function serve($method = null, $id = null) {
+        $file = $this->getDoctrine()->getManager()->find(File::class,$id);
         if ($file instanceof File) {
-            if (!$ps->hasRead($file)) {
+            if (!$this->getPermissionService()->hasRead($file)) {
                 throw $this->createAccessDeniedException();
             }
             $file->prepareFile();

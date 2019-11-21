@@ -1,12 +1,12 @@
-App\Entity\Proyect:
+App\Entity\Project:
     type: entity
-    repositoryClass: App\Repository\ProyectRepository
+    repositoryClass: App\Repository\ProjectRepository
     oneToMany:
         documents:
             orderBy: { 'creationDate': 'DESC' }
             cascade: [persist]
             targetEntity: Document
-            mappedBy: proyect
+            mappedBy: project
     id:
         id:
             type: guid
