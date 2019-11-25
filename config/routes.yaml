@@ -66,6 +66,22 @@ project-settings:
     path: /project/{id}/settings
     controller: App\Controller\ProjectController::index
 
+templates:
+    path: /templates
+    controller: App\Controller\TemplateController::index
+
+template-new:
+    path: /template/new
+    controller: App\Controller\TemplateController::new
+
+template:
+    path: /template/{id}
+    controller: App\Controller\TemplateController::template
+
+template-settings:
+    path: /template/{id}/settings
+    controller: App\Controller\TemplateController::index
+
 
 document:
     path: /document/{id}

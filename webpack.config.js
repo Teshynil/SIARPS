@@ -18,6 +18,8 @@ Encore
          * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
          */
         .addEntry('app', './assets/js/app.js')
+        .addEntry('print', './assets/js/print.js')
+
         .addEntry('charts_app', './assets/js/charts.js')
         .addEntry('datatables_app', './assets/js/datatables.js')
         

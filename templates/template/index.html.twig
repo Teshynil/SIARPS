@@ -1,0 +1,46 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('datatables_app') }}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('datatables_app') }}
+    {{ encore_entry_script_tags('projects') }}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header"><i class="icon-layers"></i> Plantillas
+                {% if hasWrite(app.user.group) %}
+                <div class="card-header-actions">
+                    <a class="btn btn-pill btn-success" href="{{ path('template-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir una plantilla</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <table class="table table-striped datatable" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Grupo</th>
+                            <th data-width="15%">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for template in templates %}
+                        <tr>
+                            <td>{{ template.name }}</td>
+                            <td>{{ template.group.name|default('Global') }}</td>
+                            <td>
+                                <a class="btn btn-info" href="{{ path('template',{'id':template.id}) }}"><i class="fas fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

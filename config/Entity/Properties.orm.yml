@@ -5,6 +5,8 @@ App\Entity\Properties:
             targetEntity: User
         group:
           targetEntity: Group
+        lockedBy:
+            targetEntity: User
     fields:
         ownerPermissions:
             type: integer

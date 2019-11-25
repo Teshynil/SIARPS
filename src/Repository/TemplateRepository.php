@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Template;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -19,6 +20,33 @@ class TemplateRepository extends ServiceEntityRepository
         parent::__construct($registry, Template::class);
     }
 
+    
+    public function getAvailableTemplates(User $user) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('t')
+                ->from(Template::class, 't')
+                ->join(User::class, 'u')
+                //->join('p.documents', 'd')
+                //->addSelect(['lastUpdate',])
+                ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
+                ->andWhere(
+                        $qb->expr()->orX(
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('t.owner', 'u.id'),
+                                        $qb->expr()->gt('BIT_AND(t.ownerPermissions, 4)', 0)
+                                ),
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('t.group', 'u.group'),
+                                        $qb->expr()->gt('BIT_AND(t.groupPermissions, 4)', 0)
+                                ),
+                                $qb->expr()->gt('BIT_AND(t.otherPermissions, 4)', 0)
+                        )
+                )
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+    
     // /**
     //  * @return Template[] Returns an array of Template objects
     //  */

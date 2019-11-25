@@ -1,0 +1,238 @@
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>render</title>
+        {{ encore_entry_link_tags('print') }}
+        <style type="text/css">
+            html, body {
+                height:100%;
+                width:100%;
+            }
+            body{
+                font-family: {{page.font|default('Arial')}};
+            }
+            .sf-toolbar{
+                display:none!important;
+            }
+            .page {
+                {% if page.orientation|default('portrait')=='landscape' %}
+                    width: {{page.size.height|default('27.9cm')}};
+                    min-height: {{page.size.width|default('21.6cm')}};
+                    max-height: {{page.size.width|default('21.6cm')}};
+                {%else%}
+                    width: {{page.size.width|default('21.6cm')}};
+                    min-height: {{page.size.height|default('27.9cm')}};
+                    max-height: {{page.size.height|default('27.9cm')}};
+                {% endif %}
+                padding-left: {{ page.margin.left|default('2cm')}};
+                padding-right: {{ page.margin.right|default('2cm')}};
+            }
+            @page {
+                size: {{page.size.name|default('letter')}} {{page.orientation|default('portrait')}};
+                margin-top: {{ page.margin.header is defined ? '0cm' : page.margin.top|default('2cm')}};
+                margin-left: {{ page.margin.left|default('2cm')}};
+                margin-right: {{ page.margin.right|default('2cm')}};
+                margin-bottom: {{ page.margin.footer is defined ? '0cm' : page.margin.bottom|default('2cm')}};                
+                max-height:100%;
+                max-width:100%
+            }
+        </style>
+    </head>
+    <body class="document">
+        <div class="header" style="height: {{page.margin.header}};text-align: center;background-color: red">
+            {% block header %}
+                <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
+                <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
+                    <span><i>Seguimiento de Proyectos, Requerimientos y Servicios de la </i><strong>DGTID</strong></span></p>
+                {% endblock %}
+        </div>
+        <div class="footer" style="height: {{page.margin.footer}};text-align: center;position: sticky;top: 100%;background-color: blue">
+            {% block footer %}
+                <p><strong><span>Revisó:  {| document.lockedBy.fullName |}</span></strong></p>
+            {% endblock %}
+        </div>
+        {% block document %}
+            <div class="page" contenteditable="true" style="background-color: green">
+                <table>
+                    <tbody>
+                        <tr style="height: 1cm">
+                            <td colspan="4">
+                                <p><strong><span style="font-size:16pt;color:#365F91;">Datos generales del proyecto</span></strong></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1.5cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Nombre:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.name |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm">
+                        </tr>
+                        <tr style="height: 2.5cm">
+                            <td colspan="4" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Objetivo:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.settings.objetivo |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Titular Responsable:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.group.owner.fullName |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Unidad:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.group.name |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Clave del Proyecto asignado por la PMO:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.settings.clavePMO |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="2" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Porcentaje de<br> avance:</span></strong></p>
+                            </td>
+                            <td colspan="2" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.progreso |}</span></p>
+                            </td>
+                            <td colspan="3"></td>
+                            <td colspan="2" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Estatus:</span></strong></p>
+                            </td>
+                            <td colspan="2" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.status |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 1cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="2"></td>
+                            <td colspan="3" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Fecha de actualización:</span></strong></p>
+                            </td>
+                            <td colspan="4" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.date |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="visibility: collapse;">
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page" contenteditable="true">
+                <table>
+                    <tbody>
+                        <tr style="height: 1cm">
+                            <td colspan="4">
+                                <p><strong><span style="font-size:16pt;color:#365F91;">Datos generales del proyecto</span></strong></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1.5cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Nombre:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.name |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm">
+                        </tr>
+                        <tr style="height: 2.5cm">
+                            <td colspan="4" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Objetivo:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.settings.objetivo |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Titular Responsable:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.group.owner.fullName |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Unidad:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.group.name |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="4" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Clave del Proyecto asignado por la PMO:</span></strong></p>
+                            </td>
+                            <td colspan="7" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| proyect.settings.clavePMO |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 0.5cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="2" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Porcentaje de<br> avance:</span></strong></p>
+                            </td>
+                            <td colspan="2" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.progreso |}</span></p>
+                            </td>
+                            <td colspan="3"></td>
+                            <td colspan="2" style="background: #D0CECE; border: 1pt solid #D0CECE;border-right: none">
+                                <p style="text-align:center;"><strong><span>Estatus:</span></strong></p>
+                            </td>
+                            <td colspan="2" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.status |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 1cm"></tr>
+                        <tr style="height: 1cm">
+                            <td colspan="2"></td>
+                            <td colspan="3" style="background: #AEAAAA; border: 1pt solid #AEAAAA;border-right: none">
+                                <p style="text-align:center;"><strong><span>Fecha de actualización:</span></strong></p>
+                            </td>
+                            <td colspan="4" style="border: 1pt solid black;">
+                                <p style="text-align:center;"><span>{| document.date |}</span></p>
+                            </td>
+                        </tr>
+                        <tr style="visibility: collapse;">
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                            <td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td><td style="width: calc(99%/11)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endblock %}
+        {{ encore_entry_script_tags('print') }}
+    </body>
+</html>

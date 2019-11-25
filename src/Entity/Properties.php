@@ -15,6 +15,7 @@ class Properties {
     protected $groupPermissions;
     protected $groupsPermissions;
     protected $lockState;
+    protected $lockedBy;
     
     public function __construct() {
         $this->groupsPermissions=[];
@@ -110,5 +111,15 @@ class Properties {
         $this->lockState = $lockState;
         return $this;
     }
+
+    function getLockedBy(): User {
+        return $this->lockedBy;
+    }
+
+    function setLockedBy($lockedBy): self {
+        $this->lockedBy = $lockedBy;
+        return $this;
+    }
+
 
 }
