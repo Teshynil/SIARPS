@@ -16,18 +16,40 @@
             .sf-toolbar{
                 display:none!important;
             }
+            .header,.footer{
+                position: absolute;
+                width: 100%;
+                left:0;
+                text-align: center;
+            }
+            .footer{
+                bottom: 0;
+            }
+            .page-body {
+                margin-top: {{page.margin.header|default(page.margin.top|default('2cm'))}};
+            }
             .page {
                 {% if page.orientation|default('portrait')=='landscape' %}
                     width: {{page.size.height|default('27.9cm')}};
-                    min-height: {{page.size.width|default('21.6cm')}};
+                    min-height: 100%!important;
                     max-height: {{page.size.width|default('21.6cm')}};
                 {%else%}
                     width: {{page.size.width|default('21.6cm')}};
-                    min-height: {{page.size.height|default('27.9cm')}};
+                    min-height: 100%!important;
                     max-height: {{page.size.height|default('27.9cm')}};
                 {% endif %}
                 padding-left: {{ page.margin.left|default('2cm')}};
                 padding-right: {{ page.margin.right|default('2cm')}};
+                overflow:hidden;
+                position: relative;
+            }
+            @media print{
+                .header{
+                    position: initial;
+                }
+                .page-body{
+                    margin-top:0;
+                }
             }
             @page {
                 size: {{page.size.name|default('letter')}} {{page.orientation|default('portrait')}};
@@ -41,20 +63,20 @@
         </style>
     </head>
     <body class="document">
-        <div class="header" style="height: {{page.margin.header}};text-align: center;background-color: red">
+        <div class="header" style="height: {{page.margin.header}};">
             {% block header %}
                 <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
                 <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
                     <span><i>Seguimiento de Proyectos, Requerimientos y Servicios de la </i><strong>DGTID</strong></span></p>
                 {% endblock %}
         </div>
-        <div class="footer" style="height: {{page.margin.footer}};text-align: center;position: sticky;top: 100%;background-color: blue">
+        <div class="footer" style="height: {{page.margin.footer}};">
             {% block footer %}
                 <p><strong><span>Revisó:  {| document.lockedBy.fullName |}</span></strong></p>
             {% endblock %}
         </div>
         {% block document %}
-            <div class="page" contenteditable="true" style="background-color: green">
+            <div class="page" contenteditable="true">
                 <table>
                     <tbody>
                         <tr style="height: 1cm">
