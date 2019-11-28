@@ -55,6 +55,7 @@ $('.symfony-collection').each(function () {
         allow_add: $(this).data('allowAdd'),
         allow_remove: $(this).data('allowRemove'),
         allow_duplicate: $(this).data('allowDuplicate'),
+        elements_selector: $(this).data('elementsSelector'),
         up: '<a href="#" class="ml-1 mr-1 btn btn-pill btn-secondary"><i class="fa fa-level-up-alt"></i>&nbsp;Subir</a>',
         down: '<a href="#" class="ml-1 mr-1 btn btn-pill btn-secondary"><i class="fa fa-level-down-alt"></i>&nbsp;Bajar</a>',
         add: '<a href="#" class="ml-1 mr-1 btn btn-pill btn-success"><i class="fa fa-plus"></i>&nbsp;Agregar nuevo</a>',

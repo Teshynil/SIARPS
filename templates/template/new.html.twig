@@ -8,7 +8,7 @@
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="icon-layers"></i> Nuevo Proyecto
+            <div class="card-header"><i class="icon-layers"></i> Nueva Plantilla
             </div>
             <div class="card-body">
                 {{ form_start(form) }}
@@ -18,9 +18,9 @@
                     </div>
                     <div class="card-body">
                         {{ form_row(form.name) }}
-                        {{ form_row(form.description) }}
                         {{ form_row(form.owner) }}
                         {{ form_row(form.group) }}
+                        {{ form_row(form.type) }}
                         <div class="row">
                             <div class="form-group col">
                                 {{ form_label(form.ownerPermissions) }}
@@ -42,8 +42,8 @@
                         Documentos
                     </div>
                     <div class="card-body">
-                        {% form_theme form.documents 'jquery.collection.html.twig'%}
-                        {{ form_widget(form.documents) }}
+                        {% form_theme form.templateForm 'jquery.collection.html.twig'%}
+                        {{ form_widget(form.templateForm) }}
                     </div>
                 </div>
                 {{ form_end(form) }}

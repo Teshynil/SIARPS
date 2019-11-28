@@ -54,6 +54,13 @@ class Template extends Properties
 
         return $this;
     }
+    
+    public function setSetting(string $key, $value): self
+    {
+        $this->settings[$key] = $value;
+
+        return $this;
+    }
 
     public function getFile(): ?File
     {

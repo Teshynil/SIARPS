@@ -59,46 +59,46 @@
         {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline')|trim}) -%}
         <div {{ block('widget_container_attributes') }}>
             {%- if with_years -%}
-            <div class="col-auto">
-                {{ form_label(form.years) }}
-                {{ form_widget(form.years) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.years) }}
+                    {{ form_widget(form.years) }}
+                </div>
             {%- endif -%}
             {%- if with_months -%}
-            <div class="col-auto">
-                {{ form_label(form.months) }}
-                {{ form_widget(form.months) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.months) }}
+                    {{ form_widget(form.months) }}
+                </div>
             {%- endif -%}
             {%- if with_weeks -%}
-            <div class="col-auto">
-                {{ form_label(form.weeks) }}
-                {{ form_widget(form.weeks) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.weeks) }}
+                    {{ form_widget(form.weeks) }}
+                </div>
             {%- endif -%}
             {%- if with_days -%}
-            <div class="col-auto">
-                {{ form_label(form.days) }}
-                {{ form_widget(form.days) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.days) }}
+                    {{ form_widget(form.days) }}
+                </div>
             {%- endif -%}
             {%- if with_hours -%}
-            <div class="col-auto">
-                {{ form_label(form.hours) }}
-                {{ form_widget(form.hours) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.hours) }}
+                    {{ form_widget(form.hours) }}
+                </div>
             {%- endif -%}
             {%- if with_minutes -%}
-            <div class="col-auto">
-                {{ form_label(form.minutes) }}
-                {{ form_widget(form.minutes) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.minutes) }}
+                    {{ form_widget(form.minutes) }}
+                </div>
             {%- endif -%}
             {%- if with_seconds -%}
-            <div class="col-auto">
-                {{ form_label(form.seconds) }}
-                {{ form_widget(form.seconds) }}
-            </div>
+                <div class="col-auto">
+                    {{ form_label(form.seconds) }}
+                    {{ form_widget(form.seconds) }}
+                </div>
             {%- endif -%}
             {%- if with_invert %}{{ form_widget(form.invert) }}{% endif -%}
         </div>
@@ -120,14 +120,14 @@
 
 {% block file_widget -%}
     <{{ element|default('div') }} class="custom-file">
-        {%- set type = type|default('file') -%}
-        {{- block('form_widget_simple') -}}
-        {%- set label_attr = label_attr|merge({ class: (label_attr.class|default('') ~ ' custom-file-label')|trim }) -%}
-        <label for="{{ form.vars.id }}" {% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
-            {%- if attr.placeholder is defined -%}
-                {{- translation_domain is same as(false) ? attr.placeholder : attr.placeholder|trans({}, translation_domain) -}}
-            {%- endif -%}
-        </label>
+    {%- set type = type|default('file') -%}
+    {{- block('form_widget_simple') -}}
+    {%- set label_attr = label_attr|merge({ class: (label_attr.class|default('') ~ ' custom-file-label')|trim }) -%}
+    <label for="{{ form.vars.id }}" {% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
+        {%- if attr.placeholder is defined -%}
+            {{- translation_domain is same as(false) ? attr.placeholder : attr.placeholder|trans({}, translation_domain) -}}
+        {%- endif -%}
+    </label>
     </{{ element|default('div') }}>
 {% endblock %}
 
@@ -230,9 +230,9 @@
         <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>{{ translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}{% block form_label_errors %}{{- form_errors(form) -}}{% endblock form_label_errors %}</{{ element|default('label') }}>
     {%- else -%}
         {%- if errors|length > 0 -%}
-        <div id="{{ id }}_errors" class="mb-2">
-            {{- form_errors(form) -}}
-        </div>
+            <div id="{{ id }}_errors" class="mb-2">
+                {{- form_errors(form) -}}
+            </div>
         {%- endif -%}
     {%- endif -%}
 {%- endblock form_label %}
@@ -277,6 +277,38 @@
 
 {# Rows #}
 
+{% block _template_templateForm_entry -%}
+
+{%- endblock _template_templateForm_entry %}
+
+{% block _template_templateForm_widget -%}
+    {% if prototype is defined %}
+        {% set attr = attr|merge({'data-prototype': form_row(prototype)}) %}
+        {% set attr = attr|merge({'data-prototype-name': prototype.vars.name}) %}
+    {% endif %}
+    {% set attr = attr|merge({'data-allow-add': allow_add ? 1 : 0}) %}
+    {% set attr = attr|merge({'data-allow-remove': allow_delete ? 1 : 0 }) %}
+    {% set attr = attr|merge({'data-name-prefix': full_name}) %}
+    <table class="table table-responsive-sm table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Acciones</th>
+                <th>Campo</th>
+                <th>Descripción</th>
+                <th>Tipo de campo</th>
+                <th>Requerido</th>
+            </tr>
+        </thead>
+        <tbody {{ block('widget_attributes') }} data-elements-selector="> tr">
+            {% for child in form.children -%}
+                {{ form_row(child) }}
+            {%- endfor %}
+        </tbody>
+    </table>
+        
+
+{%- endblock _template_templateForm_widget %}
+
 {% block form_row -%}
     {%- if compound is defined and compound -%}
         {%- set element = 'fieldset' -%}
@@ -286,24 +318,51 @@
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
     {%- if compound is defined and compound -%}
-    <div class="card">
-        <div class="card-header">
-            <a class="btn btn-secondary btn-minimize" href="#" data-toggle="collapse" data-target="#collapse{{ form.vars.id }}" aria-expanded="true"><i class="icon-arrow-up"></i></a>
-            <span class="h3" data-sync-mode="text" id="header-{{ form.vars.id }}"></span>
-            <div class="card-header-actions {{form.parent.vars.id}}-collection-actions">
+        {%- if 'table-collection' in form.parent.vars.attr.class|default([]) -%}
+            <tr>
+            <fieldset>
+                <td>
+                    <div class="{{form.parent.vars.id}}-collection-actions"></div>
+                </td>
+
+                <td>
+                    {{ form_widget(form.name) }}
+                </td>
+                <td>
+                    {{ form_widget(form.description) }}
+                </td>
+                <td>
+                    {{ form_widget(form.type) }}
+                </td>
+                <td>
+                    {{ form_widget(form.required) }}
+                </td>
+            </fieldset>
+        </tr>
+    {%- else -%}
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-secondary btn-minimize" href="#" data-toggle="collapse" data-target="#collapse{{ form.vars.id }}" aria-expanded="true"><i class="icon-arrow-up"></i></a>
+                <span class="h3" data-sync-mode="text" id="header-{{ form.vars.id }}"></span>
+                <div class="card-header-actions {{form.parent.vars.id}}-collection-actions">
+                </div>
+            </div>
+            <div class="card-body collapse show" id="collapse{{ form.vars.id }}">
+                <{{ element|default('div') }} class="form-group" >
+                {{- form_label(form) -}}
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_help(form) -}}
+                </{{ element|default('div') }}>
             </div>
         </div>
-        <div class="card-body collapse show" id="collapse{{ form.vars.id }}">
-        {%- endif -%}
-        <{{ element|default('div') }} class="form-group" >
-            {{- form_label(form) -}}
-            {{- form_widget(form, widget_attr) -}}
-            {{- form_help(form) -}}
-        </{{ element|default('div') }}>
-        {%- if compound is defined and compound -%}
-        </div>
-    </div>
     {%- endif -%}
+{%- else -%}
+    <{{ element|default('div') }} class="form-group" >
+    {{- form_label(form) -}}
+    {{- form_widget(form, widget_attr) -}}
+    {{- form_help(form) -}}
+    </{{ element|default('div') }}>
+{%- endif -%}
 {%- endblock form_row %}
 
 {# Errors #}

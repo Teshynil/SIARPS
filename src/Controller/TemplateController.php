@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Template;
 use App\Form\TemplateType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Helpers\SIARPSController;
 use Symfony\Component\HttpFoundation\Request;
 
-class TemplateController extends AbstractController
+class TemplateController extends SIARPSController
 {
     
     public function index() {
@@ -19,12 +19,12 @@ class TemplateController extends AbstractController
     }
     
     public function template($id){
-        $project=$this->getDoctrine()->getManager()->find(Template::class, $id);
-        if(!$this->getPermissionService()->hasRead($project)){
+        $template=$this->getDoctrine()->getManager()->find(Template::class, $id);
+        if(!$this->getPermissionService()->hasRead($template)){
             throw $this->createAccessDeniedException();
         }
         return $this->render('template/template_dashboard.html.twig', [
-                    'template' => $project
+                    'template' => $template
         ]);
     }
 
@@ -37,9 +37,13 @@ class TemplateController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data=$form->getData();
+            $templateForm=$form->get('templateForm')->getData();
+            if($data->getType()=='Form'){
+                $data->setSetting('fields',$templateForm);
+            }
             $this->getDoctrine()->getManager()->persist($data);
             $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute("projects");
+            return $this->redirectToRoute("templates");
         }
         $formView=$form->createView();
         return $this->render('template/new.html.twig', [

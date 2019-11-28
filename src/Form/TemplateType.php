@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -66,18 +68,26 @@ class TemplateType extends AbstractType {
                     ]
                 ])
                 ->add('templateForm', CollectionType::class, ['entry_type' => FormFieldType::class,
-                    'label' => false,
+                    'label' => '',
                     'allow_add' => true,
                     'allow_delete' => true,
                     'prototype' => true,
                     'required' => false,
+                    'mapped'=>false,
                     'entry_options' => [
                         'label' => false,
-                        
                     ],
                     'attr' => [
-                        'class' => "symfony-collection",
-                    ]
+                        'class' => "symfony-collection table-collection",
+                    ],
+                    'data' => [
+                        [
+                            'name' => 'Hola',
+                            'description' => 'mundo',
+                            'type'=>FileType::class,
+                            'required'=>false
+                        ]
+                    ],
                 ])
                 ->add('ownerPermissions', PermissionType::class, ['label' => 'Permisos del dueño', 'preferred_choices' => [7]])
                 ->add('groupPermissions', PermissionType::class, ['label' => 'Permisos del Grupo', 'preferred_choices' => [4]])

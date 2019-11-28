@@ -7,8 +7,8 @@
         {{ encore_entry_link_tags('print') }}
         <style type="text/css">
             html, body {
-                height:100%;
-                width:100%;
+                height: 100%;
+                width: 100%;
             }
             body{
                 font-family: {{page.font|default('Arial')}};
@@ -16,61 +16,66 @@
             .sf-toolbar{
                 display:none!important;
             }
-            .header,.footer{
-                position: absolute;
+            .header{
+                height: {{page.margin.header|default('2')}}{{page.unit|default('cm')}};
                 width: 100%;
-                left:0;
                 text-align: center;
             }
             .footer{
-                bottom: 0;
+                height: {{page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                width: 100%;
+                text-align: center;
             }
             .page-body {
-                margin-top: {{page.margin.header|default(page.margin.top|default('2cm'))}};
+                {% if page.orientation|default('portrait')=='landscape' %}
+                    height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                {%else%}
+                    height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                {% endif %}
             }
             .page {
                 {% if page.orientation|default('portrait')=='landscape' %}
-                    width: {{page.size.height|default('27.9cm')}};
-                    min-height: 100%!important;
-                    max-height: {{page.size.width|default('21.6cm')}};
+                    width: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
+                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
+                    max-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
                 {%else%}
-                    width: {{page.size.width|default('21.6cm')}};
-                    min-height: 100%!important;
-                    max-height: {{page.size.height|default('27.9cm')}};
+                    width: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
+                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
+                    max-height: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
                 {% endif %}
-                padding-left: {{ page.margin.left|default('2cm')}};
-                padding-right: {{ page.margin.right|default('2cm')}};
+                padding-left: {{ page.margin.left|default('2')}}{{page.unit|default('cm')}};
+                padding-right: {{ page.margin.right|default('2')}}{{page.unit|default('cm')}};
                 overflow:hidden;
-                position: relative;
-            }
-            @media print{
-                .header{
-                    position: initial;
-                }
-                .page-body{
-                    margin-top:0;
-                }
             }
             @page {
+                {% if page.orientation|default('portrait')=='landscape' %}
+                    max-width: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
+                    max-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
+                {% else %}
+                    max-width: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}}!important;
+                    max-height: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}}!important;
+                {% endif %}
                 size: {{page.size.name|default('letter')}} {{page.orientation|default('portrait')}};
-                margin-top: {{ page.margin.header is defined ? '0cm' : page.margin.top|default('2cm')}};
-                margin-left: {{ page.margin.left|default('2cm')}};
-                margin-right: {{ page.margin.right|default('2cm')}};
-                margin-bottom: {{ page.margin.footer is defined ? '0cm' : page.margin.bottom|default('2cm')}};                
-                max-height:100%;
-                max-width:100%
+                margin-top: {{ page.margin.header is defined ? '0' : page.margin.top|default('2')}}{{page.unit|default('cm')}};
+                margin-left: {{ page.margin.left|default('2')}}{{page.unit|default('cm')}};
+                margin-right: {{ page.margin.right|default('2')}}{{page.unit|default('cm')}};
+                margin-bottom: {{ page.margin.footer is defined ? '0' : page.margin.bottom|default('2')}}{{page.unit|default('cm')}};
             }
         </style>
     </head>
     <body class="document">
-        <div class="header" style="height: {{page.margin.header}};">
+        <div class="header">
             {% block header %}
                 <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
                 <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
                     <span><i>Seguimiento de Proyectos, Requerimientos y Servicios de la </i><strong>DGTID</strong></span></p>
                 {% endblock %}
         </div>
-        <div class="footer" style="height: {{page.margin.footer}};">
+        <div class="footer">
             {% block footer %}
                 <p><strong><span>Revisó:  {| document.lockedBy.fullName |}</span></strong></p>
             {% endblock %}

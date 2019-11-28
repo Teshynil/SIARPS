@@ -81,6 +81,10 @@ template:
 template-settings:
     path: /template/{id}/settings
     controller: App\Controller\TemplateController::index
+    
+template-view:
+    path: /template/{id}/view
+    controller: App\Controller\TemplateController::index
 
 
 document:
