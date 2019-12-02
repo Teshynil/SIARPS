@@ -213,6 +213,9 @@ class InstallCommand extends Command {
         $this->em->flush();
         $this->em->persist(new Setting("nullTemplate", Template::class, $nullTemplate->getId(), $user, $group, 07, 07, 00));
         $this->em->flush();
+        
+        $command = $this->getApplication()->find('doctrine:migrations:execute');
+        $returnCode = $command->run(new ArrayInput(['--no-interaction' => true]), $output);
     }
 
     protected function reconfigure(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {

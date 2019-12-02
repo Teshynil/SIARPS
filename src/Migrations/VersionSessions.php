@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190906084650 extends AbstractMigration {
+final class VersionSessions extends AbstractMigration {
 
     public function getDescription(): string {
         return 'Session tables';
@@ -21,12 +21,12 @@ final class Version20190906084650 extends AbstractMigration {
     `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
     `sess_data` BLOB NOT NULL,
     `sess_time` INTEGER UNSIGNED NOT NULL,
-    `sess_lifetime` MEDIUMINT NOT NULL
+    `sess_lifetime` INTEGER UNSIGNED NOT NULL
     ) COLLATE utf8mb4_bin, ENGINE = InnoDB;');
     }
 
     public function down(Schema $schema): void {
-        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('DROP TABLE `sessions`;');
     }
 
 }
