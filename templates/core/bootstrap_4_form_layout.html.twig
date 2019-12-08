@@ -277,9 +277,8 @@
 
 {# Rows #}
 
-{% block _template_templateForm_entry -%}
-
-{%- endblock _template_templateForm_entry %}
+{% block _formField_widget -%}
+{% endblock %}
 
 {% block _template_templateForm_widget -%}
     {% if prototype is defined %}
@@ -292,11 +291,10 @@
     <table class="table table-responsive-sm table-bordered table-striped">
         <thead>
             <tr>
-                <th>Acciones</th>
-                <th>Campo</th>
-                <th>Descripción</th>
-                <th>Tipo de campo</th>
-                <th>Requerido</th>
+                <th>Acciones{{ dump(form.vars.prototype.children) }}</th>
+                    {% for item in form.vars.prototype.children -%}
+                    <th>{{ item.vars.label }}</th>
+                    {%- endfor %}
             </tr>
         </thead>
         <tbody {{ block('widget_attributes') }} data-elements-selector="> tr">
@@ -305,7 +303,7 @@
             {%- endfor %}
         </tbody>
     </table>
-        
+
 
 {%- endblock _template_templateForm_widget %}
 
@@ -324,19 +322,11 @@
                 <td>
                     <div class="{{form.parent.vars.id}}-collection-actions"></div>
                 </td>
-
-                <td>
-                    {{ form_widget(form.name) }}
-                </td>
-                <td>
-                    {{ form_widget(form.description) }}
-                </td>
-                <td>
-                    {{ form_widget(form.type) }}
-                </td>
-                <td>
-                    {{ form_widget(form.required) }}
-                </td>
+                {% for item in form %}
+                    <td>
+                        {{ form_widget(item) }}
+                    </td>
+                {% endfor %}
             </fieldset>
         </tr>
     {%- else -%}

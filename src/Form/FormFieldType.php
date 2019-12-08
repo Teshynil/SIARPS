@@ -34,7 +34,7 @@ class FormFieldType extends AbstractType {
                         'Archivo' => FileType::class,
                     ]
                 ])
-                ->add('required', CheckboxType::class, ['label' => 'Requerido'])
+                ->add('settings', FieldSettingType::class,['label'=>'Configuración'])
         ;
     }
 

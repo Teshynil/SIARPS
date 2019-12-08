@@ -215,7 +215,7 @@ class InstallCommand extends Command {
         $this->em->flush();
         
         $command = $this->getApplication()->find('doctrine:migrations:execute');
-        $returnCode = $command->run(new ArrayInput(['--no-interaction' => true]), $output);
+        $returnCode = $command->run(new ArrayInput(['version'=>'Sessions','--no-interaction' => true]), $output);
     }
 
     protected function reconfigure(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {

@@ -80,14 +80,6 @@ class TemplateType extends AbstractType {
                     'attr' => [
                         'class' => "symfony-collection table-collection",
                     ],
-                    'data' => [
-                        [
-                            'name' => 'Hola',
-                            'description' => 'mundo',
-                            'type'=>FileType::class,
-                            'required'=>false
-                        ]
-                    ],
                 ])
                 ->add('ownerPermissions', PermissionType::class, ['label' => 'Permisos del dueño', 'preferred_choices' => [7]])
                 ->add('groupPermissions', PermissionType::class, ['label' => 'Permisos del Grupo', 'preferred_choices' => [4]])
