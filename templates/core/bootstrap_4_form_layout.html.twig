@@ -276,8 +276,18 @@
 {%- endblock checkbox_radio_label %}
 
 {# Rows #}
+{% block _template_templateForm_entry_settings_constraints_row -%}
+    <div class="form-group row">
+        <div class="col-12"><label class="col-form-label">{{ form.vars.label }}</label></div>
+        <div class="col-12">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{% endblock %}
 
-{% block _formField_widget -%}
+{% block _template_templateForm_entry_settings_widget -%}
+{% form_theme form "core/bootstrap_4_horizontal_layout.html.twig" %}
+{{ form_widget(form) }}
 {% endblock %}
 
 {% block _template_templateForm_widget -%}
@@ -285,15 +295,20 @@
         {% set attr = attr|merge({'data-prototype': form_row(prototype)}) %}
         {% set attr = attr|merge({'data-prototype-name': prototype.vars.name}) %}
     {% endif %}
+    {% set attr = attr|merge({'data-min-buttons':  1}) %}
     {% set attr = attr|merge({'data-allow-add': allow_add ? 1 : 0}) %}
     {% set attr = attr|merge({'data-allow-remove': allow_delete ? 1 : 0 }) %}
     {% set attr = attr|merge({'data-name-prefix': full_name}) %}
     <table class="table table-responsive-sm table-bordered table-striped">
         <thead>
             <tr>
-                <th>Acciones{{ dump(form.vars.prototype.children) }}</th>
+                <th style="width: 10rem">Acciones</th>
                     {% for item in form.vars.prototype.children -%}
-                    <th>{{ item.vars.label }}</th>
+                        {% if 'data-width' in item.vars.attr|keys %}
+                        <th style="width: {{item.vars.attr['data-width']}}">{{ item.vars.label }}</th>
+                        {% else %}
+                        <th>{{ item.vars.label }}</th>
+                        {% endif %}
                     {%- endfor %}
             </tr>
         </thead>

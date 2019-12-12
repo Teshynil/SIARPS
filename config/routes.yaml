@@ -80,11 +80,12 @@ template:
 
 template-settings:
     path: /template/{id}/settings
-    controller: App\Controller\TemplateController::index
-    
+    controller: App\Controller\TemplateController::edit
+
 template-view:
     path: /template/{id}/view
-    controller: App\Controller\TemplateController::index
+    controller: App\Controller\TemplateController::editFile
+
 
 
 document:

@@ -13,15 +13,15 @@ class FieldSettingType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('label', TextType::class, ['label' => 'Etiqueta'])
+                ->add('label', TextType::class, ['label'=>false,'attr' => ['placeholder' => 'Etiqueta']])
                 ->add('required', CheckboxType::class, ['label' => 'Obligatorio'])
-                ->add('choices', TextareaType::class, ['label' => 'Opciones'])
-                ->add('placeholder', TextType::class, ['label' => 'Placeholder'])
+                ->add('choices', TextareaType::class, ['label'=>false,'attr' => ['placeholder' => 'Opciones']])
+                ->add('placeholder', TextType::class, ['label'=>false,'attr' => ['placeholder' => 'Placeholder']])
                 ->add('multiple', CheckboxType::class, ['label' => 'Multiple'])
-                ->add('constraints', TextareaType::class, ['label' => 'Condiciones',
+                ->add('constraints', TextareaType::class, ['label'=>'Condiciones',
                     'attr' => [
                         'class' => 'code-editor',
-                        'data-code-type'=>'yaml'
+                        'data-code-type' => 'yaml'
                     ]
                 ])
         ;

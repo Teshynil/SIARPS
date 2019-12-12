@@ -6,10 +6,11 @@ use App\Entity\Properties;
 use App\Security\PermissionService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Twig_Error_Runtime;
 
 class AppTwigExtension extends AbstractExtension {
 
@@ -54,10 +55,14 @@ class AppTwigExtension extends AbstractExtension {
 
     public function evaluate(Environment $environment, $context, $string) {
         $loader = $environment->getLoader();
-        
-        $parsed = $this->parseString($environment, $context, $string);
+        try {
+            $parsed = $this->parseString($environment, $context, $string);
 
-        $environment->setLoader($loader);
+            $environment->setLoader($loader);
+        } catch (SyntaxError $exc) {
+            return null;            
+        }
+
         return $parsed;
     }
 

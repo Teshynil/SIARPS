@@ -4,7 +4,7 @@ Encore
         // directory where compiled assets will be stored
         .setOutputPath('public/build/')
         // public path used by the web server to access the output path
-        .setPublicPath('/SIARPS/public/build')
+        .setPublicPath('/build')
         // only needed for CDN's or sub-directory deploy
         .setManifestKeyPrefix('build/')
 
@@ -25,6 +25,8 @@ Encore
         
         .addEntry('users', './assets/js/views/users.js')
         .addEntry('projects', './assets/js/views/projects.js')
+        .addEntry('template', './assets/js/views/template.js')
+        .addEntry('editTemplateFile', './assets/js/views/editTemplateFile.js')
 
 //        .addEntry('calendar', './assets/js/views/calendar.js')
 //        .addEntry('charts', './assets/js/views/charts.js')

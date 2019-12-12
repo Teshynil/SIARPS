@@ -15,27 +15,12 @@ html, body {
 	font-size: 12pt;
 
 	/* Styles for better appearance on screens only -- are reset to defaults in print styles later */
-
-	/* Use a non-white background color to make the content areas stick out from the full page box */
-	background-color: #eee;
 }
 /* Styles that are shared by all elements */
 * {
 	/* Include the content box as well as padding and border for precise definitions */
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
-}
-.page {
-	/* Styles for better appearance on screens only -- are reset to defaults in print styles later */
-
-	/* Divide single pages with some space and center all pages horizontally */
-	margin: 1cm auto;
-	/* Define a white paper background that sticks out from the darker overall background */
-	background: #fff;
-	/* Show a drop shadow beneath each page */
-	box-shadow: 0 4px 5px rgba(75, 75, 75, 0.2);
-	/* Override outline from user agent stylesheets */
-	outline: 0;
 }
 /* Defines a class for manual page breaks via inserted .page-break element */
 div.page-break {

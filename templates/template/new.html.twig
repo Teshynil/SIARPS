@@ -1,8 +1,10 @@
 {% extends "core/base.html.twig" %}
 
 {% block stylesheets %}
+    {{ encore_entry_link_tags('template') }}
 {% endblock %}
 {% block javascripts %}
+    {{ encore_entry_script_tags('template') }}
 {% endblock %}
 {% block body %}
 
@@ -37,9 +39,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card" id="form-fields">
                     <div class="card-header bg-gray-300">
-                        Documentos
+                        Campos
                     </div>
                     <div class="card-body">
                         {% form_theme form.templateForm 'jquery.collection.html.twig'%}

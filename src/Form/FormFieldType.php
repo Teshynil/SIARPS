@@ -20,9 +20,9 @@ class FormFieldType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('name', TextType::class, ['label' => 'Nombre'])
-                ->add('description', TextareaType::class, ['label' => 'Descripción'])
-                ->add('type', ChoiceType::class, ['label' => 'Tipo de campo',
+                ->add('name', TextType::class, ['label' => 'Nombre','attr'=>['placeholder' => 'Nombre','data-width'=>'15rem']])
+                ->add('description', TextareaType::class, ['label' => 'Descripción','attr'=>['placeholder' => 'Descripción','data-width'=>'15rem']])
+                ->add('type', ChoiceType::class, ['label' => 'Tipo de campo','attr'=>['data-width'=>'10rem'],
                     'choices' => [
                         'Texto' => TextareaType::class,
                         'Entero' => IntegerType::class,
@@ -32,9 +32,9 @@ class FormFieldType extends AbstractType {
                         'Fecha y Hora' => DateTimeType::class,
                         'Imagen' => FileType::class,
                         'Archivo' => FileType::class,
-                    ]
+                    ],
                 ])
-                ->add('settings', FieldSettingType::class,['label'=>'Configuración'])
+                ->add('settings', FieldSettingType::class,['label'=>'Configuración','attr'=>['placeholder' => 'Configuración']])
         ;
     }
 

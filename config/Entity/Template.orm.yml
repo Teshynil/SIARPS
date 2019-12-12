@@ -14,7 +14,7 @@ App\Entity\Template:
         name:
             type: string
             length: 180
-            unique: true
+            unique: false
             nullable: false
         type:
             type: string

@@ -68,20 +68,16 @@
         </style>
     </head>
     <body class="document">
-        <div class="header">
-            {% block header %}
+        {% block document %}
+            <div class="header">
                 <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
                 <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
                     <span><i>Seguimiento de Proyectos, Requerimientos y Servicios de la </i><strong>DGTID</strong></span></p>
-                {% endblock %}
-        </div>
-        <div class="footer">
-            {% block footer %}
+            </div>
+            <div class="footer">
                 <p><strong><span>Revisó:  {| document.lockedBy.fullName |}</span></strong></p>
-            {% endblock %}
-        </div>
-        {% block document %}
-            <div class="page" contenteditable="true">
+            </div>
+            <div class="page">
                 <table>
                     <tbody>
                         <tr style="height: 1cm">
