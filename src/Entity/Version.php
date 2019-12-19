@@ -4,7 +4,7 @@ namespace App\Entity;
 
 class Version extends Properties 
 {
-    private $id;
+    
 
     private $date;
 
@@ -12,10 +12,7 @@ class Version extends Properties
 
     private $document;
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
+    
 
     public function getDate(): ?\DateTimeInterface
     {

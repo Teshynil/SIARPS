@@ -10,7 +10,13 @@
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="icon-layers"></i> Nueva Plantilla
+            <div class="card-header">
+                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ template.group.name|default('Global') }} | {{ template.name }}</span>
+                {% if hasWrite(template) %}
+                    <div class="card-header-actions">
+                        <a class="btn btn-pill btn-secondary" href="{{ path('template-view',{'id':template.id}) }}"><i class="fa fa-eye"></i>&nbsp;Configuración</a>
+                    </div>
+                {% endif %}
             </div>
             <div class="card-body">
                 {{ form_start(form) }}

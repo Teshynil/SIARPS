@@ -9,7 +9,7 @@ App\Entity\Notification:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         icon:
             type: string

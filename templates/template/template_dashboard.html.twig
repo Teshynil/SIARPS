@@ -12,7 +12,7 @@
                 <span class="h3"><i class="icon-layers"></i>&nbsp; {{ template.group.name|default('Global') }} | {{ template.name }}</span>
                 {% if hasWrite(template) %}
                     <div class="card-header-actions">
-                        <a class="btn btn-pill btn-secondary" href="{{ path('template-settings',{'id':template.id}) }}"><i class="fa fa-cog"></i>&nbsp;Editar</a>
+                        <a class="btn btn-pill btn-secondary" href="{{ path('template-edit',{'id':template.id}) }}"><i class="fa fa-cog"></i>&nbsp;Editar</a>
                         <a class="btn btn-pill btn-secondary" href="{{ path('template-view',{'id':template.id}) }}"><i class="fa fa-eye"></i>&nbsp;Configuración</a>
                     </div>
                 {% endif %}

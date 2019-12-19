@@ -12,7 +12,7 @@ App\Entity\Project:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         name:
             type: string

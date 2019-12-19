@@ -276,51 +276,162 @@
 {%- endblock checkbox_radio_label %}
 
 {# Rows #}
-{% block _template_templateForm_entry_settings_constraints_row -%}
-    <div class="form-group row">
-        <div class="col-12"><label class="col-form-label">{{ form.vars.label }}</label></div>
-        <div class="col-12">
-            {{ form_widget(form) }}
+{% block _edit_template_templateForm_entry_settings_constraints_row -%}
+    {% block _create_template_templateForm_entry_settings_constraints_row -%}
+        <div class="form-group row">
+            <div class="col-12"><label class="col-form-label">{{ form.vars.label }}</label></div>
+            <div class="col-12">
+                {{ form_widget(form) }}
+            </div>
+        </div>
+
+    {% endblock %}
+{% endblock %}
+
+{% block _edit_template_templateForm_entry_settings_widget -%}
+    {% block _create_template_templateForm_entry_settings_widget -%}
+        {% form_theme form "core/bootstrap_4_horizontal_layout.html.twig" %}
+        {{ form_widget(form) }}
+    {% endblock %}
+{% endblock %}
+
+{% block _edit_template_templateForm_widget -%}
+    {% block _create_template_templateForm_widget -%}
+        {% if prototype is defined %}
+            {% set attr = attr|merge({'data-prototype': form_row(prototype)}) %}
+            {% set attr = attr|merge({'data-prototype-name': prototype.vars.name}) %}
+        {% endif %}
+        {% set attr = attr|merge({'data-min-buttons':  1}) %}
+        {% set attr = attr|merge({'data-allow-add': allow_add ? 1 : 0}) %}
+        {% set attr = attr|merge({'data-allow-remove': allow_delete ? 1 : 0 }) %}
+        {% set attr = attr|merge({'data-name-prefix': full_name}) %}
+        <table class="table table-responsive-sm table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10rem">Acciones</th>
+                        {% for item in form.vars.prototype.children -%}
+                            {% if 'data-width' in item.vars.attr|keys %}
+                            <th style="width: {{item.vars.attr['data-width']}}">{{ item.vars.label }}</th>
+                            {% else %}
+                            <th>{{ item.vars.label }}</th>
+                            {% endif %}
+                        {%- endfor %}
+                </tr>
+            </thead>
+            <tbody {{ block('widget_attributes') }} data-elements-selector="> tr">
+                {% for child in form.children -%}
+                    {{ form_row(child) }}
+                {%- endfor %}
+            </tbody>
+        </table>
+
+    {%- endblock %}
+{%- endblock %}
+
+{% block create_properties_row -%}
+    <div class="card">
+        <div class="card-header">
+            <span class="h5">Propiedades</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% if form.owner is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.owner) }}
+                        {{ form_errors(form.owner) }}
+                        {{ form_widget(form.owner) }}
+                    </div>
+                {% endif %}
+                {% if form.group is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.group) }}
+                        {{ form_errors(form.group) }}
+                        {{ form_widget(form.group) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if form.ownerPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.ownerPermissions) }}
+                        {{ form_errors(form.ownerPermissions) }}
+                        {{ form_widget(form.ownerPermissions) }}
+                    </div>
+                {% endif %}
+                {% if form.groupPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.groupPermissions) }}
+                        {{ form_errors(form.groupPermissions) }}
+                        {{ form_widget(form.groupPermissions) }}
+                    </div>
+                {% endif %}
+                {% if form.otherPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.otherPermissions) }}
+                        {{ form_errors(form.otherPermissions) }}
+                        {{ form_widget(form.otherPermissions) }}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
-{% endblock %}
+{%- endblock %}
 
-{% block _template_templateForm_entry_settings_widget -%}
-{% form_theme form "core/bootstrap_4_horizontal_layout.html.twig" %}
-{{ form_widget(form) }}
-{% endblock %}
-
-{% block _template_templateForm_widget -%}
-    {% if prototype is defined %}
-        {% set attr = attr|merge({'data-prototype': form_row(prototype)}) %}
-        {% set attr = attr|merge({'data-prototype-name': prototype.vars.name}) %}
-    {% endif %}
-    {% set attr = attr|merge({'data-min-buttons':  1}) %}
-    {% set attr = attr|merge({'data-allow-add': allow_add ? 1 : 0}) %}
-    {% set attr = attr|merge({'data-allow-remove': allow_delete ? 1 : 0 }) %}
-    {% set attr = attr|merge({'data-name-prefix': full_name}) %}
-    <table class="table table-responsive-sm table-bordered table-striped">
-        <thead>
-            <tr>
-                <th style="width: 10rem">Acciones</th>
-                    {% for item in form.vars.prototype.children -%}
-                        {% if 'data-width' in item.vars.attr|keys %}
-                        <th style="width: {{item.vars.attr['data-width']}}">{{ item.vars.label }}</th>
-                        {% else %}
-                        <th>{{ item.vars.label }}</th>
-                        {% endif %}
-                    {%- endfor %}
-            </tr>
-        </thead>
-        <tbody {{ block('widget_attributes') }} data-elements-selector="> tr">
-            {% for child in form.children -%}
-                {{ form_row(child) }}
-            {%- endfor %}
-        </tbody>
-    </table>
-
-
-{%- endblock _template_templateForm_widget %}
+{% block edit_properties_row -%}
+    <div class="card">
+        <div class="card-header">
+            <span class="h5">Propiedades</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% if form.owner is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.owner) }}
+                        {{ form_errors(form.owner) }}
+                        {{ form_widget(form.owner) }}
+                    </div>
+                {% endif %}
+                {% if form.group is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.group) }}
+                        {{ form_errors(form.group) }}
+                        {{ form_widget(form.group) }}
+                    </div>
+                {% endif %}
+                {% if form.locked is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.locked) }}
+                        {{ form_errors(form.locked) }}
+                        {{ form_widget(form.locked) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if form.ownerPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.ownerPermissions) }}
+                        {{ form_errors(form.ownerPermissions) }}
+                        {{ form_widget(form.ownerPermissions) }}
+                    </div>
+                {% endif %}
+                {% if form.groupPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.groupPermissions) }}
+                        {{ form_errors(form.groupPermissions) }}
+                        {{ form_widget(form.groupPermissions) }}
+                    </div>
+                {% endif %}
+                {% if form.otherPermissions is defined %}
+                    <div class="form-group col">
+                        {{ form_label(form.otherPermissions) }}
+                        {{ form_errors(form.otherPermissions) }}
+                        {{ form_widget(form.otherPermissions) }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{%- endblock %}
 
 {% block form_row -%}
     {%- if compound is defined and compound -%}

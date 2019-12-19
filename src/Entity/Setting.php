@@ -4,7 +4,7 @@ namespace App\Entity;
 
 class Setting extends Properties {
 
-    private $id;
+    
     private $entity;
     private $value;
 

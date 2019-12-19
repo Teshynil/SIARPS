@@ -1,0 +1,62 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Nuevo usuario
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                        <div class="row">
+                            <div class="form-group col">
+                                {{ form_label(form.username) }}
+                                {{ form_errors(form.username) }}
+                                {{ form_widget(form.username) }}
+                                {{ form_help(form.username) }}
+                            </div>
+                            <div class="form-group col">
+                                {{ form_label(form.email) }}
+                                {{ form_errors(form.email) }}
+                                {{ form_widget(form.email) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                {{ form_label(form.firstName) }}
+                                {{ form_errors(form.firstName) }}
+                                {{ form_widget(form.firstName) }}
+                            </div>
+                            <div class="form-group col">
+                                {{ form_label(form.lastName) }}
+                                {{ form_errors(form.lastName) }}
+                                {{ form_widget(form.lastName) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                {{ form_label(form.password.first) }}
+                                {{ form_errors(form.password.first) }}
+                                {{ form_widget(form.password.first) }}
+                            </div>
+                            <div class="form-group col">
+                                {{ form_label(form.password.second) }}
+                                {{ form_errors(form.password.second) }}
+                                {{ form_widget(form.password.second) }}
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                <!-- /.col-->
+            </div>
+            <!-- /.row-->
+        </div>
+    {% endblock %}

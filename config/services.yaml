@@ -7,12 +7,14 @@ parameters:
     locale: 'es'
     app.db.table_prefix: t_
     app.db.column_prefix: c_
+    env(FILE_SAVE_PATH): '%kernel.project_dir%\data'
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            $targetDirectory: '%env(FILE_SAVE_PATH)%'
             $ldapSettings:
                 LDAP_HOST: '%env(LDAP_HOST)%'
                 READ_ONLY_USER: '%env(READ_ONLY_USER)%'
@@ -32,6 +34,9 @@ services:
         tags:
         - { name: doctrine.event_listener, event: onFlush }
 
+    App\Helpers\FileUploader:
+        class: App\Helpers\FileUploader
+            
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments: [!service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] },{ lock_mode: 1 }]
 

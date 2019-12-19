@@ -9,13 +9,14 @@ App\Entity\User:
             mappedBy: user
     manyToOne:
         photo:
+            cascade: [persist]
             targetEntity: File
     id:
         id:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         username:
             type: string

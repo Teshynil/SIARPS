@@ -2,6 +2,7 @@
 ###> symfony/framework-bundle ###
 /public/bundles/
 /var/
+/data/
 /vendor/
 ###< symfony/framework-bundle ###
 

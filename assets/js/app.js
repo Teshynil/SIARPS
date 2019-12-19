@@ -25,6 +25,8 @@ $("[fallback-src]").each(function () {
 require('symfony-collection/jquery.collection.js');
 require('popper.js/dist/umd/popper.js');
 require('bootstrap/dist/js/bootstrap.js');
+const bsCustomFileInput=require('bs-custom-file-input/dist/bs-custom-file-input.js')
+global.bsCustomFileInput = bsCustomFileInput;
 require('@fortawesome/fontawesome-free/js/all.js');
 const bootbox = require('bootbox/bootbox.all.js');
 global.bootbox = bootbox;
@@ -47,6 +49,9 @@ $('[bootbox-alert]').each(function () {
 });
 $('[data-toggle="tooltip"]').tooltip();
 $('[data-toggle="popover"]').popover();
+$(document).ready(function () {
+  bsCustomFileInput.init();
+});
 $(".letterpic").letterpic();
 $('.symfony-collection').each(function () {
     $(this).collection({

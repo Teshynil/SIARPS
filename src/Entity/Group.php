@@ -6,14 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Group extends Properties {
 
-    private $id;
+    
     private $name;
     private $description;
     private $dn;
 
-    public function getId(): ?string {
-        return $this->id;
-    }
+    
 
     public function getName(): ?string {
         return $this->name;

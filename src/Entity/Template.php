@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\File;
+
 class Template extends Properties 
 {
-    private $id;
+    
 
     private $name;
 
@@ -14,10 +16,7 @@ class Template extends Properties
 
     private $file;
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
+    
 
     public function getName(): ?string
     {
@@ -53,6 +52,11 @@ class Template extends Properties
         $this->settings = $settings;
 
         return $this;
+    }
+    
+    public function getSetting(string $key,$default=null)
+    {
+        return isset($this->settings[$key])?$this->settings[$key]:$default;
     }
     
     public function setSetting(string $key, $value): self

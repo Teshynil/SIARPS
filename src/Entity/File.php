@@ -4,14 +4,11 @@ namespace App\Entity;
 
 use DateTime;
 use DateTimeInterface;
-use JsonSerializable;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File as SysFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class File extends Properties {
 
-    private $id;
     private $path;
     private $name;
     private $mimeType;
@@ -20,6 +17,18 @@ class File extends Properties {
     private $modificationDate;
     private $valid;
     private $file;
+
+    public static function createFromUploadedFile(UploadedFile $uFile): File {
+        $originalFilename = pathinfo($uFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeName = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+        $file = new File("", $safeName);
+        $file->size = $uFile->getSize();
+        $file->mimeType = $uFile->getMimeType();
+        $file->creationDate = new \DateTime();
+        $file->modificationDate = $file->creationDate;
+        $file->file = null;
+        return $file;
+    }
 
     public function __construct(string $path, string $name) {
         $this->path = $path;
@@ -49,8 +58,8 @@ class File extends Properties {
     }
 
     public function update() {
-        if ($this->path !== $this->file->getPathname()) {
-            $this->file = new SysFile($path, false);
+        if ($this->file == null || $this->path !== $this->file->getPathname()) {
+            $this->file = new SysFile($this->path, false);
             $this->valid = $this->file->isFile();
             $this->modificationDate = new DateTime();
             if ($this->valid) {
@@ -64,10 +73,6 @@ class File extends Properties {
             }
         }
         return $this;
-    }
-
-    public function getId(): ?string {
-        return $this->id;
     }
 
     public function getPath(): ?string {
@@ -127,8 +132,18 @@ class File extends Properties {
         return $this;
     }
 
-    public function getFile() {
+    public function getFile(): ?SysFile {
         return $this->file;
+    }
+
+    public function readFile(): string {
+        $out="";
+        if ($this->getValid()) {
+            $f = $this->getFile()->openFile();
+            $out=$f->fread($f->getSize());
+            $f=null;
+        }
+        return $out;
     }
 
     public function setCreationDate(\DateTimeInterface $creationDate): self {

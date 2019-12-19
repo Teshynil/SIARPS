@@ -9,7 +9,7 @@ App\Entity\Template:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         name:
             type: string

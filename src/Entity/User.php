@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends Properties implements UserInterface, EquatableInterface {
 
-    private $id;
+    
     private $dn;
     private $email;
     private $password;
@@ -27,9 +27,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
         parent::__construct();
     }
 
-    public function getId(): ?string {
-        return $this->id;
-    }
+    
 
     public function getEmail(): ?string {
         return $this->email;
@@ -171,6 +169,16 @@ class User extends Properties implements UserInterface, EquatableInterface {
     public function setAdminMode(bool $adminMode): self {
         $this->adminMode = $adminMode;
         return $this;
+    }
+    
+    public function isLdapLogin(): bool {
+        $output=false;
+        if(!empty($this->getDn())){
+            if($this->getDn()[0]!='#'){
+                $output=true;
+            }
+        }
+        return $output;
     }
 
 }

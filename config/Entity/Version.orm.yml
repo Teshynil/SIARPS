@@ -12,7 +12,7 @@ App\Entity\Version:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         date:
             type: datetime

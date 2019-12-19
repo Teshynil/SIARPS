@@ -3,14 +3,6 @@ const CodeMirror = require('codemirror');
 global.CodeMirror = global.CodeMirror = CodeMirror;
 require('codemirror/mode/yaml/yaml.js');
 $('#form-fields').hide();
-$('#template_type').change(function(){
-    if(this.value=="Form"){
-        $('#form-fields').show();
-    }else{
-        $('#form-fields').hide();
-    }
-});
-
 $('.symfony-collection').each(function () {
     $(this).collection({
         allow_up: $(this).data('allowUp'),
@@ -37,7 +29,7 @@ $('.symfony-collection').each(function () {
                 });
                 var textarea = this;
                 code.on('change', function (i) {
-                    textarea.value = i.getValue().replace(/\t/g,"    ");
+                    textarea.value = i.getValue().replace(/\t/g, "    ");
                 });
             });
         },
@@ -46,6 +38,22 @@ $('.symfony-collection').each(function () {
         drag_drop: true,
         fade_in: false,
         fade_out: false
+    });
+
+});
+
+$('.type-field-collapser').each(function () {
+    if (this.value == "Form") {
+        $('#form-fields').show();
+    } else {
+        $('#form-fields').hide();
+    }
+    $(this).change(function () {
+        if (this.value == "Form") {
+            $('#form-fields').show();
+        } else {
+            $('#form-fields').hide();
+        }
     });
 
 });

@@ -43,12 +43,16 @@ me:
     controller: App\Controller\UsersController::user
 
 user-edit:
-    path: /user/edit/{id}
-    controller: App\Controller\UsersController::user
+    path: /user/{id}/edit
+    controller: App\Controller\UsersController::edit
 
+user-new:
+    path: /user/new
+    controller: App\Controller\UsersController::new
+    
 user:
     path: /user/{id}
-    controller: App\Controller\UsersController::user
+    controller: App\Controller\UsersController::user   
 
 projects:
     path: /projects
@@ -77,9 +81,9 @@ template-new:
 template:
     path: /template/{id}
     controller: App\Controller\TemplateController::template
-
-template-settings:
-    path: /template/{id}/settings
+    
+template-edit:
+    path: /template/{id}/edit
     controller: App\Controller\TemplateController::edit
 
 template-view:

@@ -32,7 +32,7 @@ final class Ldap implements LdapInterface {
         'ext_ldap' => 'Symfony\Component\Ldap\Adapter\ExtLdap\Adapter',
     ];
 
-    public function __construct(Adapter $adapter, Array $ldapSettings) {
+    public function __construct(Adapter $adapter, $ldapSettings) {
         $this->adapter = $adapter;
         $this->LDAP = new ArrayObject($ldapSettings);
         $this->LDAP->setFlags(ArrayObject::ARRAY_AS_PROPS);

@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 
 class Project extends Properties 
 {
-    private $id;
+    
 
     private $name;
 
@@ -23,10 +23,7 @@ class Project extends Properties
         parent::__construct();
     }
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
+    
 
     public function getName(): ?string
     {

@@ -2,12 +2,10 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 
 class Properties {
-
+    protected $id;
     protected $owner;
     protected $group;
     protected $ownerPermissions;
@@ -17,11 +15,17 @@ class Properties {
     protected $lockState;
     protected $lockedBy;
     
-    public function __construct() {
+    public function __construct(bool $generateUUID=true) {
+        $this->id=Uuid::uuid1();
         $this->groupsPermissions=[];
         $this->lockState=false;
     }
 
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+    
     public function getOwnerPermissions(): ?int {
         return $this->ownerPermissions;
     }

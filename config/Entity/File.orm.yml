@@ -6,7 +6,7 @@ App\Entity\File:
             type: guid
             id: true
             generator:
-                strategy: UUID
+                strategy: NONE
     fields:
         path:
             type: string

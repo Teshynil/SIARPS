@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 
 class Document extends Properties {
 
-    private $id;
+    
     private $name;
     private $creationDate;
 
@@ -23,9 +23,7 @@ class Document extends Properties {
         parent::__construct();
     }
 
-    public function getId(): ?string {
-        return $this->id;
-    }
+    
 
     public function getName(): ?string {
         return $this->name;
