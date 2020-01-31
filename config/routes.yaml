@@ -66,9 +66,9 @@ project:
     path: /project/{id}
     controller: App\Controller\ProjectController::project
 
-project-settings:
+project-edit:
     path: /project/{id}/settings
-    controller: App\Controller\ProjectController::index
+    controller: App\Controller\ProjectController::edit
 
 templates:
     path: /templates
@@ -95,7 +95,7 @@ template-view:
 document:
     path: /document/{id}
     controller: App\Controller\DocumentController::document
-    
+
 document-settings:
     path: /document/{id}/settings
     controller: App\Controller\DocumentController::document
@@ -104,6 +104,14 @@ version-new:
     path: /document/{id}/new
     controller: App\Controller\DocumentController::newVersion
 
+version-view:
+    path: /document/view/{id}
+    controller: App\Controller\DocumentController::viewVersion
+    
+version-print:
+    path: /document/print/{id}
+    controller: App\Controller\DocumentController::printVersion
+
 settings:
     path: /settings
     controller: App\Controller\SettingsController::index
@@ -111,3 +119,11 @@ settings:
 settings-action:
     path: /settings/{action}
     controller: App\Controller\SettingsController::action
+
+entity-lock:
+    path: /lock/{entity}/{id}
+    controller: App\Controller\SettingsController::lock
+
+entity-unlock:
+    path: /unlock/{entity}/{id}
+    controller: App\Controller\SettingsController::unlock

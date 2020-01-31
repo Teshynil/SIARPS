@@ -14,6 +14,7 @@ require('@fortawesome/fontawesome-free/css/all.css');
 require('simple-line-icons/css/simple-line-icons.css');
 require('../css/vendor-custom/pace.css');
 require('toastr/build/toastr.min.css');
+require('daterangepicker/daterangepicker.css');
 //JS
 const $ = require('jquery');
 global.$ = global.jQuery = $;
@@ -25,7 +26,9 @@ $("[fallback-src]").each(function () {
 require('symfony-collection/jquery.collection.js');
 require('popper.js/dist/umd/popper.js');
 require('bootstrap/dist/js/bootstrap.js');
-const bsCustomFileInput=require('bs-custom-file-input/dist/bs-custom-file-input.js')
+require('moment');
+require('daterangepicker');
+const bsCustomFileInput = require('bs-custom-file-input/dist/bs-custom-file-input.js')
 global.bsCustomFileInput = bsCustomFileInput;
 require('@fortawesome/fontawesome-free/js/all.js');
 const bootbox = require('bootbox/bootbox.all.js');
@@ -50,9 +53,91 @@ $('[bootbox-alert]').each(function () {
 $('[data-toggle="tooltip"]').tooltip();
 $('[data-toggle="popover"]').popover();
 $(document).ready(function () {
-  bsCustomFileInput.init();
+    bsCustomFileInput.init();
 });
 $(".letterpic").letterpic();
+var daterangepickerLocale = {
+    "format": "DD/MM/YYYY",
+    "separator": " - ",
+    "applyLabel": "Aplicar",
+    "cancelLabel": "Cancelar",
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "customRangeLabel": "Personalizado",
+    "weekLabel": "S",
+    "daysOfWeek": [
+        "Do",
+        "Lu",
+        "Ma",
+        "Mi",
+        "Ju",
+        "Vi",
+        "Sa"
+    ],
+    "monthNames": [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+    ],
+    "firstDay": 1
+};
+
+$('a[soft]').click(function(e){
+    e.preventDefault();
+    $.ajax({
+        url: this.href,
+    }).always(function(){
+        location.reload();
+    });
+});
+
+$('.input-group input[type=range]').each(function () {
+    var label = $($(this).parents('.range-input')[0]).find('span.input-group-text');
+    var input = $(this);
+    label.html(this.value);
+    this.oninput = function () {
+        label.html(this.value);
+    };
+});
+
+$("input.datetimepicker").each(function () {
+    $(this).before('<div class="picker form-control btn-secondary"><i class="fa fa-calendar"></i>&nbsp;<span></span></div>');
+    var picker = $(this).parent().find('div.picker');
+    var input = $(this);
+    input.hide();
+    function cb(start, end) {
+        var time = input.data('time') == 'time';
+        if (input.data('type') == 'simple') {
+            picker.find('span').html(start.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')));
+            input.val(start.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')));
+        } else {
+            picker.find('span').html(start.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')) + ' - ' + end.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')));
+            input.val(start.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')) + ' - ' + end.format('DD/MM/YYYY' + (time ? ' hh:mm' : '')));
+        }
+    }
+    ;
+    picker.daterangepicker({
+        "locale": daterangepickerLocale,
+        "singleDatePicker": $(this).data('type') == 'simple' ? true : false,
+        "timePicker": $(this).data('time') == 'time' ? true : false,
+        "showDropdowns": true,
+        "startDate": new Date(),
+        "endDate": new Date(),
+        "timePicker24Hour": true,
+        "minDate": $(this).data('minDate') ? $(this).data('minDate') : "01/01/2000",
+        "maxDate": $(this).data('maxDate') ? $(this).data('maxDate') : "12/31/2099"
+    }, cb);
+});
+
 $('.symfony-collection').each(function () {
     $(this).collection({
         allow_up: $(this).data('allowUp'),

@@ -1,10 +1,9 @@
 <?php
 namespace App\Form\Requests;
 
-use App\Entity\Group;
-use App\Entity\User;
+use App\Entity\Template;
+use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Range;
 
 class CreateTemplateRequest extends CreatePropertiesRequest {
     
@@ -27,7 +26,7 @@ class CreateTemplateRequest extends CreatePropertiesRequest {
     public $templateForm = [];
 
     public function createEntity() {
-        $template = new \App\Entity\Template();
+        $template = new Template();
         $template->setName($this->name)
                 ->setType($this->type);
         parent::fillProperties($template);

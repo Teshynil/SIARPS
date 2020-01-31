@@ -12,7 +12,7 @@
                 <span class="h3"><i class="icon-layers"></i>&nbsp; {{ project.group.name }} | {{ project.name }}</span>
                 {% if hasWrite(project) %}
                     <div class="card-header-actions">
-                        <a class="btn btn-pill btn-secondary" href="{{ path('project-settings',{'id':project.id}) }}"><i class="fa fa-cog"></i>&nbsp;Configuración</a>
+                        <a class="btn btn-pill btn-secondary" href="{{ path('project-edit',{'id':project.id}) }}"><i class="fa fa-cog"></i>&nbsp;Configuración</a>
                     </div>
                 {% endif %}
             </div>
@@ -33,12 +33,21 @@
                             <tr>
                                 <td>{{ document.name }}</td>
                                 <td>{{ document.template.type }}</td>
-                                <td>{{ document.versions.date|default('Sin actualización') }}</td>
-                                <td><span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span></td>
+                                <td>{{ document.versions|last !=false?document.versions|last.date|date:null|default('Sin actualización') }}</td>
+                                <td>
+                                    <span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span>
+                                    <span class="badge badge-{{document.versions|reduce((r,version)=> r and version.lockState,true)?'success':'danger'}}">{{ document.versions|reduce((r,version)=> r and version.lockState,true)?'Completado':'Incompleto' }}</span>
+                                </td>
                                 <td>
                                     <a class="btn btn-info" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-eye"></i></a>
+                                        {% if document.lockState %}
+                                        <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-lock"></i></a>
+                                        <a class="btn btn-success" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-file-alt"></i></a>
+                                        {% else %}
+                                        <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-unlock"></i></a>
+                                        {% endif %}
                                 </td>
-                                
+
                             </tr>
                         {% else %}
                             <tr>

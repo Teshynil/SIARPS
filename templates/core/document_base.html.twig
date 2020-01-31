@@ -36,6 +36,7 @@
                     min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
                     max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
                 {% endif %}
+                overflow: hidden;
             }
             .page {
                 {% if page.orientation|default('portrait')=='landscape' %}
@@ -68,7 +69,7 @@
         </style>
     </head>
     <body class="document">
-        {% block document %}
+        {% if template is not defined %}
             <div class="header">
                 <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
                 <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
@@ -255,7 +256,9 @@
                     </tbody>
                 </table>
             </div>
-        {% endblock %}
+        {%else%}
+            {{ ((template.external~template.body)|default(''))|evaluate(false) }}
+        {% endif %}
         {{ encore_entry_script_tags('print') }}
     </body>
 </html>

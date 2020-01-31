@@ -1,0 +1,58 @@
+{% extends "core/base.html.twig" %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('viewDocument') }}
+    <style type="text/css">
+        .header{
+            height: {{page.margin.header|default('2')}}cm;
+            width: 100%;
+            text-align: center;
+        }
+        .footer{
+            height: {{page.margin.footer|default('2')}}cm;
+            width: 100%;
+            text-align: center;
+        }
+        .page-body {
+            {% if page.orientation|default('portrait')=='landscape' %}
+                height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+            {%else%}
+                height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+            {% endif %}
+            overflow: hidden;
+        }
+        .page {
+            {% if page.orientation|default('portrait')=='landscape' %}
+                width: {{page.size.height|default('27.94')}}cm;
+                min-height: {{page.size.width|default('21.59')}}cm;
+                max-height: {{page.size.width|default('21.59')}}cm;
+            {%else%}
+                width: {{page.size.width|default('21.59')}}cm;
+                min-height: {{page.size.width|default('21.59')}}cm;
+                max-height: {{page.size.height|default('27.94')}}cm;
+            {% endif %}
+            padding-left: {{ page.margin.left|default('2')}}cm;
+            padding-right: {{ page.margin.right|default('2')}}cm;
+            overflow:hidden;
+        }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('viewDocument') }}
+{% endblock %}
+{% block body %}
+    <div class="card">
+            <div class="card-body">
+                <a href="{{ path('version-print',{'id':entity.id}) }}" target="_blank" class="btn btn-primary"><i class="fas fa-print"></i> Vista de impresión</a>
+            </div>
+        </div>
+    <div class="animated fadeIn row">
+        
+        <div class="document" style="zoom: 100%;margin: auto;">
+            {{ ((template.external~template.body)|default(''))|evaluate(false) }}
+        </div>
+    </div>
+{% endblock %}

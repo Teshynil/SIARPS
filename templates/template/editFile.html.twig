@@ -4,40 +4,40 @@
     {{ encore_entry_link_tags('editTemplateFile') }}
     <style type="text/css">
         .header{
-                height: {{page.margin.header|default('2')}}{{page.unit|default('cm')}};
-                width: 100%;
-                text-align: center;
-            }
-            .footer{
-                height: {{page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                width: 100%;
-                text-align: center;
-            }
-            .page-body {
-                {% if page.orientation|default('portrait')=='landscape' %}
-                    height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                {%else%}
-                    height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                {% endif %}
-            }
-            .page {
-                {% if page.orientation|default('portrait')=='landscape' %}
-                    width: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                {%else%}
-                    width: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
-                {% endif %}
-                padding-left: {{ page.margin.left|default('2')}}{{page.unit|default('cm')}};
-                padding-right: {{ page.margin.right|default('2')}}{{page.unit|default('cm')}};
-                overflow:hidden;
-            }
+            height: {{page.margin.header|default('2')}}cm;
+            width: 100%;
+            text-align: center;
+        }
+        .footer{
+            height: {{page.margin.footer|default('2')}}cm;
+            width: 100%;
+            text-align: center;
+        }
+        .page-body {
+            {% if page.orientation|default('portrait')=='landscape' %}
+                height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+            {%else%}
+                height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+            {% endif %}
+        }
+        .page {
+            {% if page.orientation|default('portrait')=='landscape' %}
+                width: {{page.size.height|default('27.94')}}cm;
+                min-height: {{page.size.width|default('21.59')}}cm;
+                max-height: {{page.size.width|default('21.59')}}cm;
+            {%else%}
+                width: {{page.size.width|default('21.59')}}cm;
+                min-height: {{page.size.width|default('21.59')}}cm;
+                max-height: {{page.size.height|default('27.94')}}cm;
+            {% endif %}
+            padding-left: {{ page.margin.left|default('2')}}cm;
+            padding-right: {{ page.margin.right|default('2')}}cm;
+            overflow:hidden;
+        }
     </style>
 {% endblock %}
 {% block javascripts %}
@@ -62,7 +62,7 @@
                         {{ form_row(form.size) }}
                         {{ form_row(form.orientation) }}
                         {% for item in form.margin.children %}
-                        {{ form_row(item) }}
+                            {{ form_row(item) }}
                         {% endfor %}
                     </div>
                 </div>
@@ -81,7 +81,7 @@
 
         </div>
         <div class="card col-6 document" style="zoom: 60%;">
-            {{ page.template|default('')|evaluate }}
+            {{ (form.template.templateExternal.vars.value ~ form.template.templateBody.vars.value)|default('')|evaluate }}
         </div>
     </div>
 {% endblock %}

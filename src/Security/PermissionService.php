@@ -3,10 +3,11 @@
 namespace App\Security;
 
 use App\Entity\Properties;
+use App\Entity\Setting;
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Security;
 
 class PermissionService {
@@ -48,7 +49,7 @@ class PermissionService {
             $hasAccess = false;
             if ($user instanceof Properties) {
                 $group = $user->getGroup();
-                if ($user->getAdminMode() || $this->entityManager->getRepository(\App\Entity\Setting::class)->getValue("adminGroup") == $group) {
+                if ($user->getAdminMode() || $this->entityManager->getRepository(Setting::class)->getValue("adminGroup") == $group) {
                     return true;
                 }
                 if ($object->getOwner() == $user) {

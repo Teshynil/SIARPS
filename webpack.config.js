@@ -27,6 +27,7 @@ Encore
         .addEntry('projects', './assets/js/views/projects.js')
         .addEntry('template', './assets/js/views/template.js')
         .addEntry('editTemplateFile', './assets/js/views/editTemplateFile.js')
+        .addEntry('viewDocument', './assets/js/views/viewDocument.js')
 
 //        .addEntry('calendar', './assets/js/views/calendar.js')
 //        .addEntry('charts', './assets/js/views/charts.js')

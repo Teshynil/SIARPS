@@ -2,7 +2,10 @@
 
 namespace App;
 
+use App\Helpers\DoctrineDateTimeType;
+use App\Helpers\DoctrineFileType;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -10,14 +13,15 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
-Type::addType('file', 'App\Helpers\DoctrineFileType');
-
 class Kernel extends BaseKernel {
 
     use MicroKernelTrait;
 
     private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    public function boot() {
+        parent::boot();
+    }
     public function registerBundles(): iterable {
         $contents = require $this->getProjectDir() . '/config/bundles.php';
         foreach ($contents as $class => $envs) {

@@ -20,9 +20,9 @@ class ResourceController extends SIARPSController {
             $file->update();
             if ($file->isValid()) {
                 if ($method == "view") {
-                    return $this->file($file->getPath(), $file->getName(), ResponseHeaderBag::DISPOSITION_INLINE);
+                    return $this->file($file->getPath(), $file->getName().'.'.$file->getFile()->guessExtension(), ResponseHeaderBag::DISPOSITION_INLINE);
                 } elseif ($method == "download") {
-                    return $this->file($file->getPath(), $file->getName(), ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+                    return $this->file($file->getPath(), $file->getName().'.'.$file->getFile()->guessExtension(), ResponseHeaderBag::DISPOSITION_ATTACHMENT);
                 }
             } else {
                 throw new ConflictHttpException("El archivo no concuerda con el almacenado");

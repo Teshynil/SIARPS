@@ -9,14 +9,18 @@
 namespace App\Helpers;
 
 use App\Security\PermissionService;
+use LogicException;
+use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 
 abstract class SIARPSController extends AbstractController{
     
+    
     protected function getPermissionService(): PermissionService{
         if (!$this->container->has('security.permission')) {
-            throw new \LogicException('Unknown Exception on PermissionService');
+            throw new LogicException('Unknown Exception on PermissionService');
         }
 
         return $this->container->get('security.permission');
@@ -25,7 +29,8 @@ abstract class SIARPSController extends AbstractController{
     public static function getSubscribedServices(){
         return array_merge(parent::getSubscribedServices(),
                 [
-                    'security.permission'=>'?'.PermissionService::class
+                    'security.permission'=>'?'.PermissionService::class,
+                    FileSaver::class=>'?'.FileSaver::class
                 ]);
     }
 }

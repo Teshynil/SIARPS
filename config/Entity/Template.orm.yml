@@ -4,6 +4,7 @@ App\Entity\Template:
     manyToOne:
         file:
             targetEntity: File
+            cascade: [persist]
     id:
         id:
             type: guid

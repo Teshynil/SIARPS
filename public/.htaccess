@@ -13,6 +13,7 @@ php_value session.auto_start 0
 # when compiling LESS/Sass/CoffeScript assets.
 # Options FollowSymlinks
 
+
 # Disabling MultiViews prevents unwanted negotiation, e.g. "/index" should not resolve
 # to the front controller "/index.php" but be rewritten to "/index.php/index".
 <IfModule mod_negotiation.c>

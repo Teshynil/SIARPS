@@ -36,6 +36,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
     private $csrfTokenManager;
     private $passwordEncoder;
     private $ldapResult;
+    private $resultUser;
 
     public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Ldap $ldap) {
         $this->entityManager = $entityManager;
@@ -86,7 +87,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 $this->ldapResult = $result;
                 $user = $this->createUserFromLdap($result);
             }
-            
+
             if ($user->getPassword() == null) {
                 if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("guestGroup")) {
                     throw new CustomUserMessageAuthenticationException('Usuario del Directorio Activo verificado. Favor de solicitar a un administrador de grupo añadirlo a un equipo.');
@@ -94,7 +95,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 $this->changeLdapGroup($user);
                 $this->verifyLdapOwner($user);
             }
-
+            $this->resultUser = $user;
             return $user;
         } catch (LdapConnectionTimeout $exc) {
             throw new CustomUserMessageAuthenticationException('No se tiene acceso al Directorio Activo.');
@@ -104,7 +105,11 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
     public function createUserFromLdap($ldapUser): User {
         $user = new User();
         $dn = $ldapUser->getAttribute('distinguishedName')[0];
-        $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+        $config = $this->entityManager->getRepository(Setting::class)->getValue("groupConfig");
+        $group = null;
+        if ($config == "INTERNAL") {
+            $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
+        }
         $user->setFirstName($ldapUser->getAttribute('givenName')[0])
                 ->setLastName($ldapUser->getAttribute('sn')[0])
                 ->setUsername($ldapUser->getAttribute('sAMAccountName')[0])
@@ -131,7 +136,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                     throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo sin administrador en el Active Directory, una vez exista y acceda al sistema el administrador del grupo se desbloqueara el acceso.');
                 }
                 $ldapOwner = $ldapOwner[0];
-                $owner = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $ldapOwner->getAttribute($this->ldap->getLdapParams()["SIARPS_LOGIN_ATTRIBUTE"])]);
+                $owner = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $ldapOwner->getAttribute($this->ldap->LOGIN_ATTR)]);
                 if ($owner == null) {
                     throw new CustomUserMessageAuthenticationException('Tu usuario pertenece a un grupo en el que el administrador no a accedido al sistema, una vez acceda, se desbloqueara el acceso.');
                 } else {
@@ -215,9 +220,9 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         $groups = $ldapUser->getAttribute('memberOf');
         $type = 0;
         foreach ($groups as $group) {
-            if ($group == $this->ldap->getLdapParams()->SIARPS_LDAP_ADMIN_GROUP_DN) {
+            if ($group == $this->ldap->ADMIN_GROUP) {
                 $type |= Ldap::ADMIN;
-            } else if ($group == $this->ldap->getLdapParams()->SIARPS_LDAP_USER_GROUP_DN) {
+            } else if ($group == $this->ldap->USER_GROUP) {
                 $type |= Ldap::USER;
             }
         }
@@ -226,6 +231,8 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
         $user = $token->getUser();
+        $this->resultUser;
+        $adminGroup = $this->entityManager->getRepository(Setting::class)->getValue("adminGroup");
         if ($user->getPassword() == null) {
             if ($this->ldapResult == null) {
                 $this->ldapResult = $this->ldap->findUserQuery($token->getUsername());
@@ -235,7 +242,7 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 $request->getSession()->set("selectLoginMode", true);
                 return new RedirectResponse($this->urlGenerator->generate('selectLoginMode'));
             }
-        } else if ($user->getGroup() == $this->entityManager->getRepository(Setting::class)->getValue("adminGroup")) {
+        } else if ($user->getGroup() == $adminGroup) {
             $request->getSession()->set("selectLoginMode", true);
             return new RedirectResponse($this->urlGenerator->generate('selectLoginMode'));
         }

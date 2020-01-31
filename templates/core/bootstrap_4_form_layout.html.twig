@@ -118,6 +118,15 @@
     {%- endif -%}
 {%- endblock percent_widget %}
 
+{% block range_widget -%}
+        <div class="input-group range-input">
+            {{ parent() }}
+            <div class="input-group-append">
+                <span class="input-group-text"></span>
+            </div>
+        </div>
+{%- endblock range_widget %}
+
 {% block file_widget -%}
     <{{ element|default('div') }} class="custom-file">
     {%- set type = type|default('file') -%}
@@ -456,21 +465,33 @@
             </fieldset>
         </tr>
     {%- else -%}
-        <div class="card">
-            <div class="card-header">
-                <a class="btn btn-secondary btn-minimize" href="#" data-toggle="collapse" data-target="#collapse{{ form.vars.id }}" aria-expanded="true"><i class="icon-arrow-up"></i></a>
-                <span class="h3" data-sync-mode="text" id="header-{{ form.vars.id }}"></span>
-                <div class="card-header-actions {{form.parent.vars.id}}-collection-actions">
+        {%- if form.parent is not null -%}
+            <div class="card">
+                <div class="card-header">
+                    <a class="btn btn-secondary btn-minimize" href="#" data-toggle="collapse" data-target="#collapse{{ form.vars.id }}" aria-expanded="true"><i class="icon-arrow-up"></i></a>
+                    <span class="h3" data-sync-mode="text" id="header-{{ form.vars.id }}"></span>
+                    <div class="card-header-actions {{form.parent.vars.id}}-collection-actions">
+                    </div>
+                </div>
+                <div class="card-body collapse show" id="collapse{{ form.vars.id }}">
+                    <{{ element|default('div') }} class="form-group" >
+                    {{- form_label(form) -}}
+                    {{- form_widget(form, widget_attr) -}}
+                    {{- form_help(form) -}}
+                    </{{ element|default('div') }}>
                 </div>
             </div>
-            <div class="card-body collapse show" id="collapse{{ form.vars.id }}">
-                <{{ element|default('div') }} class="form-group" >
-                {{- form_label(form) -}}
-                {{- form_widget(form, widget_attr) -}}
-                {{- form_help(form) -}}
-                </{{ element|default('div') }}>
+        {%- else -%}
+            <div class="card">
+                <div class="card-body collapse show">
+                    <{{ element|default('div') }} class="form-group" >
+                    {{- form_label(form) -}}
+                    {{- form_widget(form, widget_attr) -}}
+                    {{- form_help(form) -}}
+                    </{{ element|default('div') }}>
+                </div>
             </div>
-        </div>
+        {%-  endif-%}
     {%- endif -%}
 {%- else -%}
     <{{ element|default('div') }} class="form-group" >

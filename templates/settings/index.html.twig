@@ -32,17 +32,31 @@
             </div>
             <div class="col-md-9">
                 {{ form_start(form) }}
-                <div class="card" style="height: 30em" id="setting-general">
+                <div class="card" style="min-height: 30em" id="setting-general">
                     <div class="card-header bg-gray-300">
                         General
                     </div>
                     <div class="card-body">
                         {{ form_row(form.adminGroup) }}
                         {{ form_row(form.groupConfig) }}
+                        {{ form_row(form.guestGroup) }}
                         {{ form_row(form.ldapGroupConfig) }}
+                        {{ form_row(form.ldapHost) }}
+                        {{ form_row(form.ldapPort) }}
+                        {{ form_row(form.ldapEncryption) }}
+                        {{ form_row(form.ldapReadUser) }}
+                        {{ form_row(form.ldapReadUserPassword) }}
+                        {{ form_row(form.ldapBaseDN) }}
+                        {{ form_row(form.ldapUserGroupDN) }}
+                        {{ form_row(form.ldapAdminGroupDN) }}
+                        {{ form_row(form.ldapOwnerGroupDN) }}
+                        {{ form_row(form.ldapLoginAttr) }}
+                        {{ form_row(form.ldapFirstNameAttr) }}
+                        {{ form_row(form.ldapLastNameAttr) }}
+                        {{ form_row(form.ldapEmailAttr) }}
                     </div>
                 </div>
-                <div class="card" style="height: 30em" id="setting-seguridad">
+                <div class="card" style="min-height: 30em" id="setting-seguridad">
                     <div class="card-header bg-gray-300">
                         Seguridad
                     </div>
@@ -50,7 +64,7 @@
 
                     </div>
                 </div>
-                <div class="card" style="height: 30em" id="setting-usuarios">
+                <div class="card" style="min-height: 30em" id="setting-usuarios">
                     <div class="card-header bg-gray-300">
                         Usuarios
                     </div>

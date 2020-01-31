@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Form\Requests\EditTemplateViewRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -49,11 +50,27 @@ class TemplateViewType extends AbstractType {
                         ->add('bottom', NumberType::class, ['label' => 'Margen inferior'])
                         ->add('footer', NumberType::class, ['label' => 'Tamaño del pie de pagina'])
                 )
-                ->add('template', TextareaType::class, ['label' => false,
-                    'attr' => [
-                        'class' => 'code-editor'
-                    ]
-                ])
+                ->add($builder->create('template', FormType::class, [
+                            'by_reference' => false,
+                            'label' => 'Plantilla',
+                            'inherit_data' => true,
+                            'data_class' => $options['data_class']
+                        ])
+                        ->add('templateFromWord', FileType::class, ['label' => 'Leer desde Word',
+                            'required'=>false,
+                            'help'=>'Para enviar la plantilla desde word es necesario guardarlo como html y comprimir en un archivo Zip el archivo y la carpeta generada.'
+                        ])
+                        ->add('templateExternal', TextareaType::class, ['label' => 'Cabecera y Pie de pagina',
+                            'attr' => [
+                                'class' => 'code-editor'
+                            ]
+                        ])
+                        ->add('templateBody', TextareaType::class, ['label' => 'Cuerpo',
+                            'attr' => [
+                                'class' => 'code-editor'
+                            ]
+                        ])
+                )
                 ->add('updateView', SubmitType::class, ['label' => 'Actualizar vista'])
                 ->add('saveView', SubmitType::class, ['label' => 'Guardar'])
         ;

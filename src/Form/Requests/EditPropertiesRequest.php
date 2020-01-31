@@ -51,4 +51,9 @@ class EditPropertiesRequest {
      */
     public $locked;
     
+    public function fillProperties(\App\Entity\Properties &$object) {
+        $object->setPermissions($this->ownerPermissions, $this->groupPermissions, $this->otherPermissions)
+                ->setOwner($this->owner)
+                ->setGroup($this->group);
+    }
 }

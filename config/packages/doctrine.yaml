@@ -31,10 +31,10 @@ doctrine:
         mappings:
             App:
                 is_bundle: false
-                #type: annotation
-                #dir: '%kernel.project_dir%/src/Entity'
-                type: yml
-                dir: '%kernel.project_dir%/config/Entity'
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                #type: yml
+                #dir: '%kernel.project_dir%/config/Entity'
                 prefix: 'App\Entity'
                 alias: App
         dql:

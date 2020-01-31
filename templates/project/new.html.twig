@@ -19,22 +19,7 @@
                     <div class="card-body">
                         {{ form_row(form.name) }}
                         {{ form_row(form.description) }}
-                        {{ form_row(form.owner) }}
-                        {{ form_row(form.group) }}
-                        <div class="row">
-                            <div class="form-group col">
-                                {{ form_label(form.ownerPermissions) }}
-                                {{ form_widget(form.ownerPermissions) }}
-                            </div>
-                            <div class="form-group col">
-                                {{ form_label(form.groupPermissions) }}
-                                {{ form_widget(form.groupPermissions) }}
-                            </div>
-                            <div class="form-group col">
-                                {{ form_label(form.otherPermissions) }}
-                                {{ form_widget(form.otherPermissions) }}
-                            </div>
-                        </div>
+                        {{ form_row(form.properties) }}
                     </div>
                 </div>
                 <div class="card">

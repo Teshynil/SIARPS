@@ -29,32 +29,6 @@ services:
                 SIARPS_FIRST_NAME_ATTRIBUTE: '%env(SIARPS_FIRST_NAME_ATTRIBUTE)%'
                 SIARPS_LAST_NAME_ATTRIBUTE: '%env(SIARPS_LAST_NAME_ATTRIBUTE)%'
 
-
-    App\Helpers\EntityLogger:
-        tags:
-        - { name: doctrine.event_listener, event: onFlush }
-
-    App\Helpers\FileUploader:
-        class: App\Helpers\FileUploader
-            
-    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
-        arguments: [!service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] },{ lock_mode: 1 }]
-
-    App\Security\PermissionService:
-        class: App\Security\PermissionService
-    App\Security\Ldap:
-        class: App\Security\Ldap
-
-    Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
-        arguments:
-            -   host: '%env(LDAP_HOST)%'
-                port: 389
-                encryption: tls
-                options:
-                    protocol_version: 3
-                    referrals: false
-    Symfony\Component\Ldap\LdapInterface: '@App\Security\Ldap'
-
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -72,3 +46,26 @@ services:
         arguments: ['%app.db.table_prefix%','%app.db.column_prefix%']
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Helpers\EntityLogger:
+        tags:
+        - { name: doctrine.event_listener, event: onFlush }
+
+    App\Helpers\FileSaver:
+        class: App\Helpers\FileSaver
+        arguments: ['%env(FILE_SAVE_PATH)%']
+        tags:
+            - {name: 'doctrine.orm.entity_listener', event: 'prePersist', entity: 'App\Entity\File'}
+                
+    App\Helpers\FileUploader:
+        class: App\Helpers\FileUploader
+            
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments: [!service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] },{ lock_mode: 1 }]
+
+    App\Security\PermissionService:
+        class: App\Security\PermissionService
+    App\Security\Ldap:
+        class: App\Security\Ldap
+        
+    Symfony\Component\Ldap\LdapInterface: '@App\Security\Ldap'

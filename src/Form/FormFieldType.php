@@ -24,14 +24,14 @@ class FormFieldType extends AbstractType {
                 ->add('description', TextareaType::class, ['label' => 'Descripción','attr'=>['placeholder' => 'Descripción','data-width'=>'15rem']])
                 ->add('type', ChoiceType::class, ['label' => 'Tipo de campo','attr'=>['data-width'=>'10rem'],
                     'choices' => [
-                        'Texto' => TextareaType::class,
-                        'Entero' => IntegerType::class,
-                        'Numero' => NumberType::class,
-                        'Elección' => ChoiceType::class,
-                        'Fecha' => DateType::class,
-                        'Fecha y Hora' => DateTimeType::class,
-                        'Imagen' => FileType::class,
-                        'Archivo' => FileType::class,
+                        'Texto' => 'text',
+                        'Entero' => 'integer',
+                        'Numero' => 'float',
+                        'Elección' => 'choice',
+                        'Fecha' => 'date',
+                        'Fecha y Hora' => 'datetime',
+                        'Imagen' => 'image',
+                        'Archivo' => 'file',
                     ],
                 ])
                 ->add('settings', FieldSettingType::class,['label'=>'Configuración','attr'=>['placeholder' => 'Configuración']])

@@ -1,0 +1,40 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header">
+                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ document.group.name }} | {{ document.project.name }} \ {{ document.name }}</span>
+                <div class="card-header-actions">
+                    <span class="badge badge-warning">Crear una versión nueva bloqueara las versiones anteriores no bloqueadas.</span>
+                </div>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header bg-gray-300">
+                        General
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.properties) }}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-gray-300">
+                        Campos
+                    </div>
+                    <div class="card-body">
+                        {{ form_widget(form.fields) }}
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

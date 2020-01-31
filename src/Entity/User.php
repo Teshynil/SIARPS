@@ -9,18 +9,75 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * User
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ */
 class User extends Properties implements UserInterface, EquatableInterface {
 
-    
-    private $dn;
-    private $email;
-    private $password;
-    private $firstName;
-    private $lastName;
-    private $username;
-    private $notifications;
-    private $photo;
-    private $adminMode = false;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="c_username", type="string", length=180, nullable=false, unique=true)
+     */  
+    protected $username;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_dn", type="string", length=512, nullable=true, unique=true)
+     */
+    protected $dn;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_email", type="string", length=180, nullable=true, unique=true)
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="c_first_name", type="string", length=180)
+     */
+    protected $firstName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="c_last_name", type="string", length=180)
+     */
+    protected $lastName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_password", type="string", nullable=true, unique=false)
+     */
+    protected $password;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", cascade={"persist"})
+     * @ORM\OrderBy({
+     *     "creationDate"="DESC"
+     * })
+     */
+    protected $notifications;
+
+    /**
+     * @var \App\Entity\File
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\File", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="t_photo_id", referencedColumnName="id")
+     * })
+     */
+    protected $photo;
+    protected $adminMode = false;
 
     public function __construct() {
         $this->notifications = new ArrayCollection();

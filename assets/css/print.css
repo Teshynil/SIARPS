@@ -1,7 +1,3 @@
-.document{
-    /* Use a non-white background color to make the content areas stick out from the full page box */
-	background-color: #eee;
-}
 .page {
 	/* Styles for better appearance on screens only -- are reset to defaults in print styles later */
 

@@ -13,9 +13,9 @@
         <div class="card">
             <div class="card-header"><i class="icon-layers"></i> Proyectos
                 {% if hasWrite(app.user.group) %}
-                <div class="card-header-actions">
-                    <a class="btn btn-pill btn-success" href="{{ path('project-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un proyecto</a>
-                </div>
+                    <div class="card-header-actions">
+                        <a class="btn btn-pill btn-success" href="{{ path('project-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un proyecto</a>
+                    </div>
                 {% endif %}
             </div>
             <div class="card-body">
@@ -29,25 +29,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for project in projects %}
-                        <tr>
-                            <td>{{ project.name }}</td>
-                            <td>{{ project.lastUpdate|default('now')|date('d/m/Y H:i:s') }}</td>
-                            <td>
-                                <div class="progress-group m-0 p-1">
-                                    <div class="progress-group-bars">
-                                        <div class="progress progress-xs">
-                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{project.progress|default('55')}}%" aria-valuenow="{{ project.progress|default('55') }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        {% for project in projects %}
+                            <tr>
+                                <td>{{ project.name }}</td>
+                                <td>{{ project.lastUpdate|default('now')|date('d/m/Y H:i:s') }}</td>
+                                <td>
+                                    <div class="progress-group m-0 p-1">
+                                        <div class="progress-group-bars">
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: {{project.summary.currentLocked.data.avance|default('0')}}%" aria-valuenow="{{ project.summary.currentLocked.data.avance|default('0') }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
                                         </div>
+                                        <div class="ml-2"><span class="h6">{{project.summary.currentLocked.data.avance|default('No definido')}}%</span></div>
                                     </div>
-                                            <div class="ml-2"><span class="h6">{{project.progress|default('55')}}%</span></div>
-                                </div>
-                            </td>
-                            <td>
-                                <a class="btn btn-info" href="{{ path('project',{'id':project.id}) }}"><i class="fas fa-eye"></i></a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                                </td>
+                                <td>
+                                    <a class="btn btn-info" href="{{ path('project',{'id':project.id}) }}"><i class="fas fa-eye"></i></a>
+                                        {% if project.lockState %}
+                                        <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':project.id,'entity':class(project)}) }}"><i class="fas fa-lock"></i></a>
+                                        {% else %}
+                                        <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':project.id,'entity':class(project)}) }}"><i class="fas fa-unlock"></i></a>
+                                        {% endif %}
+
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

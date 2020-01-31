@@ -23,7 +23,7 @@ class EditTemplateType extends AbstractType {
         $builder
                 ->add('name', TextType::class, ['label' => 'Nombre'])
                 ->add('type', ChoiceType::class, ['label' => 'Tipo de Plantilla',
-                    'attr'=>['class'=>'type-field-collapser'],
+                    'attr' => ['class' => 'type-field-collapser'],
                     'choices' => [
                         'Archivo' => 'File',
                         'Formulario' => 'Form'
@@ -33,7 +33,7 @@ class EditTemplateType extends AbstractType {
                     'data_class' => $options['data_class'],
                     'em' => $options['em'],
                     'user' => $options['user'],
-                    'locked'=>$options['locked']
+                    'locked' => $options['locked']
                 ])
                 ->add('templateForm', CollectionType::class, ['entry_type' => FormFieldType::class,
                     'label' => '',
@@ -48,7 +48,7 @@ class EditTemplateType extends AbstractType {
                         'class' => "symfony-collection table-collection",
                     ],
                 ])
-                ->add('submit', SubmitType::class, ['label' => 'Crear documento'])
+                ->add('submit', SubmitType::class, ['label' => 'Actualizar Plantilla'])
         ;
     }
 

@@ -8,7 +8,7 @@
 
 namespace App\Security;
 
-use App\Entity\User;
+use App\Entity\Setting;
 use ArrayObject;
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
@@ -23,7 +23,21 @@ final class LdapConnectionTimeout extends \Exception {
 final class Ldap implements LdapInterface {
 
     private $adapter;
-    private $LDAP;
+    public $LDAP_HOST;
+    public $PORT;
+    public $ENCRYPTION;
+    public $BASE_DN;
+    public $READ_USER;
+    public $READ_USER_PASSWORD;
+    public $USER_GROUP;
+    public $ADMIN_GROUP;
+    public $OWNER_GROUP;
+    public $GROUP_PREFIX;
+    public $LOGIN_ATTR;
+    public $FIRSTNAME_ATTR;
+    public $LASTNAME_ATTR;
+    public $EMAIL_ATTR;
+    
 
     const USER = 0x01;
     const ADMIN = 0x02;
@@ -32,20 +46,29 @@ final class Ldap implements LdapInterface {
         'ext_ldap' => 'Symfony\Component\Ldap\Adapter\ExtLdap\Adapter',
     ];
 
-    public function __construct(Adapter $adapter, $ldapSettings) {
-        $this->adapter = $adapter;
-        $this->LDAP = new ArrayObject($ldapSettings);
-        $this->LDAP->setFlags(ArrayObject::ARRAY_AS_PROPS);
-        $this->LDAP->SIARPS_MAIN_OU = ($ldapSettings["SIARPS_MAIN_OU"] == null ? $this->LDAP->BASE_DN : $ldapSettings["SIARPS_MAIN_OU"]);
-    }
-
-    public function getLdapParams() {
-        return $this->LDAP;
-    }
+    public function __construct(EntityManagerInterface $em) {
+        $settings=$em->getRepository(Setting::class);
+        $this->HOST=$settings->getValue("ldapHost");
+        $this->PORT=$settings->getValue("ldapPort");
+        $this->ENCRYPTION=$settings->getValue("ldapEncryption");
+        $this->BASE_DN=$settings->getValue("ldapBaseDN");
+        $this->READ_USER=$settings->getValue("ldapReadUser");
+        $this->READ_USER_PASSWORD=$settings->getValue("ldapReadUserPassword");
+        $this->USER_GROUP=$settings->getValue("ldapUserGroupDN");
+        $this->ADMIN_GROUP=$settings->getValue("ldapAdminGroupDN");
+        $this->OWNER_GROUP=$settings->getValue("ldapOwnerGroupDN");
+        $this->GROUP_PREFIX=$settings->getValue("ldapGroupPrefix");
+        $this->LOGIN_ATTR=$settings->getValue("ldapLoginAttr");
+        $this->FIRSTNAME_ATTR=$settings->getValue("ldapFirstNameAttr");
+        $this->LASTNAME_ATTR=$settings->getValue("ldapLastNameAttr");
+        $this->EMAIL_ATTR=$settings->getValue("ldapEmailAttr");
+        
+        $this->adapter = new Adapter(['host'=>$this->HOST,'port'=>$this->PORT,'encryption'=>$this->ENCRYPTION]);
+    }   
 
     public function checkConnection() {
         try {
-            $op = fsockopen($this->LDAP->LDAP_HOST, 389, $errno, $errstr, 2);
+            $op = fsockopen($this->HOST, 389, $errno, $errstr, 2);
             if (!$op)
                 throw new LdapConnectionTimeout();
             else {
@@ -63,8 +86,8 @@ final class Ldap implements LdapInterface {
     public function bind($dn = null, $password = null) {
         $this->checkConnection();
         if ($dn == $password && $dn == null) {
-            $dn = $this->LDAP->READ_ONLY_USER;
-            $password = $this->LDAP->READ_ONLY_USER_PASSWORD;
+            $dn = $this->READ_USER;
+            $password = $this->READ_USER_PASSWORD;
         }
         $this->adapter->getConnection()->bind($dn, $password);
     }
@@ -76,33 +99,33 @@ final class Ldap implements LdapInterface {
 
     public function findAllUsers() {
         $query = "("
-                . "memberOf=" . $this->LDAP->SIARPS_LDAP_USER_GROUP_DN
+                . "memberOf=" . $this->USER_GROUP
                 . ")";
-        return $this->query($this->LDAP->SIARPS_MAIN_OU, $query)->execute();
+        return $this->query($this->BASE_DN, $query)->execute();
     }
 
     public function findAllAdmins() {
         $query = "("
-                . "memberOf=" . $this->LDAP->SIARPS_LDAP_ADMIN_GROUP_DN
+                . "memberOf=" . $this->ADMIN_GROUP
                 . ")";
-        return $this->query($this->LDAP->SIARPS_MAIN_OU, $query)->execute();
+        return $this->query($this->BASE_DN, $query)->execute();
     }
 
     public function findUserQuery($username) {
         $query_string = "(&"
                 . "(|"
-                . "(memberOf=" . $this->LDAP->SIARPS_LDAP_USER_GROUP_DN . ")"
-                . "(memberOf=" . $this->LDAP->SIARPS_LDAP_ADMIN_GROUP_DN . ")"
+                . "(memberOf=" . $this->USER_GROUP . ")"
+                . "(memberOf=" . $this->ADMIN_GROUP . ")"
                 . ")"
-                . "(" . $this->LDAP->SIARPS_LOGIN_ATTRIBUTE . "={username})"
+                . "(" . $this->LOGIN_ATTR . "={username})"
                 . ")";
         $username = $this->escape($username, '', LdapInterface::ESCAPE_FILTER);
         $query = str_replace('{username}', $username, $query_string);
-        return $this->query($this->LDAP->SIARPS_MAIN_OU, $query)->execute();
+        return $this->query($this->BASE_DN, $query)->execute();
     }
 
     public function findGroupOwner($gdn) {
-        $query = "(memberOf=" . $this->LDAP->SIARPS_LDAP_GROUP_OWNER_DN . ")";
+        $query = "(memberOf=" . $this->OWNER_GROUP . ")";
         return $this->query($gdn, $query)->execute();
     }
 
@@ -110,7 +133,7 @@ final class Ldap implements LdapInterface {
         $query_string = "(&(objectClass=organizationalUnit)(objectClass=top)(distinguishedName={ou}))";
         $dn = $this->escape($dn, '', LdapInterface::ESCAPE_FILTER);
         $query = str_replace('{ou}', $dn, $query_string);
-        return $this->query($this->LDAP->BASE_DN, $query)->execute();
+        return $this->query($this->BASE_DN, $query)->execute();
     }
 
     /**

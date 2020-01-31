@@ -32,9 +32,15 @@
                                 <td>{{ version.date|date('d/m/Y H:i') }}</td>
                                 <td><span class="badge badge-{{version.lockState?'success':'danger'}}">{{ version.lockState?'Cerrado':'Abierto' }}</span></td>
                                 <td>
-                                    <a class="btn btn-info" href="{{ path('document',{'id':version.id}) }}"><i class="fas fa-eye"></i></a>
+                                    <a class="btn btn-info" href="{{ path('version-view',{'id':version.id}) }}"><i class="fas fa-eye"></i></a>
+                                        {% if version.lockState %}
+                                        <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':version.id,'entity':class(version)}) }}"><i class="fas fa-lock"></i></a>
+                                        <a class="btn btn-success" href="{{ path('version-view',{'id':version.id}) }}"><i class="fas fa-file-alt"></i></a>
+                                        {% else %}
+                                        <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':version.id,'entity':class(version)}) }}"><i class="fas fa-unlock"></i></a>
+                                        {% endif %}
                                 </td>
-                                
+
                             </tr>
                         {% else %}
                             <tr>

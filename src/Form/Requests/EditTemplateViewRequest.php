@@ -5,6 +5,7 @@ namespace App\Form\Requests;
 use App\Entity\Group;
 use App\Entity\Template;
 use App\Entity\User;
+use App\Helpers\WordToHtmlHelper;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
@@ -74,36 +75,62 @@ class EditTemplateViewRequest {
     public $footer;
 
     /**
+     * 
+     * @var string
+     * */
+    public $templateExternal;
+
+    /**
      * @NotBlank()
      * @var string
      * */
-    public $template;
+    public $templateBody;
+    
+    /**
+     * @var \Symfony\Component\HttpFoundation\File\UploadedFile
+     * */
+    public $templateFromWord;
 
     /**
      *
      * @var Template 
      */
     private $entity;
-
     
-    public function fillEntity(Template $template): self {
-        $this->entity = $template;
-        $settings = $template->getSetting("settings");
-        $this->size = $settings['size']['name'] ?? "";
-        $this->orientation = $settings['orientation'] ?? "";
-        $this->header = $settings['margin']['header'] ?? "";
-        $this->top = $settings['margin']['top'] ?? "";
-        $this->left = $settings['margin']['left'] ?? "";
-        $this->right = $settings['margin']['right'] ?? "";
-        $this->bottom = $settings['margin']['bottom'] ?? "";
-        $this->footer = $settings['margin']['footer'] ?? "";
-        $this->template = $template->getFile()->readFile();
+    function replaceImages(array $images): self {
+        $this->templateExternal = WordToHtmlHelper::convertExternalFromWord($templateExternal);
         return $this;
     }
 
-    public function createEntity() {
-        $template = $this->entity;
-        $settings = $template->getSetting("settings");
+    function setTemplateExternal(string $templateExternal): self {
+        $this->templateExternal = WordToHtmlHelper::convertExternalFromWord($templateExternal);
+        return $this;
+    }
+
+    function setTemplateBody(string $templateBody): self {
+        $this->templateBody = WordToHtmlHelper::convertBodyFromWord($templateBody);
+        return $this;
+    }
+
+    public function fillEntity(Template $template): self {
+        $this->entity = $template;
+        $settings = $template->getSetting("page");
+        $this->size = $settings['size']['name'];
+        $this->orientation = $settings['orientation'];
+        $this->header = $settings['margin']['header'];
+        $this->top = $settings['margin']['top'];
+        $this->left = $settings['margin']['left'];
+        $this->right = $settings['margin']['right'];
+        $this->bottom = $settings['margin']['bottom'];
+        $this->footer = $settings['margin']['footer'];
+        $jsonTemplate = $template->getFile()->readFile('JSON');
+        $this->templateBody = $jsonTemplate['body'];
+        $this->templateExternal = $jsonTemplate['external'];
+        return $this;
+    }
+
+    public function getSettings(){
+        $settings = $this->entity->getSetting("page");
         $settings['size']['name'] = $this->size;
         switch ($this->size) {
             case "letter":
@@ -159,10 +186,16 @@ class EditTemplateViewRequest {
         $settings['margin']['right'] = $this->right;
         $settings['margin']['bottom'] = $this->bottom;
         $settings['margin']['footer'] = $this->footer;
-        $file=$template->getFile()->getPath();
-        file_put_contents($file, $template);
-        $template->getFile()->update();
-        return $template;
+        return $settings;
+    }
+    public function createEntity() {
+        $this->entity->setSetting('page', $this->getSettings());
+        $file = $this->entity->getFile()->getPath();
+        $template = ['body' => $this->templateBody, 'external' => $this->templateExternal];
+        $jsonTemplate = json_encode($template, JSON_UNESCAPED_UNICODE);
+        file_put_contents($file, $jsonTemplate);
+        $this->entity->getFile()->update();
+        return $this->entity;
     }
 
 }

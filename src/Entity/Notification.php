@@ -2,6 +2,13 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Notification
+ *
+ * @ORM\Entity
+ */
 class Notification {
 
     const COLOR_BLUE = "BLUE";
@@ -26,16 +33,73 @@ class Notification {
     const COLOR_DANGER = "DANGER";
     const COLOR_LIGHT = "LIGHT";
     const COLOR_DARK = "DARK";
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="id", type="guid")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
     private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_icon", type="string", length=32, nullable=true)
+     */
     private $icon;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_color", type="string", length=32, nullable=true)
+     */
     private $color;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="c_text", type="string", length=320)
+     */
     private $text;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="c_creation_date", type="datetime")
+     */
     private $creationDate;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="c_path", type="string", length=180, nullable=true)
+     */
     private $path;
-    private $parameters = [];
-    private $user;
+
+    /**
+     * @var json|null
+     *
+     * @ORM\Column(name="c_parameters", type="json", nullable=true)
+     */
+    private $parameters;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="c_read", type="boolean")
+     */
     private $read;
+
+    /**
+     * @var \App\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="notifications")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="t_user_id", referencedColumnName="id")
+     * })
+     */
+    private $user;
 
     public function __construct($text, $color = null, $icon = null, $path = null, $params = null) {
         $this->color = $color;

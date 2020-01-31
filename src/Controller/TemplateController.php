@@ -7,8 +7,10 @@ use App\Form\CreateTemplateType;
 use App\Form\EditTemplateType;
 use App\Form\Requests\CreateTemplateRequest;
 use App\Form\Requests\EditTemplateRequest;
+use App\Form\Requests\EditTemplateViewRequest;
 use App\Form\TemplateViewType;
 use App\Helpers\SIARPSController;
+use App\Helpers\WordToHtmlHelper;
 use Symfony\Component\HttpFoundation\Request;
 
 class TemplateController extends SIARPSController {
@@ -36,18 +38,49 @@ class TemplateController extends SIARPSController {
         if (!$this->getPermissionService()->hasWrite($template)) {
             throw $this->createAccessDeniedException();
         }
-        $form = $this->createForm(TemplateViewType::class);
+        $editTemplateView = new EditTemplateViewRequest();
+        $editTemplateView->fillEntity($template);
+        $form = $this->createForm(TemplateViewType::class, $editTemplateView);
         $form->handleRequest($request);
-        $data = null;
+        $page = $form->getData()->getSettings();
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $file = $form->get('template')->get('templateFromWord')->getData();
+            if ($file !== null) {
+                $zip = zip_open($file->getPathname());
+                $indexHtml = false;
+                $headerHtml = null;
+                $images = [];
+                while ($zipfile = zip_read($zip)) {
+                    $ext = pathinfo(zip_entry_name($zipfile), PATHINFO_EXTENSION);
+                    $name = pathinfo(zip_entry_name($zipfile), PATHINFO_FILENAME);
+                    $fileBin = zip_entry_read($zipfile,zip_entry_filesize($zipfile));
+                    if (substr($ext, 0, strlen('htm')) == 'htm' && !$indexHtml) {
+                        $indexHtml = utf8_encode($fileBin);
+                        
+                    } else if ($name == "header") {
+                        $headerHtml = utf8_encode($fileBin);
+                    } else if (in_array($ext, ['jpg', 'jpeg', 'png', 'bmp'])) {
+                        $f = finfo_open();
+                        $mime_type = finfo_buffer($f, $fileBin, FILEINFO_MIME_TYPE);
+                        $images[$name . '.' . $ext] = 'data:' . $mime_type . ';base64,' . base64_encode($fileBin);
+                    }
+                }
+                $editTemplateView->setTemplateBody($indexHtml);
+                $editTemplateView->setTemplateExternal($headerHtml);
+                $editTemplateView->templateBody=WordToHtmlHelper::replaceImages($images,$editTemplateView->templateBody);
+                $editTemplateView->templateExternal=WordToHtmlHelper::replaceImages($images,$editTemplateView->templateExternal);
+            }
+            $data = $editTemplateView->createEntity();
+            $this->getDoctrine()->getManager()->persist($data);
+            $this->getDoctrine()->getManager()->flush();
             if ($form->get('updateView')->isClicked()) {
-                
+                return $this->redirectToRoute('template-view', ['id' => $id]);
             } else {
-                
+                return $this->redirectToRoute('template', ['id' => $id]);
             }
         } else {
-            $form->get('template')->setData(<<<'EOD'
+            if (empty($form->get('template')->get('templateExternal')->getData())) {
+                $form->get('template')->get('templateExternal')->setData(<<<'EOD'
 <div class="header">
     <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
     <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
@@ -56,16 +89,20 @@ class TemplateController extends SIARPSController {
 <div class="footer">
     <p><strong><span>Revisó:  {{ document.lockedBy.fullName }}</span></strong></p>
 </div>
-
+EOD);
+            }
+            if (empty($form->get('template')->get('templateBody')->getData())) {
+                $form->get('template')->get('templateBody')->setData(<<<'EOD'
 <div class="page">
 </div>
 EOD);
+            }
         }
         $formView = $form->createView();
         return $this->render('template/editFile.html.twig', [
                     'template' => $template,
-                    'data' => $data,
-                    'form' => $formView
+                    'form' => $formView,
+                    'page' => $page
         ]);
     }
 

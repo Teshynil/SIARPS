@@ -47,7 +47,7 @@ class CreateTemplateType extends AbstractType {
                         'class' => "symfony-collection table-collection",
                     ],
                 ])
-                ->add('submit', SubmitType::class, ['label' => 'Crear documento'])
+                ->add('submit', SubmitType::class, ['label' => 'Crear Plantilla'])
         ;
     }
 
