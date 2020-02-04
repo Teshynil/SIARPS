@@ -17,7 +17,7 @@ use Symfony\Component\Ldap\Exception\DriverNotFoundException;
 use Symfony\Component\Ldap\LdapInterface;
 
 final class LdapConnectionTimeout extends \Exception {
-
+    
 }
 
 final class Ldap implements LdapInterface {
@@ -37,7 +37,6 @@ final class Ldap implements LdapInterface {
     public $FIRSTNAME_ATTR;
     public $LASTNAME_ATTR;
     public $EMAIL_ATTR;
-    
 
     const USER = 0x01;
     const ADMIN = 0x02;
@@ -47,24 +46,24 @@ final class Ldap implements LdapInterface {
     ];
 
     public function __construct(EntityManagerInterface $em) {
-        $settings=$em->getRepository(Setting::class);
-        $this->HOST=$settings->getValue("ldapHost");
-        $this->PORT=$settings->getValue("ldapPort");
-        $this->ENCRYPTION=$settings->getValue("ldapEncryption");
-        $this->BASE_DN=$settings->getValue("ldapBaseDN");
-        $this->READ_USER=$settings->getValue("ldapReadUser");
-        $this->READ_USER_PASSWORD=$settings->getValue("ldapReadUserPassword");
-        $this->USER_GROUP=$settings->getValue("ldapUserGroupDN");
-        $this->ADMIN_GROUP=$settings->getValue("ldapAdminGroupDN");
-        $this->OWNER_GROUP=$settings->getValue("ldapOwnerGroupDN");
-        $this->GROUP_PREFIX=$settings->getValue("ldapGroupPrefix");
-        $this->LOGIN_ATTR=$settings->getValue("ldapLoginAttr");
-        $this->FIRSTNAME_ATTR=$settings->getValue("ldapFirstNameAttr");
-        $this->LASTNAME_ATTR=$settings->getValue("ldapLastNameAttr");
-        $this->EMAIL_ATTR=$settings->getValue("ldapEmailAttr");
-        
-        $this->adapter = new Adapter(['host'=>$this->HOST,'port'=>$this->PORT,'encryption'=>$this->ENCRYPTION]);
-    }   
+        $settings = $em->getRepository(Setting::class);
+        $this->HOST = $settings->getValue("ldapHost");
+        $this->PORT = $settings->getValue("ldapPort");
+        $this->ENCRYPTION = $settings->getValue("ldapEncryption");
+        $this->BASE_DN = $settings->getValue("ldapBaseDN");
+        $this->READ_USER = $settings->getValue("ldapReadUser");
+        $this->READ_USER_PASSWORD = $settings->getValue("ldapReadUserPassword");
+        $this->USER_GROUP = $settings->getValue("ldapUserGroupDN");
+        $this->ADMIN_GROUP = $settings->getValue("ldapAdminGroupDN");
+        $this->OWNER_GROUP = $settings->getValue("ldapOwnerGroupDN");
+        $this->GROUP_PREFIX = $settings->getValue("ldapGroupPrefix");
+        $this->LOGIN_ATTR = $settings->getValue("ldapLoginAttr");
+        $this->FIRSTNAME_ATTR = $settings->getValue("ldapFirstNameAttr");
+        $this->LASTNAME_ATTR = $settings->getValue("ldapLastNameAttr");
+        $this->EMAIL_ATTR = $settings->getValue("ldapEmailAttr");
+
+        $this->adapter = new Adapter(['host' => $this->HOST, 'port' => $this->PORT, 'encryption' => $this->ENCRYPTION]);
+    }
 
     public function checkConnection() {
         try {
@@ -98,15 +97,21 @@ final class Ldap implements LdapInterface {
     }
 
     public function findAllUsers() {
-        $query = "("
-                . "memberOf=" . $this->USER_GROUP
+        $query = "(&"
+                . "(memberOf=" . $this->USER_GROUP . ")"
+                . "(|"
+                . "(objectClass=user)(objectClass=person)"
+                . ")"
                 . ")";
         return $this->query($this->BASE_DN, $query)->execute();
     }
 
     public function findAllAdmins() {
-        $query = "("
-                . "memberOf=" . $this->ADMIN_GROUP
+        $query = "(&"
+                . "memberOf=" . $this->ADMIN_GROUP . ")"
+                . "(|"
+                . "(objectClass=user)(objectClass=person)"
+                . ")"
                 . ")";
         return $this->query($this->BASE_DN, $query)->execute();
     }
@@ -116,6 +121,9 @@ final class Ldap implements LdapInterface {
                 . "(|"
                 . "(memberOf=" . $this->USER_GROUP . ")"
                 . "(memberOf=" . $this->ADMIN_GROUP . ")"
+                . ")"
+                . "(|"
+                . "(objectClass=user)(objectClass=person)"
                 . ")"
                 . "(" . $this->LOGIN_ATTR . "={username})"
                 . ")";
