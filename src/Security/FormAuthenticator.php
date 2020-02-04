@@ -110,8 +110,8 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
         if ($config == "INTERNAL") {
             $group = $this->entityManager->getRepository(Setting::class)->getValue("guestGroup");
         }
-        $user->setFirstName($ldapUser->getAttribute('givenName')??$ldapUser->getAttribute('sAMAccountName')[0])
-                ->setLastName($ldapUser->getAttribute('sn')??"")
+        $user->setFirstName($ldapUser->getAttribute('givenName')[0] ?? $ldapUser->getAttribute('sAMAccountName')[0])
+                ->setLastName($ldapUser->getAttribute('sn')[0] ?? "")
                 ->setUsername($ldapUser->getAttribute('sAMAccountName')[0])
                 ->setDn($dn)
                 ->setEmail($ldapUser->getAttribute('mail')[0] ?? null)
