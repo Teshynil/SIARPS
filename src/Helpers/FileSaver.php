@@ -40,7 +40,7 @@ class FileSaver {
         if ($file->getPath() == null) {
             $file->setPath(join(DIRECTORY_SEPARATOR, [$this->targetDirectory, $file->getId()]));
         }
-        $this->fileSystem->touch($file->getPath());
+        $this->fileSystem->dumpFile($file->getPath(),'');
     }
 
 }
