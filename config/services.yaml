@@ -7,28 +7,15 @@ parameters:
     locale: 'es'
     app.db.table_prefix: t_
     app.db.column_prefix: c_
-    env(FILE_SAVE_PATH): '%kernel.project_dir%\data'
+    env(FILE_SAVE_PATH): '/data'
+    env(FULL_SAVE_PATH): '%kernel.project_dir%%env(FILE_SAVE_PATH)%'
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $targetDirectory: '%env(FILE_SAVE_PATH)%'
-            $ldapSettings:
-                LDAP_HOST: '%env(LDAP_HOST)%'
-                READ_ONLY_USER: '%env(READ_ONLY_USER)%'
-                READ_ONLY_USER_PASSWORD: '%env(READ_ONLY_USER_PASSWORD)%'
-                SIARPS_LDAP_USER_GROUP_DN: '%env(SIARPS_LDAP_USER_GROUP_DN)%'
-                SIARPS_LDAP_ADMIN_GROUP_DN: '%env(SIARPS_LDAP_ADMIN_GROUP_DN)%'
-                SIARPS_LDAP_GROUP_PREFIX: '%env(SIARPS_LDAP_GROUP_PREFIX)%'
-                SIARPS_LDAP_GROUP_OWNER_DN: '%env(SIARPS_LDAP_GROUP_OWNER_DN)%'
-                BASE_DN: '%env(BASE_DN)%'
-                SIARPS_MAIN_OU: '%env(SIARPS_MAIN_OU)%'
-                SIARPS_LOGIN_ATTRIBUTE: '%env(SIARPS_LOGIN_ATTRIBUTE)%'
-                SIARPS_FIRST_NAME_ATTRIBUTE: '%env(SIARPS_FIRST_NAME_ATTRIBUTE)%'
-                SIARPS_LAST_NAME_ATTRIBUTE: '%env(SIARPS_LAST_NAME_ATTRIBUTE)%'
-
+            $targetDirectory: '%env(FULL_SAVE_PATH)%'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -53,7 +40,7 @@ services:
 
     App\Helpers\FileSaver:
         class: App\Helpers\FileSaver
-        arguments: ['%env(FILE_SAVE_PATH)%']
+        arguments: ['%env(FULL_SAVE_PATH)%']
         tags:
             - {name: 'doctrine.orm.entity_listener', event: 'prePersist', entity: 'App\Entity\File'}
                 
