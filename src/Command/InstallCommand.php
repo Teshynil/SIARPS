@@ -168,6 +168,7 @@ class InstallCommand extends Command {
 
     protected function install(SymfonyStyle $io, InputInterface $input, OutputInterface $output) {
         //
+        $this->fileSystem->mkdir($this->targetDirectory, 0754);
         $adminGroup = new Group();
         $adminUser = new User();
         $guestGroup = new Group();
