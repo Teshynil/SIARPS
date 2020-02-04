@@ -33,7 +33,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
     /**
      * @var string|null
      *
-     * @ORM\Column(name="c_email", type="string", length=180, nullable=true, unique=true)
+     * @ORM\Column(name="c_email", type="string", length=180, nullable=true, unique=false)
      */
     protected $email;
 
