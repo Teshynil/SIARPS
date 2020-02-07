@@ -71,7 +71,7 @@ class EditUserType extends AbstractType {
                     'user' => $options['user'],
                     'locked'=> $options['locked']
                 ])
-                ->add('submit', SubmitType::class, ['label' => 'Crear documento'])
+                ->add('submit', SubmitType::class, ['label' => 'Guardar cambios'])
         ;
     }
 

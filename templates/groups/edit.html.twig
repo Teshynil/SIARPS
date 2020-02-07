@@ -1,0 +1,26 @@
+{% extends "core/base.html.twig" %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+{% block body %}
+
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Editar Grupo
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                        
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                <!-- /.col-->
+            </div>
+            <!-- /.row-->
+        </div>
+    {% endblock %}

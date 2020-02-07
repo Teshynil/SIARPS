@@ -54,6 +54,22 @@ user:
     path: /user/{id}
     controller: App\Controller\UsersController::user   
 
+groups:
+    path: /groups
+    controller: App\Controller\GroupController::groups
+
+group-edit:
+    path: /group/{id}/edit
+    controller: App\Controller\GroupController::edit
+
+group-new:
+    path: /group/new
+    controller: App\Controller\GroupController::new
+    
+group:
+    path: /group/{id}
+    controller: App\Controller\GroupController::group
+
 projects:
     path: /projects
     controller: App\Controller\ProjectController::index
