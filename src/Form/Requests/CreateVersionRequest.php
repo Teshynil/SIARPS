@@ -39,8 +39,8 @@ class CreateVersionRequest extends CreatePropertiesRequest {
         }
         foreach ($_fields as $_field) {
             if (isset($this->fields[$_field['name']])) {
-                $value=$this->fields[$key];
-                $this->fields[$key] = [
+                $value=$this->fields[$_field['name']];
+                $this->fields[$_field['name']] = [
                     'type' => $_field['type'],
                     'value' => $value
                 ];
