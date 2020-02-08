@@ -46,7 +46,7 @@ class FormFieldResolver {
                 $out=$field['value'];
                 break;
         }
-        return $out;
+        return $out??"";
     }
     
     public static function resolveFieldToForm(array $field, FormBuilderInterface $form) {
