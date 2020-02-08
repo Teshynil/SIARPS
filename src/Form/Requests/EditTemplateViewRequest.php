@@ -126,8 +126,10 @@ class EditTemplateViewRequest {
             $this->footer = $settings['margin']['footer'];
         }
         $jsonTemplate = $template->getFile()->readFile('JSON');
-        $this->templateBody = $jsonTemplate['body'];
-        $this->templateExternal = $jsonTemplate['external'];
+        if ($jsonTemplate != null) {
+            $this->templateBody = $jsonTemplate['body'];
+            $this->templateExternal = $jsonTemplate['external'];
+        }
         return $this;
     }
 
