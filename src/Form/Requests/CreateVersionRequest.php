@@ -38,13 +38,11 @@ class CreateVersionRequest extends CreatePropertiesRequest {
             $this->em->persist($field);
         }
         foreach ($_fields as $_field) {
-            if (isset($this->fields[$_field['name']])) {
-                $value=$this->fields[$_field['name']];
-                $this->fields[$_field['name']] = [
-                    'type' => $_field['type'],
-                    'value' => $value
-                ];
-            }
+            $value = $this->fields[$_field['name']];
+            $this->fields[$_field['name']] = [
+                'type' => $_field['type'],
+                'value' => $value
+            ];
         }
 
 
