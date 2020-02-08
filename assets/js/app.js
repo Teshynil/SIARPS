@@ -15,6 +15,7 @@ require('simple-line-icons/css/simple-line-icons.css');
 require('../css/vendor-custom/pace.css');
 require('toastr/build/toastr.min.css');
 require('daterangepicker/daterangepicker.css');
+require('quill/dist/quill.snow.css');
 //JS
 const $ = require('jquery');
 global.$ = global.jQuery = $;
@@ -28,6 +29,8 @@ require('popper.js/dist/umd/popper.js');
 require('bootstrap/dist/js/bootstrap.js');
 require('moment');
 require('daterangepicker');
+require('./quill.js');
+window.Quill = require('Quill');
 const bsCustomFileInput = require('bs-custom-file-input/dist/bs-custom-file-input.js')
 global.bsCustomFileInput = bsCustomFileInput;
 require('@fortawesome/fontawesome-free/js/all.js');
@@ -90,16 +93,14 @@ var daterangepickerLocale = {
     ],
     "firstDay": 1
 };
-
-$('a[soft]').click(function(e){
+$('a[soft]').click(function (e) {
     e.preventDefault();
     $.ajax({
         url: this.href,
-    }).always(function(){
+    }).always(function () {
         location.reload();
     });
 });
-
 $('.input-group input[type=range]').each(function () {
     var label = $($(this).parents('.range-input')[0]).find('span.input-group-text');
     var input = $(this);
@@ -108,7 +109,6 @@ $('.input-group input[type=range]').each(function () {
         label.html(this.value);
     };
 });
-
 $("input.datetimepicker").each(function () {
     $(this).before('<div class="picker form-control btn-secondary"><i class="fa fa-calendar"></i>&nbsp;<span></span></div>');
     var picker = $(this).parent().find('div.picker');
@@ -137,7 +137,6 @@ $("input.datetimepicker").each(function () {
         "maxDate": $(this).data('maxDate') ? $(this).data('maxDate') : "12/31/2099"
     }, cb);
 });
-
 $('.symfony-collection').each(function () {
     $(this).collection({
         allow_up: $(this).data('allowUp'),
@@ -182,5 +181,19 @@ $('.symfony-collection').each(function () {
         fade_in: false,
         fade_out: false
     });
+});
+$('.quilljs').each(function(i, el) {
+    var el = $(this), id = 'quilljs-' + i, val = el.val(), editor_height = 200;
+    var div = $('<div/>').attr('id', id).css('height', editor_height + 'px').html(val);
+    el.addClass('d-none');
+    el.parent().append(div);
 
+    var quill = new Quill('#' + id, {
+        modules: { toolbar: true },
+        theme: 'snow'
+    });
+    quill.on('text-change', function() {
+        el.html(quill.container.firstChild.innerHTML);
+        el.value=quill.container.firstChild.innerHTML;
+    });
 });
