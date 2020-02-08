@@ -50,6 +50,8 @@ class CreatePropertiesType extends AbstractType {
                                         ->setParameter(1, $options['user']->getGroup()->getId());
                     }
                 },
+                'placeholder'=>$options['user']->getAdminMode()?'Sin grupo':false,
+                'required'=>$options['user']->getAdminMode()?false:true,
                 'choice_label' => 'name',
                 'preferred_choices' => [$options['user']->getGroup()],
             ]);

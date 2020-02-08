@@ -53,7 +53,7 @@ class EditProjectType extends AbstractType {
                         'class' => "symfony-collection",
                     ],
                 ])
-                ->add('submit', SubmitType::class, ['label' => 'Crear Projecto'])
+                ->add('submit', SubmitType::class, ['label' => 'Editar Projecto'])
         ;
     }
 

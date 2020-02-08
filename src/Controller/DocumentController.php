@@ -64,7 +64,7 @@ class DocumentController extends SIARPSController {
             $form->add($formFields->getForm());
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $version = $data->createEntity();
+                $version = $data->createEntity($fields);
                 foreach ($document->getVersions() as $prevVersion) {
                     if (!$prevVersion->getLockState()) {
                         if ($this->getPermissionService()->hasLock($prevVersion)) {

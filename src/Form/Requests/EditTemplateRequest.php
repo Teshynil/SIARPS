@@ -54,6 +54,7 @@ class EditTemplateRequest extends EditPropertiesRequest {
         $template->setName($this->name)
                 ->setType($this->type);
         $template->setSetting('fields', $this->templateForm);
+        $this->fillProperties($template);
         return $template;
     }
     

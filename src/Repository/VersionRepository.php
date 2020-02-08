@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\File;
 use App\Entity\Version;
+use App\Helpers\FormFieldResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,9 +26,10 @@ class VersionRepository extends ServiceEntityRepository {
 
     public function getData(Version $document) {
         $data = $document->getData();
-        $entities = [];
-        foreach ($data['fields'] as $key => $value) {
-
+        $resolved = [];
+        foreach ($data['fields'] as $key => $inner) {
+            $value=$inner['value'];
+            $type=$inner['type']??'text';
             if (is_object($value)) {
                 $class = get_class($value);
                 if (!$this->getEntityManager()->getMetadataFactory()->isTransient($class)) {
@@ -36,18 +38,20 @@ class VersionRepository extends ServiceEntityRepository {
                     if ($entity instanceof File) {
                         if (substr($entity->getMimeType(), 0, strlen("image/")) == "image/") {
                             $url = $this->router->generate("resource", ["method" => "view", "id" => $entity->getId()]);
-                            $entities[$key]='<img src="'.$url.'"/ style="width:100%,height:100%">';
+                            $resolved[$key]='<img src="'.$url.'"/ style="width:100%,height:100%">';
                         }else{
                             $url = $this->router->generate("resource", ["method" => "download", "id" => $entity->getId()]);
-                            $entities[$key]='<a href="'.$url.'"target="_blank" /><i class="fas fa-download fa-lg"></i></a>';
+                            $resolved[$key]='<a href="'.$url.'"target="_blank" /><i class="fas fa-download fa-lg"></i></a>';
                         }
                     } else {
-                        $entities[$key] = $entity;
+                        $resolved[$key] = $entity;
                     }
                 }
+            }else{
+                $resolved[$key]=FormFieldResolver::resolveFieldToView($inner);
             }
         }
-        foreach ($entities as $key => $value) {
+        foreach ($resolved as $key => $value) {
             $data['fields'][$key] = $value;
         }
         return $data;

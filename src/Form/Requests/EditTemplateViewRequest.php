@@ -85,7 +85,7 @@ class EditTemplateViewRequest {
      * @var string
      * */
     public $templateBody;
-    
+
     /**
      * @var \Symfony\Component\HttpFoundation\File\UploadedFile
      * */
@@ -96,7 +96,7 @@ class EditTemplateViewRequest {
      * @var Template 
      */
     private $entity;
-    
+
     function replaceImages(array $images): self {
         $this->templateExternal = WordToHtmlHelper::convertExternalFromWord($templateExternal);
         return $this;
@@ -115,21 +115,23 @@ class EditTemplateViewRequest {
     public function fillEntity(Template $template): self {
         $this->entity = $template;
         $settings = $template->getSetting("page");
-        $this->size = $settings['size']['name'];
-        $this->orientation = $settings['orientation'];
-        $this->header = $settings['margin']['header'];
-        $this->top = $settings['margin']['top'];
-        $this->left = $settings['margin']['left'];
-        $this->right = $settings['margin']['right'];
-        $this->bottom = $settings['margin']['bottom'];
-        $this->footer = $settings['margin']['footer'];
+        if ($settings != null) {
+            $this->size = $settings['size']['name'];
+            $this->orientation = $settings['orientation'];
+            $this->header = $settings['margin']['header'];
+            $this->top = $settings['margin']['top'];
+            $this->left = $settings['margin']['left'];
+            $this->right = $settings['margin']['right'];
+            $this->bottom = $settings['margin']['bottom'];
+            $this->footer = $settings['margin']['footer'];
+        }
         $jsonTemplate = $template->getFile()->readFile('JSON');
         $this->templateBody = $jsonTemplate['body'];
         $this->templateExternal = $jsonTemplate['external'];
         return $this;
     }
 
-    public function getSettings(){
+    public function getSettings() {
         $settings = $this->entity->getSetting("page");
         $settings['size']['name'] = $this->size;
         switch ($this->size) {
@@ -188,6 +190,7 @@ class EditTemplateViewRequest {
         $settings['margin']['footer'] = $this->footer;
         return $settings;
     }
+
     public function createEntity() {
         $this->entity->setSetting('page', $this->getSettings());
         $file = $this->entity->getFile()->getPath();

@@ -21,6 +21,33 @@ use Symfony\Component\Validator\Constraints\Image;
 
 class FormFieldResolver {
 
+    public const FORM_FIELDS = [
+        'Texto simple' => 'text',
+        'Texto largo' => 'textarea',
+        'Texto enriquecido' => 'wysiwyg',
+        'Entero' => 'integer',
+        'Numero' => 'float',
+        'Elección' => 'choice',
+        'Fecha' => 'date',
+        'Fecha y Hora' => 'datetime',
+        'Imagen' => 'image',
+        'Archivo' => 'file',
+        'Enlace' => 'link',
+    ];
+
+    public static function resolveFieldToView(array $field): string {
+        $out="";
+        switch ($field['type']){
+            case 'link':
+                $out='<a href="'.$field['value'].'" target=_blank>'.$field['value'].'</a>';
+                break;
+            default:
+                $out=$field['value'];
+                break;
+        }
+        return $out;
+    }
+    
     public static function resolveFieldToForm(array $field, FormBuilderInterface $form) {
         $options = [
             'label' => $field['settings']['label'] ?? $field['name'],
@@ -35,7 +62,6 @@ class FormFieldResolver {
                 break;
             case 'float':
                 $formField = $form->create($field['name'], NumberType::class, $options);
-
                 break;
             case 'range':
                 $options = array_merge($options, [
@@ -88,8 +114,8 @@ class FormFieldResolver {
                 break;
             case 'image':
                 $options = array_merge($options, [
-                    'attr'=>[
-                        'accept'=>"image/*"
+                    'attr' => [
+                        'accept' => "image/*"
                     ],
                     'constraints' => [
                         new Image()
@@ -100,7 +126,19 @@ class FormFieldResolver {
             case 'file':
                 $formField = $form->create($field['name'], FileType::class, $options);
                 break;
+            case 'wysiwyg':
+                $options = array_merge($options, [
+                    'attr' => [
+                        'class' => 'quilljs',
+                    ]
+                ]);
+                $formField = $form->create($field['name'], TextAreaType::class, $options);
+                break;
+            case 'textarea':
+                $formField = $form->create($field['name'], TextAreaType::class, $options);
+                break;
             default:
+            case 'link':
             case 'text':
                 $formField = $form->create($field['name'], TextType::class, $options);
                 break;

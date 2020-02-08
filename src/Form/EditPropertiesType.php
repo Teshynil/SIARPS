@@ -52,6 +52,9 @@ class EditPropertiesType extends AbstractType {
                     }
                 },
                 'choice_label' => 'name',
+                'placeholder' => $options['user']->getAdminMode() ? 'Sin grupo' : false,
+                'required' => $options['user']->getAdminMode() ? false : true,
+                'empty_data' => '',
                 'preferred_choices' => [$options['user']->getGroup()],
             ]);
         }
