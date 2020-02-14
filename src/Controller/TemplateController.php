@@ -113,7 +113,7 @@ EOD);
         }
         $editTemplateRequest->fillEntity($template);
         $locked = $this->getPermissionService()->hasLock($template);
-        $form = $this->createForm(EditTemplateType::class, $editTemplateRequest, ['em' => $this->getDoctrine(), 'user' => $this->getUser(), 'locked' => $locked]);
+        $form = $this->createForm(EditTemplateType::class, $editTemplateRequest, ['em' => $this->getDoctrine(), 'user' => $this->getUser(), 'locked' => $locked,'groupNullable' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -134,7 +134,7 @@ EOD);
             throw $this->createAccessDeniedException();
         }
         $template = new CreateTemplateRequest();
-        $form = $this->createForm(CreateTemplateType::class, $template, ['em' => $this->getDoctrine(), 'user' => $this->getUser()]);
+        $form = $this->createForm(CreateTemplateType::class, $template, ['em' => $this->getDoctrine(), 'user' => $this->getUser(),'groupNullable' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

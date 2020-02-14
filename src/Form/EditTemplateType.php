@@ -33,7 +33,8 @@ class EditTemplateType extends AbstractType {
                     'data_class' => $options['data_class'],
                     'em' => $options['em'],
                     'user' => $options['user'],
-                    'locked' => $options['locked']
+                    'locked' => $options['locked'],
+                    'groupNullable' => $options['groupNullable'],
                 ])
                 ->add('templateForm', CollectionType::class, ['entry_type' => FormFieldType::class,
                     'label' => '',
@@ -58,6 +59,7 @@ class EditTemplateType extends AbstractType {
             'em' => null,
             'user' => null,
             'locked' => false,
+            'groupNullable' => false,
         ]);
     }
 

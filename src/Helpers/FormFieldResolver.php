@@ -130,7 +130,7 @@ class FormFieldResolver {
             case 'wysiwyg':
                 $options = array_merge($options, [
                     'attr' => [
-                        'class' => 'quilljs',
+                        'class' => 'wysiwyg',
                     ]
                 ]);
                 $formField = $form->create($field['name'], TextAreaType::class, $options);

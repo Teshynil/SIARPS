@@ -52,8 +52,8 @@ class EditPropertiesType extends AbstractType {
                     }
                 },
                 'choice_label' => 'name',
-                'placeholder' => $options['user']->getAdminMode() ? 'Sin grupo' : false,
-                'required' => $options['user']->getAdminMode() ? false : true,
+                'placeholder' => $options['groupNullable'] ? $options['user']->getAdminMode() ? 'Sin grupo' : false : false,
+                'required' => $options['groupNullable'] ? $options['user']->getAdminMode() ? false : true : true,
                 'empty_data' => '',
                 'preferred_choices' => [$options['user']->getGroup()],
             ]);
@@ -87,6 +87,7 @@ class EditPropertiesType extends AbstractType {
             'locked' => null,
             'owner' => true,
             'group' => true,
+            'groupNullable' => false,
             'ownerPermissions' => true,
             'groupPermissions' => true,
             'otherPermissions' => true

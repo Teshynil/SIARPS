@@ -15,7 +15,8 @@ require('simple-line-icons/css/simple-line-icons.css');
 require('../css/vendor-custom/pace.css');
 require('toastr/build/toastr.min.css');
 require('daterangepicker/daterangepicker.css');
-require('quill/dist/quill.snow.css');
+require('tinymce/skins/ui/oxide/skin.min.css');
+require('tinymce/skins/ui/oxide/content.min.css');
 //JS
 const $ = require('jquery');
 global.$ = global.jQuery = $;
@@ -29,8 +30,23 @@ require('popper.js/dist/umd/popper.js');
 require('bootstrap/dist/js/bootstrap.js');
 require('moment');
 require('daterangepicker');
-require('./quill.js');
-window.Quill = require('Quill');
+window.tinymce = require('tinymce/tinymce');
+require('../js/vendor-custom/tinymce/langs/es_MX.js');
+require('tinymce/themes/silver');
+require('tinymce/plugins/table/plugin.js');
+require('tinymce/plugins/quickbars/plugin.js');
+require('tinymce/plugins/paste/plugin.js');
+require('tinymce/plugins/searchreplace/plugin.js');
+require('tinymce/plugins/autolink/plugin.js');
+require('tinymce/plugins/code/plugin.js');
+require('tinymce/plugins/visualchars/plugin.js');
+require('tinymce/plugins/link/plugin.js');
+require('tinymce/plugins/charmap/plugin.js');
+require('tinymce/plugins/hr/plugin.js');
+require('tinymce/plugins/advlist/plugin.js');
+require('tinymce/plugins/lists/plugin.js');
+require('tinymce/plugins/textpattern/plugin.js');
+
 const bsCustomFileInput = require('bs-custom-file-input/dist/bs-custom-file-input.js')
 global.bsCustomFileInput = bsCustomFileInput;
 require('@fortawesome/fontawesome-free/js/all.js');
@@ -182,18 +198,17 @@ $('.symfony-collection').each(function () {
         fade_out: false
     });
 });
-$('.quilljs').each(function(i, el) {
-    var el = $(this), id = 'quilljs-' + i, val = el.val(), editor_height = 200;
-    var div = $('<div/>').attr('id', id).css('height', editor_height + 'px').html(val);
-    el.addClass('d-none');
-    el.parent().append(div);
-
-    var quill = new Quill('#' + id, {
-        modules: { toolbar: true },
-        theme: 'snow'
-    });
-    quill.on('text-change', function() {
-        el.html(quill.container.firstChild.innerHTML);
-        el.value=quill.container.firstChild.innerHTML;
-    });
+tinymce.init({
+    selector: 'textarea.wysiwyg',
+    language: 'es_MX',
+    plugins: 'paste searchreplace autolink code visualchars link table charmap hr advlist lists textpattern quickbars',
+    menubar: 'edit insert format table',
+    toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | charmap | link',
+    toolbar_sticky: true,
+    height: 400,
+    image_caption: true,
+    quickbars_selection_toolbar: 'bold italic underline | quicklink',
+    quickbars_insert_toolbar: '',
+    toolbar_drawer: 'sliding',
+    contextmenu: "cut copy paste link table",
 });

@@ -32,7 +32,8 @@ class CreateTemplateType extends AbstractType {
                 ->add('properties', CreatePropertiesType::class, [
                     'data_class' => $options['data_class'],
                     'em' => $options['em'],
-                    'user' => $options['user']
+                    'user' => $options['user'],
+                    'groupNullable' => $options['groupNullable'],
                 ])
                 ->add('templateForm', CollectionType::class, ['entry_type' => FormFieldType::class,
                     'label' => '',
@@ -56,6 +57,7 @@ class CreateTemplateType extends AbstractType {
             'data_class' => CreateTemplateRequest::class,
             'em' => null,
             'user' => null,
+            'groupNullable' => false,
         ]);
     }
 
