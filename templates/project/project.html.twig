@@ -9,7 +9,10 @@
     <div class="animated fadeIn">
         <div class="card">
             <div class="card-header">
-                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ project.group.name }} | {{ project.name }}</span>
+                <nav class="breadcrumb h4">
+                    <a class="breadcrumb-item" href="{{ path('projects') }}">Proyectos</a>
+                    <span class="breadcrumb-item active" href="{{ path('project',{'id':project.id}) }}">{{ project.group.name }} / {{ project.name }}</span>
+                </nav>
                 {% if hasWrite(project) %}
                     <div class="card-header-actions">
                         <a class="btn btn-pill btn-secondary" href="{{ path('project-edit',{'id':project.id}) }}"><i class="fa fa-cog"></i>&nbsp;Configuración</a>
@@ -32,7 +35,14 @@
                         {% for document in project.documents %}
                             <tr>
                                 <td>{{ document.name }}</td>
-                                <td>{{ document.template.type }}</td>
+                                <td>{{ document.template.type }} 
+                                    {% if project.summary is not null and project.summary.id==document.id %}
+                                        <span class="badge badge-primary">Sumario</span>
+                                    {% endif %}
+                                    {% if project.progressDocument is not null and project.progressDocument.id==document.id %}
+                                        <span class="badge badge-primary">Documento de progreso</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ document.versions|last !=false?document.versions|last.date|date:null|default('Sin actualización') }}</td>
                                 <td>
                                     <span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span>

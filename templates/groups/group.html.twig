@@ -11,7 +11,12 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Grupo: {{ group.name }}
+                    <div class="card-header">
+                        <nav class="breadcrumb h4">
+                            <a class="breadcrumb-item" href="{{ path('groups') }}">Grupos</a>
+                            <span class="breadcrumb-item active">{{ group.name }}</span>
+                        </nav>
+                        
                         <div class="card-header-actions">
                             {% if hasWrite(group) %}
                                 <a class="card-header-action" href="{{ path('group-edit',{'id':group.id}) }}"><i class="fas fa-edit text-info fa-lg"></i></a>

@@ -172,16 +172,16 @@ class InstallCommand extends Command {
         $adminGroup = new Group();
         $adminUser = new User();
         $guestGroup = new Group();
-        $nullTemplate = new Template();
-        $requiredTemplate = new Template();
+//        $nullTemplate = new Template();
+//        $requiredTemplate = new Template();
 
         $_installStatus = new Setting("installStatus", null, null, $adminUser, $adminGroup);
         $_adminGroup = new Setting("adminGroup", null, null, $adminUser, $adminGroup);
         $_groupConfig = new Setting("groupConfig", null, null, $adminUser, $adminGroup);
         $_ldapGroupConfig = new Setting("ldapGroupConfig", null, null, $adminUser, $adminGroup);
         $_guestGroup = new Setting("guestGroup", null, null, $adminUser, $adminGroup);
-        $_nullTemplate = new Setting("nullTemplate", null, null, $adminUser, $adminGroup);
-        $_requiredTemplate = new Setting("requiredTemplate", null, null, $adminUser, $adminGroup);
+//        $_nullTemplate = new Setting("nullTemplate", null, null, $adminUser, $adminGroup);
+//        $_requiredTemplate = new Setting("requiredTemplate", null, null, $adminUser, $adminGroup);
 
         $_ldapHost = new Setting("ldapHost", null, null, $adminUser, $adminGroup);
         $_ldapPort = new Setting("ldapPort", null, null, $adminUser, $adminGroup);
@@ -288,67 +288,68 @@ class InstallCommand extends Command {
             $_groupConfig->setValue("INTERNAL");
         }
         $_guestGroup->setValue($guestGroup);
-        $nullTemplate->setPermissions(07, 07, 04)
-                ->setName("Archivo")
-                ->setType('File')
-                ->setSettings([
-                    'repeatable' => true
-                ])
-                ->setFile(null);
-        $_nullTemplate->setValue($nullTemplate);
-
-        $requiredTemplate->setPermissions(07, 07, 04)
-                ->setName("Resumen")
-                ->setType('Form')
-                ->setSettings(['fields' =>
-                    [
-                        ['name' => 'avance',
-                            'description' => 'Avance porcentual del proyecto',
-                            'type' => 'range',
-                            'settings' =>
-                            ['label' => 'Avance',
-                                'min' => 0,
-                                'max' => 100,
-                                'step' => 1,
-                                'required' => true,
-                                'choices' => NULL,
-                                'placeholder' => NULL,
-                                'multiple' => false,
-                                'constraints' => '- Range:\r\nmin: 0\r\nmax: 100',
-                            ],
-                        ],
-                    ],
-                    'page' =>
-                    ['size' =>
-                        ['name' => 'letter',
-                            'height' => 27.94,
-                            'width' => 21.59,
-                        ],
-                        'orientation' => 'landscape',
-                        'margin' =>
-                        ['header' => 4.5,
-                            'top' => 0,
-                            'left' => 1.8,
-                            'right' => 1.8,
-                            'bottom' => 0,
-                            'footer' => 1.8,
-                        ],
-                    ],
-        ]);
-        $_requiredTemplate->setValue($requiredTemplate);
+        
+//        $nullTemplate->setPermissions(07, 07, 04)
+//                ->setName("Archivo")
+//                ->setType('File')
+//                ->setSettings([
+//                    'repeatable' => true
+//                ])
+//                ->setFile(null);
+//        $_nullTemplate->setValue($nullTemplate);
+//
+//        $requiredTemplate->setPermissions(07, 07, 04)
+//                ->setName("Resumen")
+//                ->setType('Form')
+//                ->setSettings(['fields' =>
+//                    [
+//                        ['name' => 'avance',
+//                            'description' => 'Avance porcentual del proyecto',
+//                            'type' => 'range',
+//                            'settings' =>
+//                            ['label' => 'Avance',
+//                                'min' => 0,
+//                                'max' => 100,
+//                                'step' => 1,
+//                                'required' => true,
+//                                'choices' => NULL,
+//                                'placeholder' => NULL,
+//                                'multiple' => false,
+//                                'constraints' => '- Range:\r\nmin: 0\r\nmax: 100',
+//                            ],
+//                        ],
+//                    ],
+//                    'page' =>
+//                    ['size' =>
+//                        ['name' => 'letter',
+//                            'height' => 27.94,
+//                            'width' => 21.59,
+//                        ],
+//                        'orientation' => 'landscape',
+//                        'margin' =>
+//                        ['header' => 4.5,
+//                            'top' => 0,
+//                            'left' => 1.8,
+//                            'right' => 1.8,
+//                            'bottom' => 0,
+//                            'footer' => 1.8,
+//                        ],
+//                    ],
+//        ]);
+//        $_requiredTemplate->setValue($requiredTemplate);
 
         $this->em->persist($adminUser);
         $this->em->persist($adminGroup);
         $this->em->persist($guestGroup);
-        $this->em->persist($nullTemplate);
-        $this->em->persist($requiredTemplate);
+//        $this->em->persist($nullTemplate);
+//        $this->em->persist($requiredTemplate);
         $this->em->persist($_adminGroup);
         $this->em->persist($_groupConfig);
         $this->em->persist($_guestGroup);
         $this->em->persist($_installStatus);
         $this->em->persist($_ldapGroupConfig);
-        $this->em->persist($_nullTemplate);
-        $this->em->persist($_requiredTemplate);
+//        $this->em->persist($_nullTemplate);
+//        $this->em->persist($_requiredTemplate);
         $this->em->persist($_ldapHost);
         $this->em->persist($_ldapPort);
         $this->em->persist($_ldapEncryption);

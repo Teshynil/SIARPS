@@ -102,12 +102,12 @@ class EditTemplateViewRequest {
         return $this;
     }
 
-    function setTemplateExternal(string $templateExternal): self {
+    function setTemplateExternal(?string $templateExternal): self {
         $this->templateExternal = WordToHtmlHelper::convertExternalFromWord($templateExternal);
         return $this;
     }
 
-    function setTemplateBody(string $templateBody): self {
+    function setTemplateBody(?string $templateBody): self {
         $this->templateBody = WordToHtmlHelper::convertBodyFromWord($templateBody);
         return $this;
     }

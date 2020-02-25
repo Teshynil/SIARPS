@@ -9,7 +9,12 @@
     <div class="animated fadeIn">
         <div class="card">
             <div class="card-header">
-                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ document.group.name }} | {{ document.project.name }} \ {{ document.name }}</span>
+                <nav class="breadcrumb h4">
+                    <a class="breadcrumb-item" href="{{ path('projects') }}">Proyectos</a>
+                    <a class="breadcrumb-item" href="{{ path('project',{'id':document.project.id}) }}">{{ document.project.group.name|default('Global') }} / {{ document.project.name }}</a>
+                    <a class="breadcrumb-item" href="{{ path('document',{'id':document.id}) }}">{{ document.name }}</a>
+                    <span class="breadcrumb-item active">Nueva Version</span>
+                </nav>
                 <div class="card-header-actions">
                     <span class="badge badge-warning">Crear una versión nueva bloqueara las versiones anteriores no bloqueadas.</span>
                 </div>

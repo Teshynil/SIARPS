@@ -32,6 +32,12 @@ class EditProjectRequest extends EditPropertiesRequest {
      *
      */
     public $summary;
+    
+    /**
+     * @var Document
+     *
+     */
+    public $progressDocument;
 
     /**
      *
@@ -55,6 +61,7 @@ class EditProjectRequest extends EditPropertiesRequest {
         $this->groupsPermissions = $project->getGroupsPermissions();
         $this->otherPermissions = $project->getOtherPermissions();
         $this->summary = $project->getSummary();
+        $this->progressDocument = $project->getProgressDocument();
 
         $this->name = $project->getName();
         $this->description = $project->getDescription();
@@ -72,7 +79,8 @@ class EditProjectRequest extends EditPropertiesRequest {
         $project = $this->entity;
         $project->setName($this->name)
                 ->setDescription($this->description)
-                ->setSummary($this->summary);
+                ->setSummary($this->summary)
+                ->setProgressDocument($this->progressDocument);
         parent::fillProperties($project);
 
         $formDocuments = [];

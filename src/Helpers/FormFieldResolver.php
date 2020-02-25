@@ -8,6 +8,10 @@
 
 namespace App\Helpers;
 
+use App\Entity\Project;
+use App\Entity\User;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -28,28 +32,30 @@ class FormFieldResolver {
         'Texto enriquecido' => 'wysiwyg',
         'Entero' => 'integer',
         'Numero' => 'float',
+        'Rango' => 'range',
         'Elección' => 'choice',
         'Fecha' => 'date',
         'Fecha y Hora' => 'datetime',
         'Imagen' => 'image',
         'Archivo' => 'file',
         'Enlace' => 'link',
+        'Integración' => 'integration'
     ];
 
     public static function resolveFieldToView(array $field): string {
-        $out="";
-        switch ($field['type']){
+        $out = "";
+        switch ($field['type']) {
             case 'link':
-                $out='<a href="'.$field['value'].'" target=_blank>'.$field['value'].'</a>';
+                $out = '<a href="' . $field['value'] . '" target=_blank>' . $field['value'] . '</a>';
                 break;
             default:
-                $out=$field['value'];
+                $out = $field['value'];
                 break;
         }
-        return $out??"";
+        return $out ?? "";
     }
-    
-    public static function resolveFieldToForm(array $field, FormBuilderInterface $form) {
+
+    public static function resolveFieldToForm(array $field, FormBuilderInterface $form, User $user) {
         $options = [
             'label' => $field['settings']['label'] ?? $field['name'],
             'required' => $field['settings']['required'] ?? false,
@@ -137,6 +143,33 @@ class FormFieldResolver {
                 break;
             case 'textarea':
                 $formField = $form->create($field['name'], TextareaType::class, $options);
+                break;
+            case 'integration':
+                $options = array_merge($options, [
+                    'multiple' => true,
+                    'placeholder' => $field['settings']['placeholder'] ?? $options['label'],
+                    'class' => Project::class,
+                    'query_builder' => function (EntityRepository $er) use ($user) {
+                        if ($user->getAdminMode()) {
+                            return $er->createQueryBuilder('p')
+                                            ->orderBy('p.name', 'ASC');
+                        } else {
+                            return $er->createQueryBuilder('p')
+                                            ->where('p.group = ?1')
+                                            ->orderBy('p.name', 'ASC')
+                                            ->setParameter(1, $user->getGroup()->getId());
+                        }
+                    },
+                    'choice_label' => function ($project) {
+                        return $project->getGroup()->getName() . ' / ' . $project->getName();
+                    },
+                    'preferred_choices' => [],
+                    'group_by' => function($choice, $key, $value) {
+                        return $choice->getGroup()->getName();
+                    },
+                ]);
+                $formField = $form->create($field['name'], EntityType::class, $options);
+
                 break;
             default:
             case 'link':

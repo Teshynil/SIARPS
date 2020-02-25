@@ -37,8 +37,7 @@ class Version extends Properties {
      * })
      */
     private $document;
-    
-    private $data; 
+    private $data = null;
 
     public function __construct() {
         $this->file = File::createEmptyFile();
@@ -68,29 +67,47 @@ class Version extends Properties {
 
     public function fillFile(array $data): self {
         $file = $this->getFile()->getPath();
-        $data= serialize($data);
+        $data = serialize($data);
         file_put_contents($file, $data);
         $this->getFile()->update();
         return $this;
     }
-    
+
     public function getData(): ?array {
-        $this->data = $this->getFile()->readFile('SERIALIZE');
-        
+        if ($this->data == null) {
+            $this->data = $this->getFile()->readFile('SERIALIZE');
+        }
+
         return $this->data;
     }
 
-    public function field(string $name){
-        if($this->data==null){
+    public function getFields(bool $withTypes = false): array {
+        if ($this->data == null) {
             $this->getData();
         }
-        if(isset($this->data[$name])){
-            return $this->data[$name];
-        }else{
+        if (isset($this->data['fields'])) {
+            if ($withTypes) {
+                $fields = $this->data['fields'];
+            } else {
+                $fields = array_combine(array_keys($this->data['fields']),array_column($this->data['fields'], 'value'));
+            }
+            return $fields;
+        } else {
             return null;
         }
     }
-    
+
+    public function getField(string $name) {
+        if ($this->data == null) {
+            $this->getData();
+        }
+        if (isset($this->data[$name])) {
+            return $this->data[$name];
+        } else {
+            return null;
+        }
+    }
+
     public function getDocument(): ?Document {
         return $this->document;
     }

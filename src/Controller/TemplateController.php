@@ -18,7 +18,7 @@ class TemplateController extends SIARPSController {
     public function index() {
 
         $ts = $this->getDoctrine()->getRepository(Template::class)->getAvailableTemplates($this->getUser());
-        return $this->render('template/index.html.twig', [
+        return $this->render('template/templates.html.twig', [
                     'templates' => $ts
         ]);
     }
@@ -28,7 +28,7 @@ class TemplateController extends SIARPSController {
         if (!$this->getPermissionService()->hasRead($template)) {
             throw $this->createAccessDeniedException();
         }
-        return $this->render('template/template_dashboard.html.twig', [
+        return $this->render('template/template.html.twig', [
                     'template' => $template
         ]);
     }
@@ -82,12 +82,8 @@ class TemplateController extends SIARPSController {
             if (empty($form->get('template')->get('templateExternal')->getData())) {
                 $form->get('template')->get('templateExternal')->setData(<<<'EOD'
 <div class="header">
-    <img src="{{ asset('img/header.png') }}" style="height: 2.5cm">
-    <p><strong><span>REPORTE DE AVANCES DE GESTIÓN</span></strong><br>
-    <span><i>Seguimiento de Proyectos, Requerimientos y Servicios de la </i><strong>DGTID</strong></span></p>
 </div>
 <div class="footer">
-    <p><strong><span>Revisó:  {{ document.lockedBy.fullName }}</span></strong></p>
 </div>
 EOD);
             }

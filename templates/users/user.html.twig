@@ -11,7 +11,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Usuario: {{ user.username }}
+                    <div class="card-header">
+                        <nav class="breadcrumb h4">
+                            <a class="breadcrumb-item" href="{{ path('users') }}">Usuarios</a>
+                            <span class="breadcrumb-item active">{{ user.username }}</span>
+                        </nav>
                         <div class="card-header-actions">
                             {% if hasWrite(user) %}
                                 <a class="card-header-action" href="{{ path('user-edit',{'id':user.id}) }}"><i class="fas fa-edit text-info fa-lg"></i></a>

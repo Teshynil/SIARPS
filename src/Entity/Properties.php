@@ -12,7 +12,8 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Table(name="t_properties")
  * @ORM\MappedSuperclass
  */
-class Properties{
+class Properties {
+
     /**
      * @var string
      *
@@ -21,6 +22,7 @@ class Properties{
      * @ORM\GeneratedValue(strategy="NONE")
      */
     protected $id;
+
     /**
      * @var \App\Entity\User
      *
@@ -40,6 +42,7 @@ class Properties{
      * })
      */
     protected $group;
+
     /**
      * @var int
      *
@@ -182,6 +185,9 @@ class Properties{
 
     public function setLockState($lockState): self {
         $this->lockState = $lockState;
+        if ($lockState == false) {
+            $this->lockedBy = null;
+        }
         return $this;
     }
 

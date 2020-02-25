@@ -34,11 +34,11 @@ class VersionRepository extends ServiceEntityRepository {
                 $class = get_class($value);
                 if (!$this->getEntityManager()->getMetadataFactory()->isTransient($class)) {
                     $entity = $this->getEntityManager()->find(get_class($value), $value->getId());
-
+                    
                     if ($entity instanceof File) {
                         if (substr($entity->getMimeType(), 0, strlen("image/")) == "image/") {
                             $url = $this->router->generate("resource", ["method" => "view", "id" => $entity->getId()]);
-                            $resolved[$key]='<img src="'.$url.'"/ style="width:100%,height:100%">';
+                            $resolved[$key]='<img src="'.$url.'"/ class="img-fluid" style="max-height: -webkit-fill-available;max-height: -moz-available;max-height: stretch;">';
                         }else{
                             $url = $this->router->generate("resource", ["method" => "download", "id" => $entity->getId()]);
                             $resolved[$key]='<a href="'.$url.'"target="_blank" /><i class="fas fa-download fa-lg"></i></a>';

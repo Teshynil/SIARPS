@@ -1,10 +1,8 @@
 {% extends "core/base.html.twig" %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('template') }}
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('template') }}
 {% endblock %}
 {% block body %}
 
@@ -12,9 +10,15 @@
         <div class="card">
             <div class="card-header">
                 <nav class="breadcrumb h4">
-                    <a class="breadcrumb-item" href="{{ path('templates') }}">Plantillas</a>
-                    <span class="breadcrumb-item active">Nuevo</span>
+                    <a class="breadcrumb-item" href="{{ path('projects') }}">Proyectos</a>
+                    <a class="breadcrumb-item" href="{{ path('project',{'id':version.document.project.id}) }}">{{ version.document.project.group.name|default('Global') }} / {{ version.document.project.name }}</a>
+                    <a class="breadcrumb-item" href="{{ path('document',{'id':version.document.id}) }}">{{ version.document.name }}</a>
+                    <span class="breadcrumb-item">{{ version.date|date('d/m/Y H:i:s') }}</span>
+                    <span class="breadcrumb-item active">Editar</span>
                 </nav>
+                <div class="card-header-actions">
+                    <span class="badge badge-warning">Editar una versión, bloqueara todas las versiones no bloqueadas y la mandara al principio de la lista de versiones.</span>
+                </div>
             </div>
             <div class="card-body">
                 {{ form_start(form) }}
@@ -23,18 +27,15 @@
                         General
                     </div>
                     <div class="card-body">
-                        {{ form_row(form.name) }}
-                        {{ form_row(form.type) }}
                         {{ form_row(form.properties) }}
                     </div>
                 </div>
-                <div class="card" id="form-fields">
+                <div class="card">
                     <div class="card-header bg-gray-300">
                         Campos
                     </div>
                     <div class="card-body">
-                        {% form_theme form.templateForm 'jquery.collection.html.twig'%}
-                        {{ form_widget(form.templateForm) }}
+                        {{ form_widget(form.fields) }}
                     </div>
                 </div>
                 {{ form_end(form) }}

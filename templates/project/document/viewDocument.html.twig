@@ -6,9 +6,19 @@
             height: {{page.margin.header|default('2')}}cm;
             width: 100%;
             text-align: center;
+            padding-top: {{page.margin.top|default('1')}}cm;
+            padding-left: {{ page.margin.left|default('2')}}cm;
+            padding-right: {{ page.margin.right|default('2')}}cm;
+            z-index: 0;
+        }
+        .header img{
+            display: block!important;
         }
         .footer{
             height: {{page.margin.footer|default('2')}}cm;
+            padding-bottom: {{page.margin.bottom|default('1')}}cm;
+            padding-left: {{ page.margin.left|default('2')}}cm;
+            padding-right: {{ page.margin.right|default('2')}}cm;
             width: 100%;
             text-align: center;
         }
@@ -22,9 +32,13 @@
                 min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
                 max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
             {% endif %}
-            overflow: hidden;
+            padding-left: {{ page.margin.left|default('2')}}cm;
+            padding-right: {{ page.margin.right|default('2')}}cm;
+            overflow:hidden;
         }
         .page {
+            z-index: 0;
+            font-family: 'Arial'!important;
             {% if page.orientation|default('portrait')=='landscape' %}
                 width: {{page.size.height|default('27.94')}}cm;
                 min-height: {{page.size.width|default('21.59')}}cm;
@@ -34,8 +48,6 @@
                 min-height: {{page.size.width|default('21.59')}}cm;
                 max-height: {{page.size.height|default('27.94')}}cm;
             {% endif %}
-            padding-left: {{ page.margin.left|default('2')}}cm;
-            padding-right: {{ page.margin.right|default('2')}}cm;
             overflow:hidden;
         }
     </style>
@@ -51,7 +63,7 @@
         </div>
     <div class="animated fadeIn row">
         
-        <div class="document" style="zoom: 100%;margin: auto;">
+        <div class="document" style="margin: auto;">
             {{ ((template.external~template.body)|default(''))|evaluate(false) }}
         </div>
     </div>

@@ -40,7 +40,10 @@ class FileSaver {
         if ($file->getPath() == null) {
             $file->setPath(join(DIRECTORY_SEPARATOR, [$this->targetDirectory, $file->getId()]));
         }
-        $this->fileSystem->dumpFile($file->getPath(),'');
+        if ($file->getSize() == 0) {
+            $this->fileSystem->dumpFile($file->getPath(), '');
+        }
+        $file->setCreationDate(new \DateTime());
     }
 
 }

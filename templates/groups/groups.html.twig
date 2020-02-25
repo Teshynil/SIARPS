@@ -1,16 +1,19 @@
 {% extends "core/base.html.twig" %}
 
 {% block stylesheets %}
-    
+
 {% endblock %}
 {% block javascripts %}
-    
+
 {% endblock %}
 {% block body %}
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="fas fa-edit"></i> Grupos
+            <div class="card-header">
+                <nav class="breadcrumb h4">
+                    <span class="breadcrumb-item active">Grupos</span>
+                </nav>
                 {% if app.user.adminMode %}
                     <div class="card-header-actions">
                         <a class="btn btn-pill btn-success" href="{{ path('group-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un Grupo</a>

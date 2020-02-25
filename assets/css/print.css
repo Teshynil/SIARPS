@@ -1,3 +1,9 @@
+.document{
+    display: grid;
+}
+.header{
+    position: relative;
+}
 .page {
 	/* Styles for better appearance on screens only -- are reset to defaults in print styles later */
 

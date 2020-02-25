@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UsersController extends SIARPSController {
 
-    public function new(Request $request,CreateUserRequest $user) {
+    public function new(Request $request, CreateUserRequest $user) {
         if (!$this->getPermissionService()->hasWrite($this->getUser()->getGroup())) {
             throw $this->createAccessDeniedException();
         }
@@ -31,15 +31,15 @@ class UsersController extends SIARPSController {
                     'form' => $formView
         ]);
     }
-    
-    public function edit($id, Request $request,EditUserRequest $userEdit) {
+
+    public function edit($id, Request $request, EditUserRequest $userEdit) {
         $user = $this->getDoctrine()->getManager()->find(User::class, $id);
         if (!$this->getPermissionService()->hasWrite($user)) {
             throw $this->createAccessDeniedException();
         }
-        $locked=$this->getPermissionService()->hasLock($user);
+        $locked = $this->getPermissionService()->hasLock($user);
         $userEdit->fillEntity($user);
-        $form = $this->createForm(EditUserType::class, $userEdit, ['em' => $this->getDoctrine(), 'user' => $this->getUser(),'locked'=>$locked]);
+        $form = $this->createForm(EditUserType::class, $userEdit, ['em' => $this->getDoctrine(), 'user' => $this->getUser(), 'locked' => $locked]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -47,10 +47,11 @@ class UsersController extends SIARPSController {
             $this->getDoctrine()->getManager()->persist($DBUser);
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', "Usuario Editado|El usuario " . $DBUser->getUsername() . " fue editado correctamente");
-            return $this->redirectToRoute("user",['id'=>$DBUser->getId()]);
+            return $this->redirectToRoute("user", ['id' => $DBUser->getId()]);
         }
         $formView = $form->createView();
         return $this->render('users/edit.html.twig', [
+                    'user' => $user,
                     'form' => $formView
         ]);
     }

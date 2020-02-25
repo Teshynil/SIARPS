@@ -24,11 +24,6 @@ class EditDocumentType extends AbstractType {
                         'data-target' => "#header-{{form.parent.vars.id}}",
                     ]
                 ])
-                ->add('properties', EditPropertiesType::class, [
-                    'data_class' => $options['data_class'],
-                    'em' => $options['em'],
-                    'user' => $options['user']
-                ])
                 ->add('template', EntityType::class, ['label' => 'Plantilla',
                     'class' => Template::class,
                     'query_builder' => function (EntityRepository $er) use ($options) {
@@ -56,6 +51,11 @@ class EditDocumentType extends AbstractType {
                         }
                         return $out;
                     },
+                ])
+                ->add('properties', EditPropertiesType::class, [
+                    'data_class' => $options['data_class'],
+                    'em' => $options['em'],
+                    'user' => $options['user']
                 ])
         ;
     }

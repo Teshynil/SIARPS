@@ -11,7 +11,11 @@
     <div class="animated fadeIn">
         <div class="card">
             <div class="card-header">
-                <span class="h3"><i class="icon-layers"></i>&nbsp; {{ template.group.name|default('Global') }} | {{ template.name }}</span>
+                <nav class="breadcrumb h4">
+                    <a class="breadcrumb-item" href="{{ path('templates') }}">Plantillas</a>
+                    <a class="breadcrumb-item" href="{{ path('template',{'id':template.id}) }}">{{ template.group.name|default('Global') }} / {{ template.name }}</a>
+                    <span class="breadcrumb-item active">Editar</span>
+                </nav>
                 {% if hasWrite(template) %}
                     <div class="card-header-actions">
                         <a class="btn btn-pill btn-secondary" href="{{ path('template-view',{'id':template.id}) }}"><i class="fa fa-eye"></i>&nbsp;Configuración</a>

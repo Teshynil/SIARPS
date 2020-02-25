@@ -4651,6 +4651,11 @@ input[type="button"].btn-block {
     background-color: transparent;
     border-radius: 0;
 }
+.card-header .breadcrumb {
+    float: left;
+    line-height: 35px;
+    padding: 0px;
+}
 
 .breadcrumb-item + .breadcrumb-item {
     padding-left: 0.5rem;

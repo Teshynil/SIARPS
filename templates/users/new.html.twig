@@ -11,7 +11,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Nuevo usuario
+                    <div class="card-header">
+                        <nav class="breadcrumb h4">
+                            <a class="breadcrumb-item" href="{{ path('users') }}">Usuarios</a>
+                            <span class="breadcrumb-item active">Nuevo</span>
+                        </nav>
                     </div>
                     <div class="card-body">
                         {{ form_start(form) }}

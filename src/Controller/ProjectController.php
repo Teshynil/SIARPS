@@ -18,7 +18,7 @@ class ProjectController extends SIARPSController {
     public function index() {
 
         $ps = $this->getDoctrine()->getRepository(Project::class)->getAvailableProjects($this->getUser());
-        return $this->render('project/index.html.twig', [
+        return $this->render('project/projects.html.twig', [
                     'projects' => $ps
         ]);
     }
@@ -28,7 +28,7 @@ class ProjectController extends SIARPSController {
         if (!$this->getPermissionService()->hasRead($project)) {
             throw $this->createAccessDeniedException();
         }
-        return $this->render('project/project_dashboard.html.twig', [
+        return $this->render('project/project.html.twig', [
                     'project' => $project
         ]);
     }
@@ -66,17 +66,6 @@ class ProjectController extends SIARPSController {
 
         if ($form->isSubmitted() && $form->isValid()) {
             $project = $data->createEntity();
-            $defaultTemplate = $this->getDoctrine()->getRepository(Setting::class)->getValue('requiredTemplate');
-            if ($defaultTemplate instanceof Template) {
-                $defaultDocument = new Document();
-                $defaultDocument->setName("Resumen de Avance")
-                        ->setOwner($project->getOwner())
-                        ->setGroup($project->getGroup())
-                        ->setPermissions($project->getOwnerPermissions(), $project->getGroupPermissions(), $project->getOtherPermissions())
-                        ->setTemplate($defaultTemplate);
-                $project->addDocument($defaultDocument);
-                $project->setSummary($defaultDocument);
-            }
             $this->getDoctrine()->getManager()->persist($project);
             $this->getDoctrine()->getManager()->flush();
             return $this->redirectToRoute("projects");

@@ -27,6 +27,20 @@ class EditProjectType extends AbstractType {
                     'locked' => $options['locked']
                 ])
                 ->add('summary', EntityType::class, ['label' => 'Documento de resumen',
+                    'help'=>'Este documento representa la información minima que contiene un proyecto',
+                    'class' => Document::class,
+                    'query_builder' => function (EntityRepository $er) use ($options) {
+                        return $er->createQueryBuilder('d')
+                                ->where('d.project = ?1')
+                                ->orderBy('d.name', 'ASC')
+                                ->setParameter(1, $options['project']->getId());
+                    },
+                    'choice_label' => function ($document) {
+                        return $document->getName();
+                    },
+                ])
+                ->add('progressDocument', EntityType::class, ['label' => 'Documento de progreso',
+                    'help'=>'Cada version de este documento actualizara el progreso del proyecto. Debe tener un campo llamado "progress" ',
                     'class' => Document::class,
                     'query_builder' => function (EntityRepository $er) use ($options) {
                         return $er->createQueryBuilder('d')

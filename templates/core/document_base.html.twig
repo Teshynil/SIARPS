@@ -17,39 +17,53 @@
                 display:none!important;
             }
             .header{
-                height: {{page.margin.header|default('2')}}{{page.unit|default('cm')}};
+                height: {{page.margin.header|default('2')}}cm;
                 width: 100%;
                 text-align: center;
+                padding-top: {{page.margin.top|default('1')}}cm;
+                padding-left: {{ page.margin.left|default('2')}}cm;
+                padding-right: {{ page.margin.right|default('2')}}cm;
+                z-index: 0;
+            }
+            .header img{
+                display: block!important;
             }
             .footer{
-                height: {{page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                height: {{page.margin.footer|default('2')}}cm;
+                padding-bottom: {{page.margin.bottom|default('1')}}cm;
+                padding-left: {{ page.margin.left|default('2')}}cm;
+                padding-right: {{ page.margin.right|default('2')}}cm;
                 width: 100%;
                 text-align: center;
             }
             .page-body {
                 {% if page.orientation|default('portrait')=='landscape' %}
-                    height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                    min-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                    max-height: {{page.size.width|default('21.59')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
                 {%else%}
-                    height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}{{page.unit|default('cm')}};
+                    height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                    min-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
+                    max-height: {{page.size.height|default('27.94')-page.margin.header|default('2')-page.margin.footer|default('2')}}cm;
                 {% endif %}
-                overflow: hidden;
+                padding-left: {{ page.margin.left|default('2')}}cm;
+                padding-right: {{ page.margin.right|default('2')}}cm;
+                overflow:hidden;
             }
             .page {
+                z-index: 0;
+                font-family: 'Arial'!important;
                 {% if page.orientation|default('portrait')=='landscape' %}
-                    width: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
+                    width: {{page.size.height|default('27.94')}}cm;
+                    min-height: {{page.size.width|default('21.59')}}cm;
+                    max-height: {{page.size.width|default('21.59')}}cm;
+                    height: {{page.size.width|default('21.59')}}cm;
                 {%else%}
-                    width: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    min-height: {{page.size.width|default('21.59')}}{{page.unit|default('cm')}};
-                    max-height: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}};
+                    width: {{page.size.width|default('21.59')}}cm;
+                    min-height: {{page.size.width|default('21.59')}}cm;
+                    height: {{page.size.height|default('27.94')}}cm;
+                    max-height: {{page.size.height|default('27.94')}}cm;
                 {% endif %}
-                padding-left: {{ page.margin.left|default('2')}}{{page.unit|default('cm')}};
-                padding-right: {{ page.margin.right|default('2')}}{{page.unit|default('cm')}};
                 overflow:hidden;
             }
             @page {
@@ -61,6 +75,7 @@
                     max-height: {{page.size.height|default('27.94')}}{{page.unit|default('cm')}}!important;
                 {% endif %}
                 size: {{page.size.name|default('letter')}} {{page.orientation|default('portrait')}};
+                margin:0!important;
                 margin-top: {{ page.margin.header is defined ? '0' : page.margin.top|default('2')}}{{page.unit|default('cm')}};
                 margin-left: {{ page.margin.left|default('2')}}{{page.unit|default('cm')}};
                 margin-right: {{ page.margin.right|default('2')}}{{page.unit|default('cm')}};

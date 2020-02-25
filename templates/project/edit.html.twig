@@ -8,7 +8,12 @@
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="icon-layers"></i>&nbsp; {{ project.group.name|default('Global') }} | {{ project.name }}
+            <div class="card-header">
+                <nav class="breadcrumb h4">
+                    <a class="breadcrumb-item" href="{{ path('projects') }}">Proyectos</a>
+                    <a class="breadcrumb-item" href="{{ path('project',{'id':project.id}) }}">{{ project.group.name|default('Global') }} / {{ project.name }}</a>
+                    <span class="breadcrumb-item active">Editar</span>
+                </nav>
             </div>
             <div class="card-body">
                 {{ form_start(form) }}
@@ -19,8 +24,9 @@
                     <div class="card-body">
                         {{ form_row(form.name) }}
                         {{ form_row(form.description) }}
-                        {{ form_row(form.properties) }}
                         {{ form_row(form.summary) }}
+                        {{ form_row(form.progressDocument) }}
+                        {{ form_row(form.properties) }}
                     </div>
                 </div>
                 <div class="card">

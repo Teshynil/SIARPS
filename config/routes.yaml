@@ -119,6 +119,14 @@ document-settings:
 version-new:
     path: /document/{id}/new
     controller: App\Controller\DocumentController::newVersion
+    
+version-edit:
+    path: /document/edit/{id}
+    controller: App\Controller\DocumentController::editVersion
+    
+version-new-basedOf:
+    path: /document/{id}/new/{baseVersion}
+    controller: App\Controller\DocumentController::newVersion
 
 version-view:
     path: /document/view/{id}

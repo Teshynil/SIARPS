@@ -11,7 +11,10 @@
 
     <div class="animated fadeIn">
         <div class="card">
-            <div class="card-header"><i class="icon-layers"></i> Proyectos
+            <div class="card-header">
+                <nav class="breadcrumb h4">
+                    <span class="breadcrumb-item active">Proyectos</span>
+                </nav>
                 {% if hasWrite(app.user.group) %}
                     <div class="card-header-actions">
                         <a class="btn btn-pill btn-success" href="{{ path('project-new') }}"><i class="fa fa-plus"></i>&nbsp;Añadir un proyecto</a>

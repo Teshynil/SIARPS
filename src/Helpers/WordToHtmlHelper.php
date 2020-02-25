@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class WordToHtmlHelper {
 
-    public static function replaceImages(array $images, string $str) {
+    public static function replaceImages(array $images, ?string $str) {
         if ($str !== null) {
             if (count($images) > 0) {
                 preg_match_all('~(<\s{0,1}img.*?src=(?:"|\'))([\w,\s-]+\.[A-Za-z]{1,4})((?:"|\')/>)~is', $str, $matches, PREG_SET_ORDER, 0);
@@ -84,7 +84,7 @@ class WordToHtmlHelper {
             $str = preg_replace('~(<span [^<]*?|)<br[^>]*?style=[^>]*?page-break-before:always[^>]*?>([^<]*?</span>|)~si', '</div><div class="page">', $str);
             $str = preg_replace('~(?(?=class="page")|(class=((\'|"|)[\w ]*?(\'|")|[\w]+?))(?= |>))~si', '', $str);
             $str = preg_replace('~</{0,1}o:p>~si', '', $str);
-
+            $str = preg_replace('~<p>&nbsp;</p>~si', '', $str);
             $str = preg_replace('~<\!\[.*?]>.*?<\!\[.*?]>~si', '', $str);
         }
         return $str;
