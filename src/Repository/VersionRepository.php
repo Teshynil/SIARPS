@@ -26,35 +26,55 @@ class VersionRepository extends ServiceEntityRepository {
 
     public function getData(Version $document) {
         $data = $document->getData();
-        $resolved = [];
-        foreach ($data['fields'] as $key => $inner) {
-            $value=$inner['value'];
-            $type=$inner['type']??'text';
-            if (is_object($value)) {
-                $class = get_class($value);
-                if (!$this->getEntityManager()->getMetadataFactory()->isTransient($class)) {
-                    $entity = $this->getEntityManager()->find(get_class($value), $value->getId());
-                    
-                    if ($entity instanceof File) {
-                        if (substr($entity->getMimeType(), 0, strlen("image/")) == "image/") {
-                            $url = $this->router->generate("resource", ["method" => "view", "id" => $entity->getId()]);
-                            $resolved[$key]='<img src="'.$url.'"/ class="img-fluid" style="max-height: -webkit-fill-available;max-height: -moz-available;max-height: stretch;">';
-                        }else{
-                            $url = $this->router->generate("resource", ["method" => "download", "id" => $entity->getId()]);
-                            $resolved[$key]='<a href="'.$url.'"target="_blank" /><i class="fas fa-download fa-lg"></i></a>';
-                        }
-                    } else {
-                        $resolved[$key] = $entity;
-                    }
-                }
-            }else{
-                $resolved[$key]=FormFieldResolver::resolveFieldToView($inner);
+        if ($document->getLockState()) {
+            $updated = false;
+            if ($data['page'] == null) {
+                $data['page'] = $document->getDocument()->getTemplate()->getSetting('page');
+                $updated = true;
             }
+            if ($data['template'] == null) {
+                $data['template'] = $document->getDocument()->getTemplate()->getFile()->readFile("JSON");
+                $updated = true;
+            }
+            if ($updated) {
+                $document->fillFile($data);
+            }
+        }
+        $resolved = [];
+        foreach ($data['fields'] as $key => $field) {
+            $resolved[$key] = $this->transformData($field,$document);
         }
         foreach ($resolved as $key => $value) {
             $data['fields'][$key] = $value;
         }
         return $data;
+    }
+
+public function transformData($data, Version $document) {
+        $value = $data['value'];
+        $type = $data['type'] ?? 'text';
+        $output = $value;
+        if (is_object($value)) {
+            $class = get_class($value);
+            if (!$this->getEntityManager()->getMetadataFactory()->isTransient($class)) {
+                $entity = $this->getEntityManager()->find(get_class($value), $value->getId());
+
+                if ($entity instanceof File) {
+                    if (substr($entity->getMimeType(), 0, strlen("image/")) == "image/") {
+                        $url = $this->router->generate("resource", ["method" => "view", "id" => $entity->getId()]);
+                        $output = '<img src="' . $url . '"/ class="img-fluid" style="max-height: -webkit-fill-available;max-height: -moz-available;max-height: stretch;">';
+                    } else {
+                        $url = $this->router->generate("resource", ["method" => "download", "id" => $entity->getId()]);
+                        $output = '<a href="' . $url . '"target="_blank" /><i class="fas fa-download fa-lg"></i></a>';
+                    }
+                } else {
+                    $output = $entity;
+                }
+            }
+        } else {
+            $output = FormFieldResolver::resolveFieldToView($data, $this->getEntityManager(),$document);
+        }
+        return $output;
     }
 
     // /**

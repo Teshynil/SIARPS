@@ -51,10 +51,15 @@
                                 <td>
                                     <a class="btn btn-info" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-eye"></i></a>
                                         {% if document.lockState %}
-                                        <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-lock"></i></a>
-                                        <a class="btn btn-success" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-file-alt"></i></a>
+                                            {% if hasLock(document) %}
+                                            <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-lock"></i></a>
+                                            {% endif %}
+                                        <!-- <a class="btn btn-success" href="{{ path('document',{'id':document.id}) }}" target="_blank"><i class="fas fa-file-alt"></i></a>
+                                        -->
                                         {% else %}
-                                        <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-unlock"></i></a>
+                                            {% if hasLock(document) %}
+                                            <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-unlock"></i></a>
+                                            {% endif %}
                                         {% endif %}
                                 </td>
 

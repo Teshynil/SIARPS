@@ -96,7 +96,11 @@ class FormAuthenticator extends AbstractFormLoginAuthenticator {
                 $this->verifyLdapOwner($user);
             }
             $this->resultUser = $user;
-            return $user;
+            if(!$user->getLockState()){
+                return $user;
+            }else{
+                throw new CustomUserMessageAuthenticationException('El usuario esta deshabilitado.');
+            }
         } catch (LdapConnectionTimeout $exc) {
             throw new CustomUserMessageAuthenticationException('No se tiene acceso al Directorio Activo.');
         }

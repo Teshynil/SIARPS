@@ -4,6 +4,7 @@ namespace App\Twig;
 
 use App\Entity\Properties;
 use App\Entity\Version;
+use App\Helpers\FormFieldResolver;
 use App\Security\PermissionService;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -35,6 +36,8 @@ class AppTwigExtension extends AbstractExtension {
             new TwigFunction('hasLock', [$this->permissionService, 'hasLock']),
             new TwigFunction('hasDelete', [$this->permissionService, 'hasDelete']),
             new TwigFunction('class', [$this, 'getClass']),
+            new TwigFunction('twigSyntax', [$this, 'getSyntaxFromType']),
+            new TwigFunction('globales', [$this, 'getGlobalProject']),
             new TwigFunction('data', [$this, 'getData']),
         ];
     }
@@ -50,14 +53,54 @@ class AppTwigExtension extends AbstractExtension {
                 'needs_environment' => true,
                 'needs_context' => true,
                 'is_safe' => ['data' => true]]
+            ),
+            new TwigFilter('groupBy', [$this, 'groupBy'], [
+                'needs_environment' => false,
+                'needs_context' => false,
+                'is_safe' => ['groupBy' => true]]
             )
         ];
+    }
+
+    public function groupBy($projects, $discriminator) {
+        $groupedProjects = [];
+        if (is_array($projects)) {
+            foreach ($projects as $project) {
+                if ($project instanceof \App\Entity\Project) {
+                    $data = $this->getData($project->getSummary()->getCurrentLocked());
+                    $key = null;
+                    if (isset($data[$discriminator])) {
+                        $key = $data[$discriminator];
+                    }
+                    $groupedProjects[$key][] = $project;
+                }
+            }
+            return $groupedProjects;
+        }
+    }
+
+    public function getGlobalProject() {
+        $project = $this->em->getRepository(\App\Entity\Setting::class)->getValue("globalProject");
+        $data = null;
+        if ($project instanceof \App\Entity\Project) {
+            if ($project->getSummary() instanceof Version) {
+                $data = $this->getData($project->getSummary()->getCurrentLocked());
+            }
+        }
+        return $data;
     }
 
     public function getData($version) {
         if ($version instanceof Version) {
             $data = $this->em->getRepository(Version::class)->getData($version);
             return $data['fields'];
+        }
+        return null;
+    }
+
+    public function getSyntaxFromType($field) {
+        if (is_array($field)) {
+            return FormFieldResolver::resolveFieldToSyntax($field);
         }
     }
 

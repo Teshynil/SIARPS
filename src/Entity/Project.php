@@ -167,9 +167,9 @@ class Project extends Properties {
         return $this->summary;
     }
     
-    public function setProgressDocument(?Document $summary): self {
-        if($summary instanceof Document){
-            $this->setSetting("progressDocument",$summary->getName());
+    public function setProgressDocument(?Document $document): self {
+        if($document instanceof Document){
+            $this->setSetting("progressDocument",$document->getName());
         }else{
             $this->setSetting("progressDocument",null);
         }

@@ -20,9 +20,6 @@
                             {% if hasWrite(user) %}
                                 <a class="card-header-action" href="{{ path('user-edit',{'id':user.id}) }}"><i class="fas fa-edit text-info fa-lg"></i></a>
                                 {% endif %}
-                                {% if hasDelete(user) %}
-                                <a class="card-header-action" href="#"><i class="fas fa-trash text-danger fa-lg"></i></a>
-                                {% endif %}
                         </div>
                     </div>
                     <div class="card-body">
@@ -76,7 +73,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row d-none">
                             <div class="col-sm-4">
                                 <div class="brand-card">
                                     <div class="brand-card-header bg-success">

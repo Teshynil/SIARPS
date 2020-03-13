@@ -169,6 +169,7 @@
 {% block submit_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('btn-primary'))|trim}) -%}
     {{- parent() -}}
+    <a class="ml-1 btn btn-danger" onclick="history.back()" href="#">Cancelar</a>
 {%- endblock submit_widget %}
 
 {% block checkbox_widget -%}

@@ -101,8 +101,8 @@ class Version extends Properties {
         if ($this->data == null) {
             $this->getData();
         }
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        if (isset($this->data['fields'][$name])) {
+            return $this->data['fields'][$name]['value'];
         } else {
             return null;
         }

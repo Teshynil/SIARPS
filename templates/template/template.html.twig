@@ -51,6 +51,7 @@
                             <th>Campo</th>
                             <th>Descripción</th>
                             <th>Tipo de campo</th>
+                            <th>Notación en plantillas</th>
                             <th>Requerido</th>
                         </tr>
                     </thead>
@@ -60,6 +61,7 @@
                                 <td>{{ field.name }}</td>
                                 <td>{{ field.description|default('Vacio') }}</td>
                                 <td>{{ field.type }}</td>
+                                <td>{{ twigSyntax(field) }}</td>
                                 <td>{{ field.required|default(false)?'Requerido':'Opcional' }}</td>
                             </tr>
                         {% else %}

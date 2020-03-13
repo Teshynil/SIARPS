@@ -58,9 +58,6 @@ class EditVersionRequest extends EditPropertiesRequest {
 
         parent::fillProperties($version);
         $fileFields = [];
-        foreach ($this->fileFields as $fileFieldKey) {
-            
-        }
         foreach ($this->fields as $key => $field) {
             if ($field instanceof UploadedFile) {
                 $dbfile=$this->em->find(File::class, $this->originalFields[$key]->getId());

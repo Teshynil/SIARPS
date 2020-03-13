@@ -47,16 +47,16 @@ class DocumentController extends SIARPSController {
                         'document' => $document
             ]);
         } else {
-            if($baseVersion instanceof Version){
-                $baseFields=$baseVersion->getData()['fields'];
-                $finalBaseFields=[];
-                
-                foreach ($baseFields as $key => $value){
-                    if(!in_array($value['type'], ['file','image'])){
-                        $finalBaseFields[$key]=$value['value'];
+            if ($baseVersion instanceof Version) {
+                $baseFields = $baseVersion->getData()['fields'];
+                $finalBaseFields = [];
+
+                foreach ($baseFields as $key => $value) {
+                    if (!in_array($value['type'], ['file', 'image'])) {
+                        $finalBaseFields[$key] = $value['value'];
                     }
                 }
-                $data->fields=$finalBaseFields;
+                $data->fields = $finalBaseFields;
             }
             $form = $this->createForm(CreateVersionType::class, $data, ['em' => $this->getDoctrine(), 'user' => $this->getUser()]);
             $formFields = $this->createFormBuilder()->create('fields', FormType::class, [
@@ -68,7 +68,7 @@ class DocumentController extends SIARPSController {
                 if ($template->getType() == 'Form') {
                     $fields = $template->getSetting('fields');
                     foreach ($fields as $field) {
-                        $formFields->add(FormFieldResolver::resolveFieldToForm($field, $formFields,$this->getUser()));
+                        $formFields->add(FormFieldResolver::resolveFieldToForm($field, $formFields, $this->getUser(), $this->getDoctrine()->getManager()));
                     }
                 } else {
                     $form->add('file', FileType::class);
@@ -110,7 +110,7 @@ class DocumentController extends SIARPSController {
         $hasLock = $version->getLockState();
         if ($hasLock == true) {
             $this->addFlash('error', "No se pudo completar|Es necesario que la version no se encuentre bloqueada");
-            return $this->redirectToRoute('document',['id'=>$version->getDocument()->getId()]);
+            return $this->redirectToRoute('document', ['id' => $version->getDocument()->getId()]);
         } else {
             $data->fillEntity($version);
             $form = $this->createForm(\App\Form\EditVersionType::class, $data, ['em' => $this->getDoctrine(), 'user' => $this->getUser()]);
@@ -123,7 +123,7 @@ class DocumentController extends SIARPSController {
                 if ($template->getType() == 'Form') {
                     $fields = $template->getSetting('fields');
                     foreach ($fields as $field) {
-                        $formFields->add(FormFieldResolver::resolveFieldToForm($field, $formFields,$this->getUser()));
+                        $formFields->add(FormFieldResolver::resolveFieldToForm($field, $formFields, $this->getUser(), $this->getDoctrine()->getManager()));
                     }
                 } else {
                     $form->add('file', FileType::class);
@@ -165,13 +165,8 @@ class DocumentController extends SIARPSController {
 
             $data = $this->getDoctrine()->getManager()->getRepository(Version::class)->getData($document);
             if ($document->getLockState() == true) {
-                if ($data['page'] == null || $data['template'] == null) {
-                    $template = $document->getDocument()->getTemplate()->getFile()->readFile("JSON");
-                    $page = $document->getDocument()->getTemplate()->getSetting('page');
-                } else {
-                    $template = json_decode($data['template']);
-                    $page = $data['page'];
-                }
+                $template = $data['template'];
+                $page = $data['page'];
             } else {
                 $template = $document->getDocument()->getTemplate()->getFile()->readFile("JSON");
                 $page = $document->getDocument()->getTemplate()->getSetting('page');
@@ -195,13 +190,8 @@ class DocumentController extends SIARPSController {
 
             $data = $this->getDoctrine()->getManager()->getRepository(Version::class)->getData($document);
             if ($document->getLockState() == true) {
-                if ($data['page'] == null || $data['template'] == null) {
-                    $template = $document->getDocument()->getTemplate()->getFile()->readFile("JSON");
-                    $page = $document->getDocument()->getTemplate()->getSetting('page');
-                } else {
-                    $template = json_decode($data['template']);
-                    $page = $data['page'];
-                }
+                $template = $data['template'];
+                $page = $data['page'];
             } else {
                 $template = $document->getDocument()->getTemplate()->getFile()->readFile("JSON");
                 $page = $document->getDocument()->getTemplate()->getSetting('page');

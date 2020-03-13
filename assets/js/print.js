@@ -8,6 +8,7 @@
 // any CSS you require will output into a single css file (app.css in this case)
 require('../css/sheets-of-paper.css');
 require('../css/print.css');
+require('../css/app.css');
 //JS
 const $ = require('jquery');
 global.$ = global.jQuery = $;

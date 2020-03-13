@@ -34,6 +34,7 @@
                             <th class="text-center"><i class="icon-people"></i></th>
                             <th>Nombre</th>
                             <th data-column-filter>Grupo de trabajo</th>
+                            <th>Status</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -46,7 +47,17 @@
                                 <td>{{ user.fullName }}</td>
                                 <td>{{ user.group.name }}</td>
                                 <td>
+                                    <span class="badge badge-{{user.lockState?'secondary':'primary'}}">{{ user.lockState?'Desactivado':'Activado' }}</span>
+                                </td>
+                                <td>
                                     <a class="btn btn-info" href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-eye"></i></a>
+                                        {% if hasLock(user) %}
+                                            {% if user.lockState %}
+                                            <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':user.id,'entity':class(user)}) }}"><i class="fas fa-lock"></i></a>
+                                            {% else %}
+                                            <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':user.id,'entity':class(user)}) }}"><i class="fas fa-unlock"></i></a>
+                                            {% endif %}
+                                        {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

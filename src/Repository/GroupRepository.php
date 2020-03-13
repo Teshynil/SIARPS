@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Group;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -18,32 +19,34 @@ class GroupRepository extends ServiceEntityRepository {
         parent::__construct($registry, Group::class);
     }
 
-// /**
-    //  * @return Group[] Returns an array of Group objects
-    //  */
-    /*
-      public function findByExampleField($value)
-      {
-      return $this->createQueryBuilder('g')
-      ->andWhere('g.exampleField = :val')
-      ->setParameter('val', $value)
-      ->orderBy('g.id', 'ASC')
-      ->setMaxResults(10)
-      ->getQuery()
-      ->getResult()
-      ;
-      }
-     */
+    public function getAvailable($user) {
+        $min = 0;
+        if ($user->getAdminMode()) {
+            $min = -1;
+        }
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('p')
+                ->from(Group::class, 'p')
+                ->join(User::class, 'u')
+                //->join('p.documents', 'd')
+                //->addSelect(['lastUpdate',])
+                ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
+                ->andWhere(
+                        $qb->expr()->orX(
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.owner', 'u.id'),
+                                        $qb->expr()->gt('BIT_AND(p.ownerPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.group', 'u.group'),
+                                        $qb->expr()->gt('BIT_AND(p.groupPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->gt('BIT_AND(p.otherPermissions, 4)', $min)
+                        )
+                )
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
 
-    /*
-      public function findOneBySomeField($value): ?Group
-      {
-      return $this->createQueryBuilder('g')
-      ->andWhere('g.exampleField = :val')
-      ->setParameter('val', $value)
-      ->getQuery()
-      ->getOneOrNullResult()
-      ;
-      }
-     */
 }

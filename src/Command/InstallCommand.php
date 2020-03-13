@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Group;
+use App\Entity\Project;
 use App\Entity\Setting;
 use App\Entity\Template;
 use App\Entity\User;
@@ -172,6 +173,7 @@ class InstallCommand extends Command {
         $adminGroup = new Group();
         $adminUser = new User();
         $guestGroup = new Group();
+        $globalProject = new Project();
 //        $nullTemplate = new Template();
 //        $requiredTemplate = new Template();
 
@@ -180,6 +182,7 @@ class InstallCommand extends Command {
         $_groupConfig = new Setting("groupConfig", null, null, $adminUser, $adminGroup);
         $_ldapGroupConfig = new Setting("ldapGroupConfig", null, null, $adminUser, $adminGroup);
         $_guestGroup = new Setting("guestGroup", null, null, $adminUser, $adminGroup);
+        $_globalProject = new Setting("globalProject", null, null, $adminUser, $adminGroup);
 //        $_nullTemplate = new Setting("nullTemplate", null, null, $adminUser, $adminGroup);
 //        $_requiredTemplate = new Setting("requiredTemplate", null, null, $adminUser, $adminGroup);
 
@@ -236,12 +239,19 @@ class InstallCommand extends Command {
                 ->setPassword($this->passwordEncoder->encodePassword($adminUser, $password));
         $adminGroup->setOwner($adminUser);
 
-        $guestGroup->setName("Guest");
-        $guestGroup->setPermissions(07, 00, 00);
-        $guestGroup->setDescription("Grupo de Usuarios Temporales");
-        $guestGroup->setOwner($adminUser);
-        $guestGroup->setGroup($adminGroup);
+        $guestGroup->setName("Guest")
+                ->setPermissions(07, 00, 00)
+                ->setDescription("Grupo de Usuarios Temporales")
+                ->setOwner($adminUser)
+                ->setGroup($adminGroup);
 
+        $globalProject->setName("Projecto Global")
+                ->setPermissions(07, 07, 04)
+                ->setDescription("Projecto para variables globales")
+                ->setOwner($adminUser)
+                ->setGroup($adminGroup);
+        $_globalProject->setValue($globalProject);
+        
         $_installStatus->setValue(true);
         $_adminGroup->setValue($adminGroup);
 
@@ -288,7 +298,7 @@ class InstallCommand extends Command {
             $_groupConfig->setValue("INTERNAL");
         }
         $_guestGroup->setValue($guestGroup);
-        
+
 //        $nullTemplate->setPermissions(07, 07, 04)
 //                ->setName("Archivo")
 //                ->setType('File')
@@ -341,12 +351,14 @@ class InstallCommand extends Command {
         $this->em->persist($adminUser);
         $this->em->persist($adminGroup);
         $this->em->persist($guestGroup);
+        $this->em->persist($globalProject);
 //        $this->em->persist($nullTemplate);
 //        $this->em->persist($requiredTemplate);
         $this->em->persist($_adminGroup);
         $this->em->persist($_groupConfig);
         $this->em->persist($_guestGroup);
         $this->em->persist($_installStatus);
+        $this->em->persist($_globalProject);
         $this->em->persist($_ldapGroupConfig);
 //        $this->em->persist($_nullTemplate);
 //        $this->em->persist($_requiredTemplate);

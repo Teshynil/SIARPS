@@ -40,10 +40,10 @@
                                     <div class="progress-group m-0 p-1">
                                         <div class="progress-group-bars">
                                             <div class="progress progress-xs">
-                                                <div class="progress-bar bg-info" role="progressbar" style="width: {{project.summary.currentLocked.data.avance|default('0')}}%" aria-valuenow="{{ project.summary.currentLocked.data.avance|default('0') }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: {{project.progress|default('0')}}%" aria-valuenow="{{ project.progress|default('0') }}" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                         </div>
-                                        <div class="ml-2"><span class="h6">{{project.summary.currentLocked.data.avance|default('No definido')}}%</span></div>
+                                        <div class="ml-2"><span class="h6">{{project.progress|default('No definido')}}%</span></div>
                                     </div>
                                 </td>
                                 <td>

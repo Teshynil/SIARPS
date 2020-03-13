@@ -2,8 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\Document;
+use App\Entity\Group;
 use App\Entity\Project;
+use App\Entity\Setting;
 use App\Entity\User;
+use App\Entity\Version;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr;
@@ -20,22 +25,23 @@ class ProjectRepository extends ServiceEntityRepository {
         parent::__construct($registry, Project::class);
     }
 
-//SELECT
-//    *
-//FROM
-//    t_project p
-//    JOIN t_user u
-//WHERE
-//u.id = 'e506db8b-0aa4-11ea-a57f-e840f2eb9399'
-//AND
-//	(
-//        (p.t_owner_id = u.id AND p.c_owner_permissions&4>0)
-//    OR
-//        (p.t_group_id = u.t_group_id AND p.c_other_permissions&4>0)
-//    OR
-//        (p.c_other_permissions&4>0)
-//     )
-    public function getAvailableProjects(User $user) {
+    public function getAvailableGrouped($user) {
+        $projects = $this->getAvailable($user);
+        $grouped = [];
+        foreach ($projects as $project) {
+            if ($project instanceof Project) {
+                $grouped[$project->getGroup()->getId()][] = $project;
+            }
+        }
+
+        return $grouped;
+    }
+
+    public function getAvailable($user) {
+        $min = 0;
+        if ($user->getAdminMode()) {
+            $min = -1;
+        }
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
                 ->from(Project::class, 'p')
@@ -47,13 +53,13 @@ class ProjectRepository extends ServiceEntityRepository {
                         $qb->expr()->orX(
                                 $qb->expr()->andX(
                                         $qb->expr()->eq('p.owner', 'u.id'),
-                                        $qb->expr()->gt('BIT_AND(p.ownerPermissions, 4)', 0)
+                                        $qb->expr()->gt('BIT_AND(p.ownerPermissions, 4)', $min)
                                 ),
                                 $qb->expr()->andX(
                                         $qb->expr()->eq('p.group', 'u.group'),
-                                        $qb->expr()->gt('BIT_AND(p.groupPermissions, 4)', 0)
+                                        $qb->expr()->gt('BIT_AND(p.groupPermissions, 4)', $min)
                                 ),
-                                $qb->expr()->gt('BIT_AND(p.otherPermissions, 4)', 0)
+                                $qb->expr()->gt('BIT_AND(p.otherPermissions, 4)', $min)
                         )
                 )
         ;
@@ -61,15 +67,100 @@ class ProjectRepository extends ServiceEntityRepository {
         return $query->getResult();
     }
 
-    /*
-      public function findOneBySomeField($value): ?Proyect
-      {
-      return $this->createQueryBuilder('p')
-      ->andWhere('p.exampleField = :val')
-      ->setParameter('val', $value)
-      ->getQuery()
-      ->getOneOrNullResult()
-      ;
-      }
-     */
+    public function getSummary($user, ?Group $group = null) {
+        $min = 0;
+        if ($user->getAdminMode()) {
+            $min = -1;
+        }
+        $data = [];
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('count(p)')
+                ->from(Project::class, 'p')
+                ->join(User::class, 'u')
+                ->join('p.group', 'g')
+                //->addSelect(['lastUpdate',])
+                ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
+                ->andWhere(
+                        $qb->expr()->orX(
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.owner', 'u.id'),
+                                        $qb->expr()->gt('BIT_AND(p.ownerPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.group', 'u.group'),
+                                        $qb->expr()->gt('BIT_AND(p.groupPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->gt('BIT_AND(p.otherPermissions, 4)', $min)
+                        )
+                )
+                ->andWhere(
+                        $qb->expr()->eq('p.lockState', 1)
+                )
+        ;
+        if ($group instanceof Group) {
+            $qb->andWhere(
+                    $qb->expr()->like('g.id', $qb->expr()->literal($group->getId()))
+            );
+        }
+        $query = $qb->getQuery();
+        $data['done'] = (int) $query->getSingleScalarResult();
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('count(p)')
+                ->from(Project::class, 'p')
+                ->join(User::class, 'u')
+                ->join('p.group', 'g')
+                //->addSelect(['lastUpdate',])
+                ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
+                ->andWhere(
+                        $qb->expr()->orX(
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.owner', 'u.id'),
+                                        $qb->expr()->gt('BIT_AND(p.ownerPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->andX(
+                                        $qb->expr()->eq('p.group', 'u.group'),
+                                        $qb->expr()->gt('BIT_AND(p.groupPermissions, 4)', $min)
+                                ),
+                                $qb->expr()->gt('BIT_AND(p.otherPermissions, 4)', $min)
+                        )
+                )
+                ->andWhere(
+                        $qb->expr()->eq('p.lockState', 0)
+                )
+        ;
+        if ($group instanceof Group) {
+            $qb->andWhere(
+                    $qb->expr()->like('g.id', $qb->expr()->literal($group->getId()))
+            );
+        }
+        $query = $qb->getQuery();
+        $data['now'] = (int) $query->getSingleScalarResult();
+        return $data;
+    }
+
+    public function loadSnapshot($id, DateTime $date): ?Project {
+        $project = $this->find($id);
+        $documents = $project->getDocuments();
+        foreach ($documents as $document) {
+            if ($document instanceof Document) {
+                $versions = $document->getVersions();
+                $removes = [];
+                foreach ($versions as $version) {
+                    if ($version instanceof Version)
+                        if ($version->getDate() > $date) {
+                            $removes[] = $version;
+                        }
+                }
+                foreach ($removes as $remove) {
+                    $document->removeVersion($remove);
+                }
+            }
+        }
+        return $project;
+    }
+
+    public function getGlobalProject(): ?Project {
+        return $this->getEntityManager()->getRepository(Setting::class)->getValue('globalProject');
+    }
+
 }

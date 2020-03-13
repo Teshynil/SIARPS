@@ -17,7 +17,7 @@ class ProjectController extends SIARPSController {
 
     public function index() {
 
-        $ps = $this->getDoctrine()->getRepository(Project::class)->getAvailableProjects($this->getUser());
+        $ps = $this->getDoctrine()->getRepository(Project::class)->getAvailable($this->getUser());
         return $this->render('project/projects.html.twig', [
                     'projects' => $ps
         ]);

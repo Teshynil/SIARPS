@@ -111,7 +111,7 @@ class File extends Properties {
     public function prepareFile() {
         $this->file = new SysFile($this->path, false);
         if ($this->size !== $this->file->getSize() || $this->mimeType !== $this->file->getMimeType()) {
-            $this->valid = false;
+            $this->setValid(false);
         }
     }
 
