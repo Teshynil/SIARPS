@@ -20,57 +20,61 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                <h3>Documentos</h3>
-                <table class="table table-responsive-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th>Documento</th>
-                            <th>Tipo de documento</th>
-                            <th>Ultima actualización</th>
-                            <th>Status</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for document in project.documents %}
+                {% if project.progressDocument is null or project.summary is null %}
+                    <h5>El projecto no ha sido completamente configurado, favor de asignar el documento de progreso y el de resumen en el apartado de configuración.</h5>
+                {% else %}
+                    <h3>Documentos</h3>
+                    <table class="table table-responsive-sm table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ document.name }}</td>
-                                <td>{{ document.template.type }} 
-                                    {% if project.summary is not null and project.summary.id==document.id %}
-                                        <span class="badge badge-primary">Sumario</span>
-                                    {% endif %}
-                                    {% if project.progressDocument is not null and project.progressDocument.id==document.id %}
-                                        <span class="badge badge-primary">Documento de progreso</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ document.versions|last !=false?document.versions|last.date|date:null|default('Sin actualización') }}</td>
-                                <td>
-                                    <span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span>
-                                    <span class="badge badge-{{document.versions|reduce((r,version)=> r and version.lockState,true)?'success':'danger'}}">{{ document.versions|reduce((r,version)=> r and version.lockState,true)?'Completado':'Incompleto' }}</span>
-                                </td>
-                                <td>
-                                    <a class="btn btn-info" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-eye"></i></a>
-                                        {% if document.lockState %}
-                                            {% if hasLock(document) %}
-                                            <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-lock"></i></a>
-                                            {% endif %}
-                                        <!-- <a class="btn btn-success" href="{{ path('document',{'id':document.id}) }}" target="_blank"><i class="fas fa-file-alt"></i></a>
-                                        -->
+                                <th>Documento</th>
+                                <th>Tipo de documento</th>
+                                <th>Ultima actualización</th>
+                                <th>Status</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for document in project.documents %}
+                                <tr>
+                                    <td>{{ document.name }}</td>
+                                    <td>{{ document.template.type }} 
+                                        {% if project.summary is not null and project.summary.id==document.id %}
+                                            <span class="badge badge-primary">Sumario</span>
+                                        {% endif %}
+                                        {% if project.progressDocument is not null and project.progressDocument.id==document.id %}
+                                            <span class="badge badge-primary">Documento de progreso</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ document.versions|last !=false?document.versions|last.date|date:null|default('Sin actualización') }}</td>
+                                    <td>
+                                        <span class="badge badge-{{document.lockState?'success':'danger'}}">{{ document.lockState?'Cerrado':'Abierto' }}</span>
+                                        <span class="badge badge-{{document.versions|reduce((r,version)=> r and version.lockState,true)?'success':'danger'}}">{{ document.versions|reduce((r,version)=> r and version.lockState,true)?'Completado':'Incompleto' }}</span>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="{{ path('document',{'id':document.id}) }}"><i class="fas fa-eye"></i></a>
+                                            {% if document.lockState %}
+                                                {% if hasLock(document) %}
+                                                <a class="btn btn-warning" soft href="{{ path('entity-unlock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-lock"></i></a>
+                                                {% endif %}
+                                            <!-- <a class="btn btn-success" href="{{ path('document',{'id':document.id}) }}" target="_blank"><i class="fas fa-file-alt"></i></a>
+                                            -->
                                         {% else %}
                                             {% if hasLock(document) %}
-                                            <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-unlock"></i></a>
+                                                <a class="btn btn-success" soft href="{{ path('entity-lock',{'id':document.id,'entity':class(document)}) }}"><i class="fas fa-unlock"></i></a>
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                </td>
+                                    </td>
 
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5" class="text-center">Sin documentos</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Sin documentos</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             </div>
 
         </div>
