@@ -77,7 +77,7 @@ class ProjectRepository extends ServiceEntityRepository {
         $qb->select('count(p)')
                 ->from(Project::class, 'p')
                 ->join(User::class, 'u')
-                ->join('p.group', 'g')
+                
                 //->addSelect(['lastUpdate',])
                 ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
                 ->andWhere(
@@ -98,6 +98,7 @@ class ProjectRepository extends ServiceEntityRepository {
                 )
         ;
         if ($group instanceof Group) {
+            $qb->join('p.group', 'g');
             $qb->andWhere(
                     $qb->expr()->like('g.id', $qb->expr()->literal($group->getId()))
             );
@@ -108,7 +109,6 @@ class ProjectRepository extends ServiceEntityRepository {
         $qb->select('count(p)')
                 ->from(Project::class, 'p')
                 ->join(User::class, 'u')
-                ->join('p.group', 'g')
                 //->addSelect(['lastUpdate',])
                 ->where($qb->expr()->eq('u.id', $qb->expr()->literal($user->getId())))
                 ->andWhere(
@@ -129,6 +129,7 @@ class ProjectRepository extends ServiceEntityRepository {
                 )
         ;
         if ($group instanceof Group) {
+            $qb->join('p.group', 'g');
             $qb->andWhere(
                     $qb->expr()->like('g.id', $qb->expr()->literal($group->getId()))
             );
