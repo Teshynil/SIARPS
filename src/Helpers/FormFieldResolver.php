@@ -69,7 +69,7 @@ class FormFieldResolver {
             case 'Rango':
                 $out = '<div class="progress-group">
   <div class="progress-group-header">
-    <div class="ml-auto font-weight-bold">'.$field['value'].'%</div>
+    <div class="m-auto font-weight-bold">'.$field['value'].'%</div>
   </div>
   <div class="progress-group-bars">
     <div class="progress progress-xs">
