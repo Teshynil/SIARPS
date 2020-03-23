@@ -25,6 +25,7 @@
         "symfony/monolog-bundle": "^3.1",
         "symfony/orm-pack": "*",
         "symfony/process": "^4.0",
+        "symfony/profiler-pack": "*",
         "symfony/security-bundle": "^4.0",
         "symfony/serializer": "^4.0",
         "symfony/serializer-pack": "*",
@@ -39,7 +40,6 @@
     "require-dev": {
         "symfony/debug-pack": "*",
         "symfony/maker-bundle": "^1.0",
-        "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
         "symfony/web-server-bundle": "^4.0"
     },
