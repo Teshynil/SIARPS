@@ -29,7 +29,7 @@ class AuthenticationController extends SIARPSController {
             $form->handleRequest($request);
             if ($this->getUser()->getGroup() == $this->getDoctrine()->getRepository(Setting::class)->getValue("adminGroup")) {
                 $this->getUser()->setAdminMode(true);
-                $newToken = new PostAuthenticationGuardToken($this->getUser(), $token->getProviderKey(), $token->getRoleNames());
+                $newToken = new PostAuthenticationGuardToken($this->getUser(), $token->getProviderKey(), $this->getUser()->getRoles());
                 $token_storage->setToken($newToken);
                 return $this->redirectToRoute("dashboard");
             }
@@ -42,7 +42,7 @@ class AuthenticationController extends SIARPSController {
                     return $this->render('authentication/select_login_mode.html.twig', ['form' => $form->createView()]);
                 }
                 $request->getSession()->remove("selectLoginMode");
-                $newToken = new PostAuthenticationGuardToken($this->getUser(), $token->getProviderKey(), $token->getRoleNames());
+                $newToken = new PostAuthenticationGuardToken($this->getUser(), $token->getProviderKey(), $this->getUser()->getRoles());
                 $token_storage->setToken($newToken);
                 return $this->redirectToRoute("dashboard");
             }

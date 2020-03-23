@@ -56,3 +56,6 @@ services:
         class: App\Security\Ldap
         
     Symfony\Component\Ldap\LdapInterface: '@App\Security\Ldap'
+
+    App\Security\ErrorController:
+        class: App\Security\ErrorController

@@ -11,9 +11,7 @@ security:
                 class: App\Entity\User
                 property: username
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+        
         main:
             anonymous: true
             guard:
@@ -22,9 +20,9 @@ security:
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 84600
-                path:     /
+                path: /
             logout:
-                path:   logout
+                path: /logout
 
             # activate different ways to authenticate
 
@@ -37,5 +35,6 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/_(profiler|wdt)/, roles: ROLE_ADMIN }
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }

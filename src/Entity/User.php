@@ -20,7 +20,7 @@ class User extends Properties implements UserInterface, EquatableInterface {
      * @var string
      *
      * @ORM\Column(name="c_username", type="string", length=180, nullable=false, unique=true)
-     */  
+     */
     protected $username;
 
     /**
@@ -84,8 +84,6 @@ class User extends Properties implements UserInterface, EquatableInterface {
         parent::__construct();
     }
 
-    
-
     public function getEmail(): ?string {
         return $this->email;
     }
@@ -107,11 +105,15 @@ class User extends Properties implements UserInterface, EquatableInterface {
     }
 
     public function eraseCredentials() {
-
+        
     }
 
     public function getRoles() {
-        return ['ROLE_USER'];
+        if ($this->adminMode) {
+            return ['ROLE_ADMIN', 'ROLE_USER'];
+        } else {
+            return ['ROLE_USER'];
+        }
     }
 
     public function getSalt() {
@@ -227,12 +229,12 @@ class User extends Properties implements UserInterface, EquatableInterface {
         $this->adminMode = $adminMode;
         return $this;
     }
-    
+
     public function isLdapLogin(): bool {
-        $output=false;
-        if(!empty($this->getDn())){
-            if($this->getDn()[0]!='#'){
-                $output=true;
+        $output = false;
+        if (!empty($this->getDn())) {
+            if ($this->getDn()[0] != '#') {
+                $output = true;
             }
         }
         return $output;
